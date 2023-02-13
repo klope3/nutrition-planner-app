@@ -1,0 +1,9 @@
+.day {
+  background-color: gray;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: auto;
+  padding: 10px;
+}
