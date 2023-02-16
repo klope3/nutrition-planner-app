@@ -2,14 +2,15 @@ import { DaySection } from "../DaySection/DaySection";
 import { NutrientProgressArea } from "../NutrientProgressArea/NutrientProgressArea";
 import "./Day.css";
 
-export function Day() {
+export function Day(props) {
+  const { setShowSearch } = props;
   return (
     <div className="day">
-      <DaySection />
-      <DaySection />
-      <DaySection />
-      <DaySection />
-      <DaySection />
+      <DaySection setShowSearch={setShowSearch} />
+      <DaySection setShowSearch={setShowSearch} />
+      <DaySection setShowSearch={setShowSearch} />
+      <DaySection setShowSearch={setShowSearch} />
+      <DaySection setShowSearch={setShowSearch} />
       <NutrientProgressArea />
     </div>
   );

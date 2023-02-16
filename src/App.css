@@ -1,3 +1,21 @@
 body {
   background-color: rgb(67, 67, 67);
 }
+
+.button-x {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.492);
+}
