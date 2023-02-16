@@ -8,6 +8,7 @@ export function DayChart() {
   return (
     <>
       <div className="day-chart-container">
+        {/* Should use context here */}
         <Day setShowSearch={setShowSearch} />
         <Day setShowSearch={setShowSearch} />
         <Day setShowSearch={setShowSearch} />
