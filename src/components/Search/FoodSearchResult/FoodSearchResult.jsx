@@ -1,5 +1,5 @@
 export function FoodSearchResult(props) {
-  const { description, dataType } = props.food;
+  const { description, dataType, fdcId } = props.food;
   return (
     <div>
       <div>{description}</div>

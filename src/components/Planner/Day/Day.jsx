@@ -14,3 +14,5 @@ export function Day() {
     </div>
   );
 }
+
+const day = {};
