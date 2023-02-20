@@ -9,7 +9,7 @@ import { FoodSearch } from "./components/Search/FoodSearch/FoodSearch";
 function App() {
   return (
     <div className="App">
-      <SignIn />
+      <DayChart />
     </div>
   );
 }

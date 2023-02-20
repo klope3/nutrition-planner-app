@@ -3,14 +3,15 @@ import { NutrientProgressArea } from "../NutrientProgressArea/NutrientProgressAr
 import "./Day.css";
 
 export function Day(props) {
-  const { setShowSearch } = props;
+  const {
+    day: { sections },
+    setShowSearch,
+  } = props;
   return (
     <div className="day">
-      <DaySection setShowSearch={setShowSearch} />
-      <DaySection setShowSearch={setShowSearch} />
-      <DaySection setShowSearch={setShowSearch} />
-      <DaySection setShowSearch={setShowSearch} />
-      <DaySection setShowSearch={setShowSearch} />
+      {sections.map((section, i) => (
+        <DaySection key={i} section={section} setShowSearch={setShowSearch} />
+      ))}
       <NutrientProgressArea />
     </div>
   );

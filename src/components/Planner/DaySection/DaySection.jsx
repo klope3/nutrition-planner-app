@@ -2,11 +2,13 @@ import { PortionRow } from "../PortionRow/PortionRow";
 import "./DaySection.css";
 
 export function DaySection(props) {
-  const { setShowSearch } = props;
+  const {
+    section: { rows },
+    setShowSearch,
+  } = props;
   return (
     <div className="day-section">
-      <PortionRow />
-      <PortionRow />
+      {rows && rows.map((row) => <PortionRow row={row} />)}
       <button onClick={() => setShowSearch(true)}>+</button>
     </div>
   );
