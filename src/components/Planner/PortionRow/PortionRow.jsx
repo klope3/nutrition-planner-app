@@ -2,7 +2,16 @@ import "./PortionRow.css";
 
 export function PortionRow(props) {
   const {
-    row: { fdcId },
+    row: { fdcId, id },
+    deletePortion,
   } = props;
-  return <div className="portion-row">{fdcId}</div>;
+
+  return (
+    <div className="portion-row">
+      {fdcId}
+      <button className="button-x" onClick={() => deletePortion(id)}>
+        X
+      </button>
+    </div>
+  );
 }

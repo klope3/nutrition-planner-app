@@ -6,7 +6,6 @@
   padding: 20px;
   left: 50%;
   translate: -50%;
-  display: flex;
 }
 
 .search-results-view {
@@ -17,4 +16,8 @@
 
 .food-search-modal label {
   display: block;
+}
+
+.food-search-flex {
+  display: flex;
 }

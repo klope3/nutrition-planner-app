@@ -1,9 +1,13 @@
 export function FoodSearchResult(props) {
-  const { description, dataType, fdcId } = props.food;
+  const {
+    food: { description, dataType, fdcId },
+    selectFood,
+  } = props;
   return (
-    <div>
+    <div onClick={() => selectFood(fdcId)}>
       <div>{description}</div>
       <div>{dataType}</div>
+      <div>{fdcId}</div>
     </div>
   );
 }
