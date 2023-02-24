@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { API_KEY, API_URL } from "../../../constants";
+import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
 
-export function FoodSearch(props) {
-  const { setShowSearch, addPortion } = props;
+export function FoodSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState();
   const [selectedFdcId, setSelectedFdcId] = useState();
+  const { addPortion } = useDayChart();
 
   function search() {
     fetch(
@@ -38,6 +39,7 @@ export function FoodSearch(props) {
   }
 
   const foodResults = searchResults && searchResults.foods;
+  const { setShowSearch } = useDayChart();
 
   return (
     <div className="modal-bg">

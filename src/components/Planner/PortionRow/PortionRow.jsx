@@ -1,10 +1,12 @@
+import { useDayChart } from "../../DayChartProvider";
 import "./PortionRow.css";
 
 export function PortionRow(props) {
   const {
     row: { fdcId, id },
-    deletePortion,
   } = props;
+
+  const { deletePortion } = useDayChart();
 
   return (
     <div className="portion-row">
