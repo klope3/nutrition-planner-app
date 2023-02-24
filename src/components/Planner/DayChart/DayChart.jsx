@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { sectionsPerDay } from "../../../constants";
 import { useDayChart } from "../../DayChartProvider";
 import { FoodSearch } from "../../Search/FoodSearch/FoodSearch";
 import { Day } from "../Day/Day";
@@ -13,7 +11,7 @@ export function DayChart() {
     <>
       <div className="day-chart-container">
         {days.map((day, i) => (
-          <Day indexInChart={i} />
+          <Day key={i} indexInChart={i} />
         ))}
       </div>
       {showSearch && <FoodSearch addPortion={addPortion} />}

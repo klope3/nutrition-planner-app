@@ -9,7 +9,7 @@ export function Day(props) {
   return (
     <div className="day">
       {sections.map((section, i) => (
-        <DaySection indexInDay={i} dayIndex={indexInChart} />
+        <DaySection key={i} indexInDay={i} dayIndex={indexInChart} />
       ))}
       <NutrientProgressArea />
     </div>

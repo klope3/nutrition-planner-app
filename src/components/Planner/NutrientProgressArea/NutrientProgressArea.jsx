@@ -27,7 +27,7 @@ export function NutrientProgressArea() {
   return (
     <div className="nutrient-progress-area">
       {testNutrients.map((nutrient) => (
-        <NutrientProgressBar nutrient={nutrient} />
+        <NutrientProgressBar key={nutrient.name} nutrient={nutrient} />
       ))}
     </div>
   );

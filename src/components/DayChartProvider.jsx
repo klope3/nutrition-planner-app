@@ -4,6 +4,26 @@ import { fetchFromDb } from "../fetch";
 
 const DayChartContext = createContext({});
 
+async function fetchData(setDayChartData) {
+  const endpoints = [
+    "dayChartDays",
+    "daySections",
+    "daySectionRows",
+    "portionRows",
+  ];
+  const responses = await Promise.all(
+    endpoints.map((endpoint) => fetchFromDb(endpoint))
+  );
+  const [dayChartDays, daySections, daySectionRows, portionRows] =
+    await Promise.all(responses.map((response) => response.json()));
+  setDayChartData({
+    dayChartDays,
+    daySections,
+    daySectionRows,
+    portionRows,
+  });
+}
+
 export function useDayChart() {
   const {
     dayChartData: { dayChartDays, daySections, daySectionRows, portionRows },
@@ -67,23 +87,7 @@ export function DayChartProvider({ children }) {
   const [clickedSectionIndex, setClickedSectionIndex] = useState();
 
   useEffect(() => {
-    async function fetchData() {
-      const responses = await Promise.all([
-        fetchFromDb("dayChartDays"),
-        fetchFromDb("daySections"),
-        fetchFromDb("daySectionRows"),
-        fetchFromDb("portionRows"),
-      ]);
-      const [dayChartDays, daySections, daySectionRows, portionRows] =
-        await Promise.all(responses.map((response) => response.json()));
-      setDayChartData({
-        dayChartDays,
-        daySections,
-        daySectionRows,
-        portionRows,
-      });
-    }
-    fetchData();
+    fetchData(setDayChartData);
   }, []);
 
   return (

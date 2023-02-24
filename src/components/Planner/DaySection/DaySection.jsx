@@ -41,7 +41,9 @@ export function DaySection(props) {
   return (
     <div className="day-section">
       {portionRowsHere &&
-        portionRowsHere.map((portionRow) => <PortionRow row={portionRow} />)}
+        portionRowsHere.map((portionRow) => (
+          <PortionRow key={portionRow.fdcId} row={portionRow} />
+        ))}
       <button onClick={clickAddPortion}>+</button>
     </div>
   );
