@@ -11,47 +11,27 @@ const data = {
   portionRows: [
     {
       id: 1,
-      fdcId: 2015943,
+      fdcId: 5646873,
       fractionOfServing: 0.5,
     },
     {
       id: 2,
-      fdcId: 539572,
+      fdcId: 657351,
       fractionOfServing: 1,
     },
     {
       id: 3,
-      fdcId: 2343826,
-      fractionOfServing: 1,
+      fdcId: 2316587,
+      fractionOfServing: 0.5,
     },
     {
       id: 4,
-      fdcId: 2343697,
-      fractionOfServing: 1.5,
+      fdcId: 879413,
+      fractionOfServing: 0.5,
     },
     {
       id: 5,
-      fdcId: 2344665,
-      fractionOfServing: 0.5,
-    },
-    {
-      id: 6,
-      fdcId: 2098759,
-      fractionOfServing: 1,
-    },
-    {
-      id: 7,
-      fdcId: 99999,
-      fractionOfServing: 0.5,
-    },
-    {
-      id: 8,
-      fdcId: 1337,
-      fractionOfServing: 1,
-    },
-    {
-      id: 9,
-      fdcId: 5555,
+      fdcId: 867643,
       fractionOfServing: 1,
     },
   ],
@@ -59,7 +39,7 @@ const data = {
     {
       id: 1,
       daySectionId: 1,
-      portionRowId: 3,
+      portionRowId: 1,
     },
     {
       id: 2,
@@ -69,7 +49,7 @@ const data = {
     {
       id: 3,
       daySectionId: 3,
-      portionRowId: 1,
+      portionRowId: 3,
     },
     {
       id: 4,
@@ -78,30 +58,30 @@ const data = {
     },
     {
       id: 5,
-      daySectionId: 2,
-      portionRowId: 6,
+      daySectionId: 4,
+      portionRowId: 5,
     },
   ],
   daySections: [
     {
       id: 1,
       dayId: 1,
-      indexInDay: 3,
-    },
-    {
-      id: 2,
-      dayId: 2,
       indexInDay: 2,
     },
     {
+      id: 2,
+      dayId: 1,
+      indexInDay: 4,
+    },
+    {
       id: 3,
-      dayId: 4,
-      indexInDay: 1,
+      dayId: 2,
+      indexInDay: 3,
     },
     {
       id: 4,
-      dayId: 3,
-      indexInDay: 4,
+      dayId: 4,
+      indexInDay: 0,
     },
   ],
   dayChartDays: [
@@ -117,13 +97,8 @@ const data = {
     },
     {
       id: 3,
-      dayChartId: 1,
+      dayChartId: 2,
       dayId: 4,
-    },
-    {
-      id: 4,
-      dayChartId: 1,
-      dayId: 3,
     },
   ],
   userDayCharts: [
