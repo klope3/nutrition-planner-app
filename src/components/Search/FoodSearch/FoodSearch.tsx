@@ -5,6 +5,33 @@ import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
 
+const fakeSearch: FoodSearchJson = {
+  foods: [
+    {
+      description: "Cucumber",
+      fdcId: 3987842,
+      dataType: "",
+    },
+    {
+      description: "Tomato",
+      fdcId: 23874,
+      dataType: "",
+    },
+    {
+      description: "Cookie",
+      fdcId: 8977655,
+      dataType: "",
+    },
+    {
+      description: "Wheat Bread",
+      fdcId: 879613,
+      dataType: "",
+    },
+  ]
+}
+
+const useFakeSearch = true;
+
 export function FoodSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
@@ -12,6 +39,10 @@ export function FoodSearch() {
   const { addPortion } = useDayChart();
 
   function search() {
+    if (useFakeSearch) {
+      setSearchResults(fakeSearch);
+      return;
+    }
     fetch(
       `${API_URL}/foods/search?query=${searchText}&api_key=${API_KEY}&pageNumber=1`,
       {
