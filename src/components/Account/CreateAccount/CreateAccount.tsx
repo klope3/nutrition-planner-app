@@ -5,6 +5,7 @@ export function CreateAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
   return (
     <form
       className="account-box"

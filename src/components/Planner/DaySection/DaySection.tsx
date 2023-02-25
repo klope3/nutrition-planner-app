@@ -3,7 +3,12 @@ import { useDayChart } from "../../DayChartProvider";
 import { PortionRow } from "../PortionRow/PortionRow";
 import "./DaySection.css";
 
-export function DaySection(props) {
+type DaySectionProps = {
+  indexInDay: number,
+  dayIndex: number,
+}
+
+export function DaySection(props: DaySectionProps) {
   const { indexInDay, dayIndex } = props;
 
   const { setShowSearch, setClickedSectionIndex } = useDayChart();
@@ -42,7 +47,7 @@ export function DaySection(props) {
     <div className="day-section">
       {portionRowsHere &&
         portionRowsHere.map((portionRow) => (
-          <PortionRow key={portionRow.fdcId} row={portionRow} />
+          portionRow && <PortionRow key={portionRow.fdcId} row={portionRow} />
         ))}
       <button onClick={clickAddPortion}>+</button>
     </div>

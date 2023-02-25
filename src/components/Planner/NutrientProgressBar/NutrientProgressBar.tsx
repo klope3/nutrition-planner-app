@@ -1,7 +1,16 @@
 import { nutrientDailyAmounts } from "../../../constants";
 import "./NutrientProgressBar.css";
 
-export function NutrientProgressBar(props) {
+type Nutrient = {
+  name: string,
+  amount: number,
+}
+
+type NutrientProgressBarProps = {
+  nutrient: Nutrient
+}
+
+export function NutrientProgressBar(props: NutrientProgressBarProps) {
   const { name, amount } = props.nutrient;
   const referenceNutrient = nutrientDailyAmounts.find(
     (nutrient) => nutrient.name.toLowerCase() === name.toLowerCase()

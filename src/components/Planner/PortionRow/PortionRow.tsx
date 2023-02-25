@@ -1,7 +1,12 @@
+import { PortionRowData } from "../../../types/DayChartTypes";
 import { useDayChart } from "../../DayChartProvider";
 import "./PortionRow.css";
 
-export function PortionRow(props) {
+type PortionRowProps = {
+  row: PortionRowData
+}
+
+export function PortionRow(props: PortionRowProps) {
   const {
     row: { fdcId, id },
   } = props;

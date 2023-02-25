@@ -1,10 +1,22 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { DB_URL, sectionsPerDay } from "../constants";
 import { fetchFromDb } from "../fetch";
+import { DayChartData } from "../types/DayChartTypes";
 
-const DayChartContext = createContext({});
+type DayChartContext = {
+  dayChartData: DayChartData,
+  setDayChartData: (data: DayChartData) => void,
+  showSearch: boolean,
+  setShowSearch: (showSearch: boolean) => void,
+  clickedSectionIndex: number,
+  setClickedSectionIndex: (i: number) => void,
+}
 
-async function fetchData(setDayChartData) {
+type ChildrenProps = { children: ReactNode }
+
+const DayChartContext = createContext<DayChartContext>({} as DayChartContext);
+
+async function fetchData(setDayChartData: (data: DayChartData) => void) {
   const endpoints = [
     "dayChartDays",
     "daySections",
@@ -34,7 +46,7 @@ export function useDayChart() {
     setClickedSectionIndex,
   } = useContext(DayChartContext);
 
-  async function addPortion(fdcId, fractionOfServing) {
+  async function addPortion(fdcId: number, fractionOfServing: number) {
     //add a dayChartDay with the correct dayId, OR skip if there already is one
 
     //add a daySection with this dayId and the selected indexInDay, OR skip if there is already one with the same values
@@ -55,7 +67,7 @@ export function useDayChart() {
     console.log(day ? "adding to existing day" : "adding new day");
   }
 
-  async function deletePortion(portionId) {
+  async function deletePortion(portionId: number) {
     const response = await fetch(
       `http://localhost:3000/portionRows/${portionId}`,
       {
@@ -81,10 +93,10 @@ export function useDayChart() {
   };
 }
 
-export function DayChartProvider({ children }) {
-  const [dayChartData, setDayChartData] = useState([]);
+export function DayChartProvider({ children }: ChildrenProps) {
+  const [dayChartData, setDayChartData] = useState({} as DayChartData);
   const [showSearch, setShowSearch] = useState(false);
-  const [clickedSectionIndex, setClickedSectionIndex] = useState();
+  const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
 
   useEffect(() => {
     fetchData(setDayChartData);

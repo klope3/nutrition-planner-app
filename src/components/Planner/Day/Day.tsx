@@ -3,7 +3,11 @@ import { DaySection } from "../DaySection/DaySection";
 import { NutrientProgressArea } from "../NutrientProgressArea/NutrientProgressArea";
 import "./Day.css";
 
-export function Day(props) {
+type DayProps = {
+  indexInChart: number
+}
+
+export function Day(props: DayProps) {
   const { indexInChart } = props;
   const sections = new Array(sectionsPerDay).fill({});
   return (

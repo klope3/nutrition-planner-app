@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { API_KEY, API_URL } from "../../../constants";
+import { FoodSearchJson } from "../../../types/FoodDataTypes";
 import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
 
 export function FoodSearch() {
   const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState();
-  const [selectedFdcId, setSelectedFdcId] = useState();
+  const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
+  const [selectedFdcId, setSelectedFdcId] = useState(0);
   const { addPortion } = useDayChart();
 
   function search() {
@@ -33,7 +34,7 @@ export function FoodSearch() {
     addPortion(selectedFdcId, 1);
   }
 
-  function selectFood(fdcId) {
+  function selectFood(fdcId: number) {
     console.log("selected " + fdcId);
     setSelectedFdcId(fdcId);
   }

@@ -1,4 +1,13 @@
-export function InputField(props) {
+type InputFieldProps = {
+  name: string,
+  id?: string,
+  value: any,
+  labelText?: string,
+  errorText?: string,
+  changeFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+export function InputField(props: InputFieldProps) {
   const { errorText, labelText, name, id, value, changeFunction } = props;
 
   return (

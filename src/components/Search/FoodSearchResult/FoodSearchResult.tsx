@@ -1,4 +1,11 @@
-export function FoodSearchResult(props) {
+import { FoodSearchResultData } from "../../../types/FoodDataTypes";
+
+type FoodSearchResultProps = {
+  food: FoodSearchResultData,
+  selectFood: (fdcId: number) => void
+}
+
+export function FoodSearchResult(props: FoodSearchResultProps) {
   const {
     food: { description, dataType, fdcId },
     selectFood,

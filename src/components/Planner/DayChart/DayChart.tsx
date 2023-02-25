@@ -14,7 +14,7 @@ export function DayChart() {
           <Day key={i} indexInChart={i} />
         ))}
       </div>
-      {showSearch && <FoodSearch addPortion={addPortion} />}
+      {showSearch && <FoodSearch />}
     </>
   );
 }
