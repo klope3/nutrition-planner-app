@@ -80,7 +80,7 @@ const data = {
     },
     {
       id: 4,
-      dayId: 4,
+      dayId: 3,
       indexInDay: 0,
     },
   ],
@@ -88,17 +88,17 @@ const data = {
     {
       id: 1,
       dayChartId: 1,
-      dayId: 1,
+      indexInChart: 0,
     },
     {
       id: 2,
       dayChartId: 1,
-      dayId: 2,
+      indexInChart: 1,
     },
     {
       id: 3,
-      dayChartId: 2,
-      dayId: 4,
+      dayChartId: 1,
+      indexInChart: 3,
     },
   ],
   userDayCharts: [

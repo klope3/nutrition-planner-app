@@ -19,7 +19,7 @@ export type DaySectionData = DBEntry & {
 
 export type DayChartDayData = DBEntry & {
   dayChartId: number;
-  dayId: number;
+  indexInChart: number;
 };
 
 export type DayChartData = {

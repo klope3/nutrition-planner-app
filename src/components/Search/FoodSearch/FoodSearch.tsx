@@ -9,7 +9,7 @@ const fakeSearch: FoodSearchJson = {
   foods: [
     {
       description: "Cucumber",
-      fdcId: 3987842,
+      fdcId: 111111,
       dataType: "",
     },
     {
