@@ -14,7 +14,6 @@ export function Day(props: DayProps) {
   const {
     dayChartData: { dayChartDays },
   } = useDayChart();
-  console.log("Trying to find a day in db with index " + indexInChart);
   const day =
     dayChartDays &&
     dayChartDays.find(
@@ -22,7 +21,6 @@ export function Day(props: DayProps) {
         dayChartDay.indexInChart === indexInChart &&
         dayChartDay.dayChartId === 1
     );
-  console.log(day ? "Found day id " + day.id : "No day found");
   return (
     <div className="day">
       {sections.map((section, i) => (

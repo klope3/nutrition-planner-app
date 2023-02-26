@@ -11,27 +11,27 @@ const data = {
   portionRows: [
     {
       id: 1,
-      fdcId: 5646873,
+      fdcId: 2098759,
       fractionOfServing: 0.5,
     },
     {
       id: 2,
-      fdcId: 657351,
+      fdcId: 2345173,
       fractionOfServing: 1,
     },
     {
       id: 3,
-      fdcId: 2316587,
+      fdcId: 549018,
       fractionOfServing: 0.5,
     },
     {
       id: 4,
-      fdcId: 879413,
+      fdcId: 2324381,
       fractionOfServing: 0.5,
     },
     {
       id: 5,
-      fdcId: 867643,
+      fdcId: 2345004,
       fractionOfServing: 1,
     },
   ],
