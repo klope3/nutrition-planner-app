@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { unknownFoodName, useFakeSearch } from "../../../constants";
+import { unknownFoodName } from "../../../constants";
+import { useFakeData } from "../../../fakeData";
 import { fetchSingleFdcFoodJson } from "../../../fetch";
 import { PortionRowData } from "../../../types/DayChartTypes";
 import { useDayChart } from "../../DayChartProvider";
@@ -17,7 +18,7 @@ export function PortionRow(props: PortionRowProps) {
   const { deletePortion } = useDayChart();
   useEffect(() => {
     async function fetchName() {
-      if (useFakeSearch) {
+      if (useFakeData) {
         setName("Food Portion");
         return;
       }

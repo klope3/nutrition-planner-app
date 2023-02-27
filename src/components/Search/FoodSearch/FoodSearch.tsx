@@ -1,10 +1,6 @@
 import { useState } from "react";
-import {
-  API_KEY,
-  API_URL,
-  fakeSearch,
-  useFakeSearch,
-} from "../../../constants";
+import { API_KEY, API_URL } from "../../../constants";
+import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
 import { useDayChart } from "../../DayChartProvider";
@@ -18,7 +14,7 @@ export function FoodSearch() {
   const { addPortion } = useDayChart();
 
   async function search() {
-    if (useFakeSearch) {
+    if (useFakeData) {
       setSearchResults(fakeSearch);
       return;
     }
