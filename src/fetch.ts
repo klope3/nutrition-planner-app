@@ -83,10 +83,14 @@ export async function searchFdcFoodsJson(
   return await response.json();
 }
 
-export async function fetchSingleFdcFoodJson(fdcId: number) {
-  const response = await fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
+export function fetchSingleFdcFood(fdcId: number) {
+  return fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
     method: "GET",
   });
+}
+
+export async function fetchSingleFdcFoodJson(fdcId: number) {
+  const response = await fetchSingleFdcFood(fdcId);
   if (!response.ok) {
     console.error("Getting name for food FAILED: " + response.status);
     return undefined;

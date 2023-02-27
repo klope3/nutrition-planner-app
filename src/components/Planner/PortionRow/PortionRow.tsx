@@ -12,13 +12,13 @@ type PortionRowProps = {
 
 export function PortionRow(props: PortionRowProps) {
   const {
-    row: { dbId, fdcId, foodName },
+    row: { dbId, fdcId, foodData },
   } = props;
   const { deletePortion } = useDayChart();
 
   return (
     <div className="portion-row">
-      <div>{foodName}</div>
+      <div>{foodData.description}</div>
       <button className="button-x" onClick={() => deletePortion(dbId)}>
         X
       </button>

@@ -2,6 +2,7 @@ import { sectionsPerDay } from "./constants";
 import {
   deleteFromDb,
   fetchEndpointJsons,
+  fetchSingleFdcFood,
   postToDbAndReturnJson,
 } from "./fetch";
 import {
@@ -10,6 +11,7 @@ import {
   DaySectionData,
   DaySectionRowData,
   DayState,
+  FoodData,
   PortionRowData,
   PortionRowState,
 } from "./types/DayChartTypes";
@@ -22,11 +24,37 @@ export async function updateDayChart(
   const daySections: DaySectionData[] = jsons[1];
   const daySectionRows: DaySectionRowData[] = jsons[2];
   const portionRows: PortionRowData[] = jsons[3];
+  const fdcIds = portionRows.map((portionRow) => portionRow.fdcId);
+  const allFoodDataResponses = await Promise.all(
+    fdcIds.map((id) => fetchSingleFdcFood(id))
+  );
+  const failedResponse = allFoodDataResponses.find((response) => !response.ok);
+  if (failedResponse) {
+    console.error(
+      "Updating chart FAILED because one or more food data could not be retrieved; status was " +
+        failedResponse.status
+    );
+    return;
+  }
+  const allFoodDataJsons = await Promise.all(
+    allFoodDataResponses.map((response) => response.json())
+  );
+  const allFoodData: FoodData[] = allFoodDataJsons.map((json) => ({
+    fdcId: json.fdcId,
+    description: json.description,
+  }));
 
   const dayChart: DayChartState = {
     dayChartId: 1,
     days: Array.from({ length: 4 }, (_, dayIndex) =>
-      buildDay(dayIndex, dayChartDays, daySections, daySectionRows, portionRows)
+      buildDay(
+        dayIndex,
+        dayChartDays,
+        daySections,
+        daySectionRows,
+        portionRows,
+        allFoodData
+      )
     ),
   };
 
@@ -38,7 +66,8 @@ function buildDay(
   dayChartDays: DayChartDayData[],
   daySections: DaySectionData[],
   daySectionRows: DaySectionRowData[],
-  portionRows: PortionRowData[]
+  portionRows: PortionRowData[],
+  allFoodData: FoodData[]
 ) {
   const dayFromDb = dayChartDays.find(
     (dayChartDay) =>
@@ -55,7 +84,8 @@ function buildDay(
         dayChartDays,
         daySections,
         daySectionRows,
-        portionRows
+        portionRows,
+        allFoodData
       )
     ),
   };
@@ -68,7 +98,8 @@ function buildSection(
   dayChartDays: DayChartDayData[],
   daySections: DaySectionData[],
   daySectionRows: DaySectionRowData[],
-  portionRows: PortionRowData[]
+  portionRows: PortionRowData[],
+  allFoodData: FoodData[]
 ) {
   const dayFromDb = dayChartDays.find(
     (dayChartDay: DayChartDayData) =>
@@ -90,7 +121,7 @@ function buildSection(
   const rows =
     sectionRowPairs &&
     sectionRowPairs.map((daySectionRow: DaySectionRowData) =>
-      buildRow(daySectionRow, portionRows)
+      buildRow(daySectionRow, portionRows, allFoodData)
     );
   return (
     sectionFromDb && {
@@ -103,16 +134,21 @@ function buildSection(
 
 function buildRow(
   daySectionRow: DaySectionRowData,
-  portionRows: PortionRowData[]
+  portionRows: PortionRowData[],
+  allFoodData: FoodData[]
 ) {
   const row = portionRows.find(
     (portionRow: PortionRowData) => portionRow.id === daySectionRow.portionRowId
   );
-  const rowState: PortionRowState | undefined = row && {
-    dbId: row.id,
-    fdcId: row.fdcId,
-    foodName: `Placeholder for ${row.fdcId}`,
-  };
+  const foodData = allFoodData.find(
+    (foodData) => foodData.fdcId === row?.fdcId
+  );
+  const rowState: PortionRowState | undefined = row &&
+    foodData && {
+      dbId: row.id,
+      fdcId: row.fdcId,
+      foodData,
+    };
   return rowState;
 }
 

@@ -50,9 +50,15 @@ export type DaySectionState = {
 export type PortionRowState = {
   dbId: number;
   fdcId: number;
-  foodName: string;
+  foodData: FoodData;
+  // foodName: string;
   // nutrients: Nutrient[];
   // fractionOfServing: number;
+};
+
+export type FoodData = {
+  fdcId: number;
+  description: string;
 };
 
 export type Nutrient = {
