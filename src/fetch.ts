@@ -1,5 +1,18 @@
 import { API_KEY, API_URL, DB_URL } from "./constants";
 
+export async function fetchEndpointJsons() {
+  const endpoints = [
+    "dayChartDays",
+    "daySections",
+    "daySectionRows",
+    "portionRows",
+  ];
+  const responses = await Promise.all(
+    endpoints.map((endpoint) => fetchFromDb(endpoint))
+  );
+  return await Promise.all(responses.map((response) => response.json()));
+}
+
 async function fetchRequestWithJson(
   endpoint: string,
   requestOptions: Object,
