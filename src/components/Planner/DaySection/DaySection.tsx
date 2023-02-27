@@ -10,7 +10,7 @@ type DaySectionProps = {
 };
 
 export function DaySection(props: DaySectionProps) {
-  const { indexInDay, dayId, dayIndex } = props;
+  const { indexInDay, dayIndex } = props;
   const { setShowSearch, setClickedSectionIndex } = useDayChart();
 
   function clickAddPortion() {
@@ -19,28 +19,10 @@ export function DaySection(props: DaySectionProps) {
     setClickedSectionIndex(sectionNumber);
   }
 
-  const {
-    dayChartData: { portionRows, daySectionRows, daySections },
-  } = useDayChart();
-
-  const section =
-    daySections &&
-    daySections.find(
-      (daySection) =>
-        daySection.dayId === dayId && daySection.indexInDay === indexInDay
-    );
-  const daySectionRowsHere =
-    section &&
-    daySectionRows.filter(
-      (daySectionRow) => daySectionRow.daySectionId === section.id
-    );
-  const portionRowsHere =
-    daySectionRowsHere &&
-    daySectionRowsHere.map((daySectionRow) =>
-      portionRows.find(
-        (portionRow) => portionRow.id === daySectionRow.portionRowId
-      )
-    );
+  const { dayChart } = useDayChart();
+  const day = dayChart.days && dayChart.days[dayIndex];
+  const section = day && day.sections[indexInDay];
+  const portionRowsHere = section && section.rows;
 
   return (
     <div className="day-section">

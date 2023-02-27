@@ -12,7 +12,16 @@ import {
   postToDb,
   postToDbAndReturnJson,
 } from "../fetch";
-import { DayChartData, DayChartDayData } from "../types/DayChartTypes";
+import {
+  DayChartData,
+  DayChartDayData,
+  DayChartState,
+  DaySectionData,
+  DaySectionRowData,
+  DayState,
+  PortionRowData,
+  PortionRowState,
+} from "../types/DayChartTypes";
 
 type DayChartContext = {
   dayChartData: DayChartData;
@@ -21,6 +30,8 @@ type DayChartContext = {
   setShowSearch: (showSearch: boolean) => void;
   clickedSectionIndex: number;
   setClickedSectionIndex: (i: number) => void;
+  dayChart: DayChartState;
+  setDayChart: (state: DayChartState) => void;
 };
 
 type ChildrenProps = { children: ReactNode };
@@ -46,15 +57,91 @@ async function fetchData(setDayChartData: (data: DayChartData) => void) {
     portionRows,
   });
 }
+async function updateDayChart(setDayChart: (state: DayChartState) => void) {
+  const endpoints = [
+    "dayChartDays",
+    "daySections",
+    "daySectionRows",
+    "portionRows",
+  ];
+  const responses = await Promise.all(
+    endpoints.map((endpoint) => fetchFromDb(endpoint))
+  );
+  const jsons = await Promise.all(responses.map((response) => response.json()));
+  const dayChartDays: DayChartDayData[] = jsons[0];
+  const daySections: DaySectionData[] = jsons[1];
+  const daySectionRows: DaySectionRowData[] = jsons[2];
+  const portionRows: PortionRowData[] = jsons[3];
+
+  const dayChart: DayChartState = {
+    dayChartId: 1,
+    days: Array.from({ length: 4 }, (_, dayIndex) => {
+      const dayFromDb = dayChartDays.find(
+        (dayChartDay) =>
+          dayChartDay.dayChartId === 1 && dayChartDay.indexInChart === dayIndex
+      );
+      const day: DayState | undefined = dayFromDb && {
+        dbId: dayFromDb.id,
+        dayChartId: 1,
+        indexInChart: dayIndex,
+        sections: Array.from({ length: sectionsPerDay }, (_, sectionIndex) => {
+          const dayFromDb = dayChartDays.find(
+            (dayChartDay: DayChartDayData) =>
+              dayChartDay.dayChartId === 1 &&
+              dayChartDay.indexInChart === dayIndex
+          );
+          const sectionFromDb =
+            dayFromDb &&
+            daySections.find(
+              (daySection: DaySectionData) =>
+                daySection.dayId === dayFromDb.id &&
+                daySection.indexInDay === sectionIndex
+            );
+          const sectionRowPairs =
+            sectionFromDb &&
+            daySectionRows.filter(
+              (daySectionRow: DaySectionRowData) =>
+                daySectionRow.daySectionId === sectionFromDb.id
+            );
+          const rows =
+            sectionRowPairs &&
+            sectionRowPairs.map((daySectionRow: DaySectionRowData) => {
+              const row = portionRows.find(
+                (portionRow: PortionRowData) =>
+                  portionRow.id === daySectionRow.portionRowId
+              );
+              const rowState: PortionRowState | undefined = row && {
+                dbId: row.id,
+                fdcId: row.fdcId,
+                foodName: `Placeholder for ${row.fdcId}`,
+              };
+              return rowState;
+            });
+          return (
+            sectionFromDb && {
+              dbId: sectionFromDb.id,
+              indexInDay: sectionIndex,
+              rows,
+            }
+          );
+        }),
+      };
+      return day;
+    }),
+  };
+
+  setDayChart(dayChart);
+}
 
 export function useDayChart() {
   const {
-    dayChartData: { dayChartDays, daySections, daySectionRows, portionRows },
     setDayChartData,
     showSearch,
     setShowSearch,
     clickedSectionIndex,
     setClickedSectionIndex,
+    dayChart,
+    setDayChart,
   } = useContext(DayChartContext);
 
   async function addPortion(fdcId: number, fractionOfServing: number) {
@@ -72,12 +159,8 @@ export function useDayChart() {
 
     //add a dayChartDay with the correct dayId, OR skip if there already is one
     const clickedDayIndex = Math.floor(clickedSectionIndex / sectionsPerDay);
-    const existingDay = dayChartDays.find(
-      (dayChartDay) =>
-        dayChartDay.indexInChart === clickedDayIndex &&
-        dayChartDay.dayChartId === 1
-    );
-    let dbDayId = existingDay && existingDay.id;
+    const existingDay = dayChart.days[clickedDayIndex];
+    let dbDayId = existingDay?.dbId;
     if (!existingDay) {
       const postJson = await postToDbAndReturnJson(
         "dayChartDays",
@@ -94,11 +177,9 @@ export function useDayChart() {
     //add a daySection with this dayId and the selected indexInDay, OR skip if there is already one with the same values
     //(take note of the id of the daySection created, OR the daySection that already existed)
     const indexInDay = clickedSectionIndex - sectionsPerDay * clickedDayIndex;
-    const existingSection = daySections.find(
-      (daySection) =>
-        daySection.dayId === dbDayId && daySection.indexInDay === indexInDay
-    );
-    let dbSectionId = existingSection && existingSection.id;
+    const existingSection =
+      existingDay && existingDay.sections && existingDay.sections[indexInDay];
+    let dbSectionId = existingSection && existingSection.dbId;
     if (!existingSection) {
       const postJson = await postToDbAndReturnJson(
         "daySections",
@@ -123,7 +204,7 @@ export function useDayChart() {
     );
     if (!daySectionRowJson) return;
 
-    fetchData(setDayChartData);
+    updateDayChart(setDayChart);
   }
 
   async function deletePortion(portionId: number) {
@@ -139,32 +220,29 @@ export function useDayChart() {
       return;
     }
 
-    fetchData(setDayChartData);
+    updateDayChart(setDayChart);
   }
 
   return {
-    dayChartData: {
-      dayChartDays,
-      daySections,
-      daySectionRows,
-      portionRows,
-    },
     showSearch,
     setShowSearch,
     clickedSectionIndex,
     setClickedSectionIndex,
     addPortion,
     deletePortion,
+    dayChart,
+    updateDayChart,
   };
 }
 
 export function DayChartProvider({ children }: ChildrenProps) {
   const [dayChartData, setDayChartData] = useState({} as DayChartData);
+  const [dayChart, setDayChart] = useState({} as DayChartState);
   const [showSearch, setShowSearch] = useState(false);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
 
   useEffect(() => {
-    fetchData(setDayChartData);
+    updateDayChart(setDayChart);
   }, []);
 
   return (
@@ -176,6 +254,8 @@ export function DayChartProvider({ children }: ChildrenProps) {
         setShowSearch,
         clickedSectionIndex,
         setClickedSectionIndex,
+        dayChart,
+        setDayChart,
       }}
     >
       {children}

@@ -28,3 +28,35 @@ export type DayChartData = {
   daySectionRows: DaySectionRowData[];
   portionRows: PortionRowData[];
 };
+
+//these State types should maybe be merged with the Data types using &; they end up inheriting lots of the same properties anyway
+export type DayChartState = {
+  dayChartId: number;
+  days: (DayState | undefined)[];
+};
+
+export type DayState = {
+  dbId: number;
+  dayChartId: number;
+  indexInChart: number;
+  sections: (DaySectionState | undefined)[];
+};
+
+export type DaySectionState = {
+  dbId: number;
+  rows: (PortionRowState | undefined)[] | undefined;
+};
+
+export type PortionRowState = {
+  dbId: number;
+  fdcId: number;
+  foodName: string;
+  // nutrients: Nutrient[];
+  // fractionOfServing: number;
+};
+
+export type Nutrient = {
+  name: string;
+  amount: number;
+  unit: string;
+};

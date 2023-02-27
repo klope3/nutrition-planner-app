@@ -11,23 +11,15 @@ type DayProps = {
 export function Day(props: DayProps) {
   const { indexInChart } = props;
   const sections = new Array(sectionsPerDay).fill({});
-  const {
-    dayChartData: { dayChartDays },
-  } = useDayChart();
-  const day =
-    dayChartDays &&
-    dayChartDays.find(
-      (dayChartDay) =>
-        dayChartDay.indexInChart === indexInChart &&
-        dayChartDay.dayChartId === 1
-    );
+  const { dayChart } = useDayChart();
+  const day = dayChart.days && dayChart.days[indexInChart];
   return (
     <div className="day">
       {sections.map((section, i) => (
         <DaySection
           key={i}
           indexInDay={i}
-          dayId={day && day.id}
+          dayId={day && day.dbId}
           dayIndex={indexInChart}
         />
       ))}
