@@ -37,25 +37,10 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
         : nutrient.amount;
     }
   });
-  // const nutrientsToShow: Nutrient[] = Object.keys(nutrientSums).map(
-  //   (nutrientKey) => {
-  //     const info = nutrientInfo.find(
-  //       (info) => info.fdcName === nutrientKey
-  //     ) as NutrientInfo;
-  //     const nutrient: Nutrient = {
-  //       fdcName: info.fdcName,
-  //       displayName: info.displayName,
-  //       amount: nutrientSums[nutrientKey],
-  //       unit: info.unit,
-  //       dailyValue: info.dailyValue,
-  //     };
-  //     return nutrient;
-  //   }
-  // );
   const nutrientsToShow: Nutrient[] = nutrientInfo.map((info) => ({
     fdcName: info.fdcName,
     displayName: info.displayName,
-    amount: +nutrientSums[info.fdcName],
+    amount: nutrientSums[info.fdcName] ? nutrientSums[info.fdcName] : 0,
     unit: info.unit,
     dailyValue: info.dailyValue,
   }));
@@ -64,10 +49,9 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
       nutrientOrder.indexOf(nutrient1.fdcName) -
       nutrientOrder.indexOf(nutrient2.fdcName)
   );
-
   return (
     <div className="nutrient-progress-area">
-      {nutrientsToShow?.map(
+      {nutrientsToShow.map(
         (nutrient) => nutrient && <NutrientProgressBar nutrient={nutrient} />
       )}
     </div>
