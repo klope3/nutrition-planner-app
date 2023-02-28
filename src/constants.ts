@@ -154,6 +154,34 @@ export const nutrientInfo: NutrientInfo[] = [
   },
 ];
 
+export const nutrientOrder = [
+  "Energy",
+  "Total lipid (fat)",
+  "Cholesterol",
+  "Sodium, Na",
+  "Carbohydrate, by difference",
+  "Fiber, total dietary",
+  "Sugars, total including NLEA",
+  "Protein",
+  "Vitamin A, IU",
+  "Vitamin B-6",
+  "Vitamin B-12",
+  "Vitamin C, total ascorbic acid",
+  "Vitamin D (D2 + D3)",
+  "Vitamin E (alpha-tocopherol)",
+  "Vitamin K (phylloquinone)",
+  "Calcium, Ca",
+  "Iron, Fe",
+  "Folate, total",
+  "Magnesium, Mg",
+  "Niacin",
+  "Phosphorus, P",
+  "Potassium, K",
+  "Riboflavin",
+  "Thiamin",
+  "Zinc, Zn",
+];
+
 export const API_URL = "https://api.nal.usda.gov/fdc/v1";
 export const API_KEY = import.meta.env.VITE_API_KEY;
 export const DB_URL = "http://localhost:3000";

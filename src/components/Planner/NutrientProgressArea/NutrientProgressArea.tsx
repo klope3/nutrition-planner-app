@@ -1,4 +1,4 @@
-import { nutrientInfo } from "../../../constants";
+import { nutrientInfo, nutrientOrder } from "../../../constants";
 import {
   Nutrient,
   NutrientInfo,
@@ -37,27 +37,36 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
         : nutrient.amount;
     }
   });
-  const nutrientsToShow: Nutrient[] = Object.keys(nutrientSums).map(
-    (nutrientKey) => {
-      const info = nutrientInfo.find(
-        (info) => info.fdcName === nutrientKey
-      ) as NutrientInfo;
-      const nutrient: Nutrient = {
-        fdcName: info.fdcName,
-        displayName: info.displayName,
-        amount: nutrientSums[nutrientKey],
-        unit: info.unit,
-        dailyValue: info.dailyValue,
-      };
-      return nutrient;
-    }
+  // const nutrientsToShow: Nutrient[] = Object.keys(nutrientSums).map(
+  //   (nutrientKey) => {
+  //     const info = nutrientInfo.find(
+  //       (info) => info.fdcName === nutrientKey
+  //     ) as NutrientInfo;
+  //     const nutrient: Nutrient = {
+  //       fdcName: info.fdcName,
+  //       displayName: info.displayName,
+  //       amount: nutrientSums[nutrientKey],
+  //       unit: info.unit,
+  //       dailyValue: info.dailyValue,
+  //     };
+  //     return nutrient;
+  //   }
+  // );
+  const nutrientsToShow: Nutrient[] = nutrientInfo.map((info) => ({
+    fdcName: info.fdcName,
+    displayName: info.displayName,
+    amount: +nutrientSums[info.fdcName],
+    unit: info.unit,
+    dailyValue: info.dailyValue,
+  }));
+  nutrientsToShow.sort(
+    (nutrient1, nutrient2) =>
+      nutrientOrder.indexOf(nutrient1.fdcName) -
+      nutrientOrder.indexOf(nutrient2.fdcName)
   );
 
   return (
     <div className="nutrient-progress-area">
-      {/* {testNutrients.map((nutrient) => (
-        <NutrientProgressBar key={nutrient.name} nutrient={nutrient} />
-      ))} */}
       {nutrientsToShow?.map(
         (nutrient) => nutrient && <NutrientProgressBar nutrient={nutrient} />
       )}
