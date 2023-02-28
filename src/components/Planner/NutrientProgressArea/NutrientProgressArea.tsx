@@ -43,6 +43,7 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
     amount: nutrientSums[info.fdcName] ? nutrientSums[info.fdcName] : 0,
     unit: info.unit,
     dailyValue: info.dailyValue,
+    isMajorNutrient: info.isMajorNutrient,
   }));
   nutrientsToShow.sort(
     (nutrient1, nutrient2) =>
@@ -50,10 +51,28 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
       nutrientOrder.indexOf(nutrient2.fdcName)
   );
   return (
-    <div className="nutrient-progress-area">
-      {nutrientsToShow.map(
-        (nutrient) => nutrient && <NutrientProgressBar nutrient={nutrient} />
-      )}
+    <div>
+      <div className="nutrient-progress-area">
+        {nutrientsToShow.map(
+          (nutrient) =>
+            nutrient &&
+            nutrient.isMajorNutrient && (
+              <NutrientProgressBar nutrient={nutrient} />
+            )
+        )}
+      </div>
+      <details>
+        <summary>More Nutrients</summary>
+        <div className="nutrient-progress-area">
+          {nutrientsToShow.map(
+            (nutrient) =>
+              nutrient &&
+              !nutrient.isMajorNutrient && (
+                <NutrientProgressBar nutrient={nutrient} />
+              )
+          )}
+        </div>
+      </details>
     </div>
   );
 }

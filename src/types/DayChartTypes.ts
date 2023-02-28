@@ -67,6 +67,7 @@ export type NutrientInfo = {
   displayName: string;
   unit: string;
   dailyValue: number;
+  isMajorNutrient: boolean;
 };
 
 export type Nutrient = NutrientInfo & {

@@ -57,6 +57,7 @@ export async function updateDayChart(
         amount: foodNutrient.amount,
         unit: foodNutrient.nutrient.unitName,
         dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,
+        isMajorNutrient: matchingInfo ? matchingInfo.isMajorNutrient : false,
       };
       return nutrient;
     }),
