@@ -1,0 +1,8 @@
+.food-search-result {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.food-search-result:hover {
+  background-color: lightgray;
+}

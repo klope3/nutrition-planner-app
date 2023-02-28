@@ -1,9 +1,10 @@
 import { FoodSearchResultData } from "../../../types/FoodDataTypes";
+import "./FoodSearchResult.css";
 
 type FoodSearchResultProps = {
-  food: FoodSearchResultData,
-  selectFood: (fdcId: number) => void
-}
+  food: FoodSearchResultData;
+  selectFood: (fdcId: number) => void;
+};
 
 export function FoodSearchResult(props: FoodSearchResultProps) {
   const {
@@ -11,7 +12,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
     selectFood,
   } = props;
   return (
-    <div onClick={() => selectFood(fdcId)}>
+    <div className="food-search-result" onClick={() => selectFood(fdcId)}>
       <div>{description}</div>
       <div>{dataType}</div>
       <div>{fdcId}</div>
