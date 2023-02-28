@@ -1,4 +1,4 @@
-import { sectionsPerDay } from "./constants";
+import { nutrientInfo, sectionsPerDay } from "./constants";
 import {
   deleteFromDb,
   fetchEndpointJsons,
@@ -12,6 +12,8 @@ import {
   DaySectionRowData,
   DayState,
   FoodData,
+  Nutrient,
+  NutrientInfo,
   PortionRowData,
   PortionRowState,
 } from "./types/DayChartTypes";
@@ -42,6 +44,22 @@ export async function updateDayChart(
   const allFoodData: FoodData[] = allFoodDataJsons.map((json) => ({
     fdcId: json.fdcId,
     description: json.description,
+    nutrients: json.foodNutrients.map((foodNutrient: any) => {
+      const fdcName = foodNutrient.nutrient.name;
+      const matchingInfo = nutrientInfo.find(
+        (info) => info.fdcName === fdcName
+      );
+      const nutrient: Nutrient = {
+        fdcName,
+        displayName: matchingInfo
+          ? matchingInfo.displayName
+          : "Nutrient name not found",
+        amount: foodNutrient.amount,
+        unit: foodNutrient.nutrient.unitName,
+        dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,
+      };
+      return nutrient;
+    }),
   }));
 
   const dayChart: DayChartState = {

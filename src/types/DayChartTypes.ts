@@ -59,10 +59,16 @@ export type PortionRowState = {
 export type FoodData = {
   fdcId: number;
   description: string;
+  nutrients: Nutrient[];
 };
 
-export type Nutrient = {
-  name: string;
-  amount: number;
+export type NutrientInfo = {
+  fdcName: string;
+  displayName: string;
   unit: string;
+  dailyValue: number;
+};
+
+export type Nutrient = NutrientInfo & {
+  amount: number;
 };

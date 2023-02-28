@@ -23,7 +23,7 @@ export function Day(props: DayProps) {
           dayIndex={indexInChart}
         />
       ))}
-      <NutrientProgressArea />
+      <NutrientProgressArea dayIndex={indexInChart} />
     </div>
   );
 }

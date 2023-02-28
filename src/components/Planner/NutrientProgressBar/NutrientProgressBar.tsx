@@ -1,28 +1,18 @@
-import { nutrientDailyAmounts } from "../../../constants";
+import { Nutrient } from "../../../types/DayChartTypes";
 import "./NutrientProgressBar.css";
 
-type Nutrient = {
-  name: string,
-  amount: number,
-}
-
 type NutrientProgressBarProps = {
-  nutrient: Nutrient
-}
+  nutrient: Nutrient;
+};
 
 export function NutrientProgressBar(props: NutrientProgressBarProps) {
-  const { name, amount } = props.nutrient;
-  const referenceNutrient = nutrientDailyAmounts.find(
-    (nutrient) => nutrient.name.toLowerCase() === name.toLowerCase()
-  );
-  const percent = referenceNutrient
-    ? Math.round((amount / referenceNutrient.dailyAmount) * 100)
-    : 0;
-  const style = { right: `${100 - percent}%` };
+  const { displayName, amount, dailyValue } = props.nutrient;
+  const percentDV = Math.round((amount / dailyValue) * 100);
+  const style = { right: `${100 - percentDV}%` };
   return (
     <div className="nutrient-progress-bar-container">
       <div className="nutrient-progress-bar" style={style}></div>
-      <div className="nutrient-progress-text">{name}</div>
+      <div className="nutrient-progress-text">{displayName}</div>
     </div>
   );
 }
