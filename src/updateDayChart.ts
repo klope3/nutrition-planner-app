@@ -8,8 +8,10 @@ import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
   deleteFromDb,
   EndpointJsons,
+  fetchAllFdcFoodJsons,
   fetchEndpointJsons,
   fetchSingleFdcFood,
+  fetchSingleFdcFoodJson,
   postToDbAndReturnJson,
 } from "./fetch";
 import {
@@ -22,11 +24,14 @@ import {
   PortionRowState,
 } from "./types/DayChartTypes";
 import { FoodData, Nutrient } from "./types/FoodDataTypes";
+import { extractFoodDataFromJson } from "./utility";
 
 export async function updateDayChart(
   setDayChart: (state: DayChartState) => void
 ) {
+  console.log("start update chart");
   const endpointJsons = await fetchEndpointJsons();
+  console.log("finished fetching from db");
 
   const fdcIds = endpointJsons.portionRows.map(
     (portionRow) => portionRow.fdcId
@@ -39,6 +44,7 @@ export async function updateDayChart(
   }
 
   const allFoodData = await getAllFoodData(fdcIds);
+  console.log("finished getting food data");
   if (!allFoodData) return;
 
   const dayChart: DayChartState = buildDayChartState(
@@ -50,26 +56,25 @@ export async function updateDayChart(
 }
 
 async function getAllFoodData(fdcIds: number[]) {
-  const allFoodDataResponses = await Promise.all(
-    fdcIds.map((id) => fetchSingleFdcFood(id))
-  );
-  const failedResponse = allFoodDataResponses.find((response) => !response.ok);
-  if (failedResponse) {
-    console.error(
-      "Updating chart FAILED because one or more food data could not be retrieved; status was " +
-        failedResponse.status
-    );
-    return;
-  }
-  const allFoodDataJsons = await Promise.all(
-    allFoodDataResponses.map((response) => response.json())
-  );
+  // const allFoodDataResponses = await Promise.all(
+  //   fdcIds.map((id) => fetchSingleFdcFood(id))
+  // );
+  // const failedResponse = allFoodDataResponses.find((response) => !response.ok);
+  // if (failedResponse) {
+  //   console.error(
+  //     "Updating chart FAILED because one or more food data could not be retrieved; status was " +
+  //       failedResponse.status
+  //   );
+  //   return;
+  // }
+  // const allFoodDataJsons = await Promise.all(
+  //   allFoodDataResponses.map((response) => response.json())
+  // );
+  const allFoodDataJsons = await fetchAllFdcFoodJsons(fdcIds);
 
-  const allFoodData: FoodData[] = allFoodDataJsons.map((json) => ({
-    fdcId: json.fdcId,
-    description: json.description,
-    nutrients: foodNutrientsObjToNutrientsArr(json.foodNutrients),
-  }));
+  const allFoodData: FoodData[] = allFoodDataJsons.map((json) =>
+    extractFoodDataFromJson(json)
+  );
 
   return allFoodData;
 }
@@ -79,13 +84,7 @@ function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
     console.log("trying to find a fake food with id " + id + "; result:");
     const match = fakeSingleFoods.find((food) => food.fdcId === id);
     console.log(match);
-    const data: FoodData = {
-      fdcId: match ? match.fdcId : 0,
-      description: match ? match.description : unknownFoodName,
-      nutrients: match
-        ? foodNutrientsObjToNutrientsArr(match.foodNutrients)
-        : [],
-    };
+    const data: FoodData = extractFoodDataFromJson(match);
     return data;
   });
   return allFakeData;
@@ -267,23 +266,4 @@ export async function tryAddPortion(
   if (!daySectionRowJson) return false;
 
   return true;
-}
-
-//
-function foodNutrientsObjToNutrientsArr(foodNutrients: any[]): Nutrient[] {
-  return foodNutrients.map((foodNutrient: any) => {
-    const fdcName = foodNutrient.nutrient.name;
-    const matchingInfo = nutrientInfo.find((info) => info.fdcName === fdcName);
-    const nutrient: Nutrient = {
-      fdcName,
-      displayName: matchingInfo
-        ? matchingInfo.displayName
-        : "Nutrient name not found",
-      amount: foodNutrient.amount,
-      unit: foodNutrient.nutrient.unitName,
-      dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,
-      isMajorNutrient: matchingInfo ? matchingInfo.isMajorNutrient : false,
-    };
-    return nutrient;
-  });
 }

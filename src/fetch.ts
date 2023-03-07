@@ -5,6 +5,9 @@ import {
   DaySectionRowEntry,
   PortionRowEntry,
 } from "./types/DayChartTypes";
+import { extractFoodDataFromJson, splitArrayBy } from "./utility";
+
+const foodDataCache = new Map();
 
 export type EndpointJsons = {
   dayChartDays: DayChartDayEntry[];
@@ -104,16 +107,69 @@ export async function searchFdcFoodsJson(
 }
 
 export function fetchSingleFdcFood(fdcId: number) {
-  return fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
+  // const fromCache = foodDataCache.get(fdcId);
+  // if (fromCache) {
+  //   const json = () => fromCache;
+  //   const promise = new Promise((resolve, reject) => {
+  //     const response = new Response();
+  //     response.json = json;
+  //     resolve(response);
+  //   });
+  //   return promise;
+  // }
+  const fetchPromise = fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
     method: "GET",
   });
+  // if (!fromCache) addFoodDataToCache(fetchPromise);
+  return fetchPromise;
+}
+
+export async function fetchAllFdcFoodJsons(fdcIds: number[]) {
+  const { passArr: idsInCache, failArr: idsNotInCache } = splitArrayBy(
+    fdcIds,
+    (id) => foodDataCache.has(id)
+  );
+  const dataFromCache = idsInCache.map((id) => foodDataCache.get(id));
+  console.log(
+    idsInCache.length +
+      " found in cache, " +
+      idsNotInCache.length +
+      " not in cache"
+  );
+  if (dataFromCache.length === fdcIds.length) {
+    return dataFromCache;
+  }
+  const jsons = await Promise.all(
+    idsNotInCache.map((id) => fetchSingleFdcFoodJson(id))
+  );
+  jsons.forEach((json) => foodDataCache.set(json.fdcId, json));
+  return dataFromCache.concat(jsons);
 }
 
 export async function fetchSingleFdcFoodJson(fdcId: number) {
-  const response = await fetchSingleFdcFood(fdcId);
+  // const response = await fetchSingleFdcFood(fdcId);
+  // if (!response.ok) {
+  //   console.error("Getting name for food FAILED: " + response.status);
+  //   return undefined;
+  // }
+  // return await response.json();
+
+  const response = await fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
+    method: "GET",
+  });
   if (!response.ok) {
-    console.error("Getting name for food FAILED: " + response.status);
+    console.error("FAILED to fetch food: " + response.status);
     return undefined;
   }
   return await response.json();
+}
+
+async function addFoodDataToCache(fetchPromise: Promise<Response>) {
+  const response = await fetchPromise;
+  const clone = response.clone();
+  const json = await clone.json();
+  const foodData = extractFoodDataFromJson(json);
+  foodDataCache.set(foodData.fdcId, foodData);
+  console.log("cache is now:");
+  console.log(foodDataCache);
 }
