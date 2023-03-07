@@ -1,4 +1,5 @@
 import { nutrientInfo, sectionsPerDay } from "./constants";
+import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
   deleteFromDb,
   fetchEndpointJsons,
@@ -26,7 +27,23 @@ export async function updateDayChart(
   const daySections: DaySectionData[] = jsons[1];
   const daySectionRows: DaySectionRowData[] = jsons[2];
   const portionRows: PortionRowData[] = jsons[3];
+
   const fdcIds = portionRows.map((portionRow) => portionRow.fdcId);
+  if (useFakeData) {
+    const fakeData = getAllFakeFoodData(fdcIds);
+    console.log("fake data:");
+    console.log(fakeData);
+    const dayChart = buildDayChartState(
+      dayChartDays,
+      daySections,
+      daySectionRows,
+      portionRows,
+      fakeData
+    );
+    setDayChart(dayChart);
+    return;
+  }
+
   const allFoodDataResponses = await Promise.all(
     fdcIds.map((id) => fetchSingleFdcFood(id))
   );
@@ -41,29 +58,49 @@ export async function updateDayChart(
   const allFoodDataJsons = await Promise.all(
     allFoodDataResponses.map((response) => response.json())
   );
+
   const allFoodData: FoodData[] = allFoodDataJsons.map((json) => ({
     fdcId: json.fdcId,
     description: json.description,
-    nutrients: json.foodNutrients.map((foodNutrient: any) => {
-      const fdcName = foodNutrient.nutrient.name;
-      const matchingInfo = nutrientInfo.find(
-        (info) => info.fdcName === fdcName
-      );
-      const nutrient: Nutrient = {
-        fdcName,
-        displayName: matchingInfo
-          ? matchingInfo.displayName
-          : "Nutrient name not found",
-        amount: foodNutrient.amount,
-        unit: foodNutrient.nutrient.unitName,
-        dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,
-        isMajorNutrient: matchingInfo ? matchingInfo.isMajorNutrient : false,
-      };
-      return nutrient;
-    }),
+    nutrients: foodNutrientsObjToNutrientsArr(json.foodNutrients),
   }));
 
-  const dayChart: DayChartState = {
+  const dayChart: DayChartState = buildDayChartState(
+    dayChartDays,
+    daySections,
+    daySectionRows,
+    portionRows,
+    allFoodData
+  );
+
+  setDayChart(dayChart);
+}
+
+function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
+  const allFakeData: FoodData[] = fdcIds.map((id) => {
+    console.log("trying to find a fake food with id " + id + "; result:");
+    const match = fakeSingleFoods.find((food) => food.fdcId === id);
+    console.log(match);
+    const data: FoodData = {
+      fdcId: match ? match.fdcId : 0,
+      description: match ? match.description : "Unknown food",
+      nutrients: match
+        ? foodNutrientsObjToNutrientsArr(match.foodNutrients)
+        : [],
+    };
+    return data;
+  });
+  return allFakeData;
+}
+
+function buildDayChartState(
+  dayChartDays: DayChartDayData[],
+  daySections: DaySectionData[],
+  daySectionRows: DaySectionRowData[],
+  portionRows: PortionRowData[],
+  allFoodData: FoodData[]
+): DayChartState {
+  return {
     dayChartId: 1,
     days: Array.from({ length: 4 }, (_, dayIndex) =>
       buildDay(
@@ -76,8 +113,6 @@ export async function updateDayChart(
       )
     ),
   };
-
-  setDayChart(dayChart);
 }
 
 function buildDay(
@@ -159,9 +194,14 @@ function buildRow(
   const row = portionRows.find(
     (portionRow: PortionRowData) => portionRow.id === daySectionRow.portionRowId
   );
-  const foodData = allFoodData.find(
+  const foodDataMatch = allFoodData.find(
     (foodData) => foodData.fdcId === row?.fdcId
   );
+  const foodData: FoodData = {
+    fdcId: row ? row.fdcId : 0,
+    description: foodDataMatch ? foodDataMatch.description : "Unknown food",
+    nutrients: foodDataMatch ? foodDataMatch.nutrients : [],
+  };
   const rowState: PortionRowState | undefined = row &&
     foodData && {
       dbId: row.id,
@@ -249,4 +289,22 @@ export async function tryAddPortion(
   if (!daySectionRowJson) return false;
 
   return true;
+}
+
+function foodNutrientsObjToNutrientsArr(foodNutrients: any[]): Nutrient[] {
+  return foodNutrients.map((foodNutrient: any) => {
+    const fdcName = foodNutrient.nutrient.name;
+    const matchingInfo = nutrientInfo.find((info) => info.fdcName === fdcName);
+    const nutrient: Nutrient = {
+      fdcName,
+      displayName: matchingInfo
+        ? matchingInfo.displayName
+        : "Nutrient name not found",
+      amount: foodNutrient.amount,
+      unit: foodNutrient.nutrient.unitName,
+      dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,
+      isMajorNutrient: matchingInfo ? matchingInfo.isMajorNutrient : false,
+    };
+    return nutrient;
+  });
 }

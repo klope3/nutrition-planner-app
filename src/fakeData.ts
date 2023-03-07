@@ -1,6 +1,11 @@
-export const useFakeData = false;
+export const useFakeData = true;
 export const fakeSearch = {
   foods: [
+    {
+      description: "Broccoli",
+      fdcId: 1935906,
+      dataType: "",
+    },
     {
       description: "Cucumber",
       fdcId: 111111,
