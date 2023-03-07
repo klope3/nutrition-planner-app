@@ -27,5 +27,3 @@ export function Day(props: DayProps) {
     </div>
   );
 }
-
-const day = {};

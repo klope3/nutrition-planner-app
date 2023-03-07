@@ -1,3 +1,5 @@
+import { FoodData } from "./FoodDataTypes";
+
 type DBEntry = {
   id: number;
 };
@@ -51,25 +53,4 @@ export type PortionRowState = {
   dbId: number;
   fdcId: number;
   foodData: FoodData;
-  // foodName: string;
-  // nutrients: Nutrient[];
-  // fractionOfServing: number;
-};
-
-export type FoodData = {
-  fdcId: number;
-  description: string;
-  nutrients: Nutrient[];
-};
-
-export type NutrientInfo = {
-  fdcName: string;
-  displayName: string;
-  unit: string;
-  dailyValue: number;
-  isMajorNutrient: boolean;
-};
-
-export type Nutrient = NutrientInfo & {
-  amount: number;
 };

@@ -1,4 +1,9 @@
-import { nutrientInfo, sectionsPerDay } from "./constants";
+import {
+  daysToShow,
+  nutrientInfo,
+  sectionsPerDay,
+  unknownFoodName,
+} from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
   deleteFromDb,
@@ -13,12 +18,10 @@ import {
   DaySectionEntry,
   DaySectionRowEntry,
   DayState,
-  FoodData,
-  Nutrient,
-  NutrientInfo,
   PortionRowEntry,
   PortionRowState,
 } from "./types/DayChartTypes";
+import { FoodData, Nutrient } from "./types/FoodDataTypes";
 
 export async function updateDayChart(
   setDayChart: (state: DayChartState) => void
@@ -78,7 +81,7 @@ function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
     console.log(match);
     const data: FoodData = {
       fdcId: match ? match.fdcId : 0,
-      description: match ? match.description : "Unknown food",
+      description: match ? match.description : unknownFoodName,
       nutrients: match
         ? foodNutrientsObjToNutrientsArr(match.foodNutrients)
         : [],
@@ -94,7 +97,7 @@ function buildDayChartState(
 ): DayChartState {
   return {
     dayChartId: 1,
-    days: Array.from({ length: 4 }, (_, dayIndex) =>
+    days: Array.from({ length: daysToShow }, (_, dayIndex) =>
       buildDay(dayIndex, endpointJsons, allFoodData)
     ),
   };
@@ -174,7 +177,7 @@ function buildRow(
   );
   const foodData: FoodData = {
     fdcId: rowFromDb ? rowFromDb.fdcId : 0,
-    description: foodDataMatch ? foodDataMatch.description : "Unknown food",
+    description: foodDataMatch ? foodDataMatch.description : unknownFoodName,
     nutrients: foodDataMatch ? foodDataMatch.nutrients : [],
   };
   const builtRow: PortionRowState | undefined = rowFromDb &&

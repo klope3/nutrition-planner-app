@@ -1,5 +1,4 @@
-import { NutrientInfo } from "./types/DayChartTypes";
-import { FoodSearchJson } from "./types/FoodDataTypes";
+import { NutrientInfo } from "./types/FoodDataTypes";
 
 export const nutrientInfo: NutrientInfo[] = [
   {
@@ -212,5 +211,6 @@ export const API_KEY = import.meta.env.VITE_API_KEY;
 export const DB_URL = "http://localhost:3000";
 
 export const sectionsPerDay = 5;
+export const daysToShow = 4; //should be 7 in final version
 
 export const unknownFoodName = "Unknown Food";
