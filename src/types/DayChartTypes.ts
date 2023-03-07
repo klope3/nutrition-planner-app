@@ -2,31 +2,31 @@ type DBEntry = {
   id: number;
 };
 
-export type PortionRowData = DBEntry & {
+export type PortionRowEntry = DBEntry & {
   fdcId: number;
   fractionOfServing: number;
 };
 
-export type DaySectionRowData = DBEntry & {
+export type DaySectionRowEntry = DBEntry & {
   daySectionId: number;
   portionRowId: number;
 };
 
-export type DaySectionData = DBEntry & {
+export type DaySectionEntry = DBEntry & {
   dayId: number;
   indexInDay: number;
 };
 
-export type DayChartDayData = DBEntry & {
+export type DayChartDayEntry = DBEntry & {
   dayChartId: number;
   indexInChart: number;
 };
 
 export type DayChartData = {
-  dayChartDays: DayChartDayData[];
-  daySections: DaySectionData[];
-  daySectionRows: DaySectionRowData[];
-  portionRows: PortionRowData[];
+  dayChartDays: DayChartDayEntry[];
+  daySections: DaySectionEntry[];
+  daySectionRows: DaySectionRowEntry[];
+  portionRows: PortionRowEntry[];
 };
 
 //these State types should maybe be merged with the Data types using &; they end up inheriting lots of the same properties anyway

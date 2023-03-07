@@ -2,48 +2,51 @@ import { nutrientInfo, sectionsPerDay } from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
   deleteFromDb,
+  EndpointJsons,
   fetchEndpointJsons,
   fetchSingleFdcFood,
   postToDbAndReturnJson,
 } from "./fetch";
 import {
-  DayChartDayData,
+  DayChartDayEntry,
   DayChartState,
-  DaySectionData,
-  DaySectionRowData,
+  DaySectionEntry,
+  DaySectionRowEntry,
   DayState,
   FoodData,
   Nutrient,
   NutrientInfo,
-  PortionRowData,
+  PortionRowEntry,
   PortionRowState,
 } from "./types/DayChartTypes";
 
 export async function updateDayChart(
   setDayChart: (state: DayChartState) => void
 ) {
-  const jsons = await fetchEndpointJsons();
-  const dayChartDays: DayChartDayData[] = jsons[0];
-  const daySections: DaySectionData[] = jsons[1];
-  const daySectionRows: DaySectionRowData[] = jsons[2];
-  const portionRows: PortionRowData[] = jsons[3];
+  const endpointJsons = await fetchEndpointJsons();
 
-  const fdcIds = portionRows.map((portionRow) => portionRow.fdcId);
+  const fdcIds = endpointJsons.portionRows.map(
+    (portionRow) => portionRow.fdcId
+  );
   if (useFakeData) {
     const fakeData = getAllFakeFoodData(fdcIds);
-    console.log("fake data:");
-    console.log(fakeData);
-    const dayChart = buildDayChartState(
-      dayChartDays,
-      daySections,
-      daySectionRows,
-      portionRows,
-      fakeData
-    );
+    const dayChart = buildDayChartState(endpointJsons, fakeData);
     setDayChart(dayChart);
     return;
   }
 
+  const allFoodData = await getAllFoodData(fdcIds);
+  if (!allFoodData) return;
+
+  const dayChart: DayChartState = buildDayChartState(
+    endpointJsons,
+    allFoodData
+  );
+
+  setDayChart(dayChart);
+}
+
+async function getAllFoodData(fdcIds: number[]) {
   const allFoodDataResponses = await Promise.all(
     fdcIds.map((id) => fetchSingleFdcFood(id))
   );
@@ -65,15 +68,7 @@ export async function updateDayChart(
     nutrients: foodNutrientsObjToNutrientsArr(json.foodNutrients),
   }));
 
-  const dayChart: DayChartState = buildDayChartState(
-    dayChartDays,
-    daySections,
-    daySectionRows,
-    portionRows,
-    allFoodData
-  );
-
-  setDayChart(dayChart);
+  return allFoodData;
 }
 
 function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
@@ -94,36 +89,23 @@ function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
 }
 
 function buildDayChartState(
-  dayChartDays: DayChartDayData[],
-  daySections: DaySectionData[],
-  daySectionRows: DaySectionRowData[],
-  portionRows: PortionRowData[],
+  endpointJsons: EndpointJsons,
   allFoodData: FoodData[]
 ): DayChartState {
   return {
     dayChartId: 1,
     days: Array.from({ length: 4 }, (_, dayIndex) =>
-      buildDay(
-        dayIndex,
-        dayChartDays,
-        daySections,
-        daySectionRows,
-        portionRows,
-        allFoodData
-      )
+      buildDay(dayIndex, endpointJsons, allFoodData)
     ),
   };
 }
 
 function buildDay(
   indexInChart: number,
-  dayChartDays: DayChartDayData[],
-  daySections: DaySectionData[],
-  daySectionRows: DaySectionRowData[],
-  portionRows: PortionRowData[],
+  endpointJsons: EndpointJsons,
   allFoodData: FoodData[]
 ) {
-  const dayFromDb = dayChartDays.find(
+  const dayFromDb = endpointJsons.dayChartDays.find(
     (dayChartDay) =>
       dayChartDay.dayChartId === 1 && dayChartDay.indexInChart === indexInChart
   );
@@ -132,15 +114,7 @@ function buildDay(
     dayChartId: 1,
     indexInChart,
     sections: Array.from({ length: sectionsPerDay }, (_, sectionIndex) =>
-      buildSection(
-        indexInChart,
-        sectionIndex,
-        dayChartDays,
-        daySections,
-        daySectionRows,
-        portionRows,
-        allFoodData
-      )
+      buildSection(indexInChart, sectionIndex, endpointJsons, allFoodData)
     ),
   };
   return day;
@@ -149,32 +123,32 @@ function buildDay(
 function buildSection(
   dayIndex: number,
   indexInDay: number,
-  dayChartDays: DayChartDayData[],
-  daySections: DaySectionData[],
-  daySectionRows: DaySectionRowData[],
-  portionRows: PortionRowData[],
+  endpointJsons: EndpointJsons,
   allFoodData: FoodData[]
 ) {
+  const { dayChartDays, daySections, daySectionRows, portionRows } =
+    endpointJsons;
+
   const dayFromDb = dayChartDays.find(
-    (dayChartDay: DayChartDayData) =>
+    (dayChartDay: DayChartDayEntry) =>
       dayChartDay.dayChartId === 1 && dayChartDay.indexInChart === dayIndex
   );
   const sectionFromDb =
     dayFromDb &&
     daySections.find(
-      (daySection: DaySectionData) =>
+      (daySection: DaySectionEntry) =>
         daySection.dayId === dayFromDb.id &&
         daySection.indexInDay === indexInDay
     );
-  const sectionRowPairs =
+  const sectionRowPairsFromDb =
     sectionFromDb &&
     daySectionRows.filter(
-      (daySectionRow: DaySectionRowData) =>
+      (daySectionRow: DaySectionRowEntry) =>
         daySectionRow.daySectionId === sectionFromDb.id
     );
   const rows =
-    sectionRowPairs &&
-    sectionRowPairs.map((daySectionRow: DaySectionRowData) =>
+    sectionRowPairsFromDb &&
+    sectionRowPairsFromDb.map((daySectionRow: DaySectionRowEntry) =>
       buildRow(daySectionRow, portionRows, allFoodData)
     );
   return (
@@ -187,28 +161,29 @@ function buildSection(
 }
 
 function buildRow(
-  daySectionRow: DaySectionRowData,
-  portionRows: PortionRowData[],
+  daySectionRow: DaySectionRowEntry,
+  portionRows: PortionRowEntry[],
   allFoodData: FoodData[]
 ) {
-  const row = portionRows.find(
-    (portionRow: PortionRowData) => portionRow.id === daySectionRow.portionRowId
+  const rowFromDb = portionRows.find(
+    (portionRow: PortionRowEntry) =>
+      portionRow.id === daySectionRow.portionRowId
   );
   const foodDataMatch = allFoodData.find(
-    (foodData) => foodData.fdcId === row?.fdcId
+    (foodData) => foodData.fdcId === rowFromDb?.fdcId
   );
   const foodData: FoodData = {
-    fdcId: row ? row.fdcId : 0,
+    fdcId: rowFromDb ? rowFromDb.fdcId : 0,
     description: foodDataMatch ? foodDataMatch.description : "Unknown food",
     nutrients: foodDataMatch ? foodDataMatch.nutrients : [],
   };
-  const rowState: PortionRowState | undefined = row &&
+  const builtRow: PortionRowState | undefined = rowFromDb &&
     foodData && {
-      dbId: row.id,
-      fdcId: row.fdcId,
+      dbId: rowFromDb.id,
+      fdcId: rowFromDb.fdcId,
       foodData,
     };
-  return rowState;
+  return builtRow;
 }
 
 export async function tryDeletePortion(portionId: number) {
@@ -291,6 +266,7 @@ export async function tryAddPortion(
   return true;
 }
 
+//
 function foodNutrientsObjToNutrientsArr(foodNutrients: any[]): Nutrient[] {
   return foodNutrients.map((foodNutrient: any) => {
     const fdcName = foodNutrient.nutrient.name;

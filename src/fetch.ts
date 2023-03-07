@@ -1,4 +1,17 @@
 import { API_KEY, API_URL, DB_URL } from "./constants";
+import {
+  DayChartDayEntry,
+  DaySectionEntry,
+  DaySectionRowEntry,
+  PortionRowEntry,
+} from "./types/DayChartTypes";
+
+export type EndpointJsons = {
+  dayChartDays: DayChartDayEntry[];
+  daySections: DaySectionEntry[];
+  daySectionRows: DaySectionRowEntry[];
+  portionRows: PortionRowEntry[];
+};
 
 export async function fetchEndpointJsons() {
   const endpoints = [
@@ -10,7 +23,14 @@ export async function fetchEndpointJsons() {
   const responses = await Promise.all(
     endpoints.map((endpoint) => fetchFromDb(endpoint))
   );
-  return await Promise.all(responses.map((response) => response.json()));
+  const jsons = await Promise.all(responses.map((response) => response.json()));
+  const result: EndpointJsons = {
+    dayChartDays: jsons[0],
+    daySections: jsons[1],
+    daySectionRows: jsons[2],
+    portionRows: jsons[3],
+  };
+  return result;
 }
 
 async function fetchRequestWithJson(
