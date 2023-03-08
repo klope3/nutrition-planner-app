@@ -1,17 +1,10 @@
-import {
-  daysToShow,
-  nutrientInfo,
-  sectionsPerDay,
-  unknownFoodName,
-} from "./constants";
+import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
   deleteFromDb,
   EndpointJsons,
   fetchAllFdcFoodJsons,
   fetchEndpointJsons,
-  fetchSingleFdcFood,
-  fetchSingleFdcFoodJson,
   postToDbAndReturnJson,
 } from "./fetch";
 import {
@@ -23,15 +16,13 @@ import {
   PortionRowEntry,
   PortionRowState,
 } from "./types/DayChartTypes";
-import { FoodData, Nutrient } from "./types/FoodDataTypes";
+import { FoodData } from "./types/FoodDataTypes";
 import { extractFoodDataFromJson } from "./utility";
 
 export async function updateDayChart(
   setDayChart: (state: DayChartState) => void
 ) {
-  console.log("start update chart");
   const endpointJsons = await fetchEndpointJsons();
-  console.log("finished fetching from db");
 
   const fdcIds = endpointJsons.portionRows.map(
     (portionRow) => portionRow.fdcId
@@ -44,7 +35,6 @@ export async function updateDayChart(
   }
 
   const allFoodData = await getAllFoodData(fdcIds);
-  console.log("finished getting food data");
   if (!allFoodData) return;
 
   const dayChart: DayChartState = buildDayChartState(
@@ -56,20 +46,6 @@ export async function updateDayChart(
 }
 
 async function getAllFoodData(fdcIds: number[]) {
-  // const allFoodDataResponses = await Promise.all(
-  //   fdcIds.map((id) => fetchSingleFdcFood(id))
-  // );
-  // const failedResponse = allFoodDataResponses.find((response) => !response.ok);
-  // if (failedResponse) {
-  //   console.error(
-  //     "Updating chart FAILED because one or more food data could not be retrieved; status was " +
-  //       failedResponse.status
-  //   );
-  //   return;
-  // }
-  // const allFoodDataJsons = await Promise.all(
-  //   allFoodDataResponses.map((response) => response.json())
-  // );
   const allFoodDataJsons = await fetchAllFdcFoodJsons(fdcIds);
 
   const allFoodData: FoodData[] = allFoodDataJsons.map((json) =>
@@ -81,9 +57,7 @@ async function getAllFoodData(fdcIds: number[]) {
 
 function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
   const allFakeData: FoodData[] = fdcIds.map((id) => {
-    console.log("trying to find a fake food with id " + id + "; result:");
     const match = fakeSingleFoods.find((food) => food.fdcId === id);
-    console.log(match);
     const data: FoodData = extractFoodDataFromJson(match);
     return data;
   });
