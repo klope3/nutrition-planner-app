@@ -17,6 +17,8 @@ type DayChartContext = {
   setDayChartData: (data: DayChartData) => void;
   showSearch: boolean;
   setShowSearch: (showSearch: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (b: boolean) => void;
   clickedSectionIndex: number;
   setClickedSectionIndex: (i: number) => void;
   dayChart: DayChartState;
@@ -31,6 +33,8 @@ export function useDayChart() {
   const {
     showSearch,
     setShowSearch,
+    isLoading,
+    setIsLoading,
     clickedSectionIndex,
     setClickedSectionIndex,
     dayChart,
@@ -44,17 +48,18 @@ export function useDayChart() {
       clickedSectionIndex,
       dayChart
     );
-    if (added) updateDayChart(setDayChart);
+    if (added) updateDayChart(setDayChart, setIsLoading);
   }
 
   async function deletePortion(portionId: number) {
     const deleted = await tryDeletePortion(portionId);
-    if (deleted) updateDayChart(setDayChart);
+    if (deleted) updateDayChart(setDayChart, setIsLoading);
   }
 
   return {
     showSearch,
     setShowSearch,
+    isLoading,
     clickedSectionIndex,
     setClickedSectionIndex,
     addPortion,
@@ -68,10 +73,11 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [dayChartData, setDayChartData] = useState({} as DayChartData);
   const [dayChart, setDayChart] = useState({} as DayChartState);
   const [showSearch, setShowSearch] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
 
   useEffect(() => {
-    updateDayChart(setDayChart);
+    updateDayChart(setDayChart, setIsLoading);
   }, []);
 
   return (
@@ -81,6 +87,8 @@ export function DayChartProvider({ children }: ChildrenProps) {
         setDayChartData,
         showSearch,
         setShowSearch,
+        isLoading,
+        setIsLoading,
         clickedSectionIndex,
         setClickedSectionIndex,
         dayChart,

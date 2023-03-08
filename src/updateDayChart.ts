@@ -20,8 +20,10 @@ import { FoodData } from "./types/FoodDataTypes";
 import { extractFoodDataFromJson } from "./utility";
 
 export async function updateDayChart(
-  setDayChart: (state: DayChartState) => void
+  setDayChart: (state: DayChartState) => void,
+  setIsLoading: (b: boolean) => void
 ) {
+  setIsLoading(true);
   const endpointJsons = await fetchEndpointJsons();
 
   const fdcIds = endpointJsons.portionRows.map(
@@ -43,6 +45,7 @@ export async function updateDayChart(
   );
 
   setDayChart(dayChart);
+  setIsLoading(false);
 }
 
 async function getAllFoodData(fdcIds: number[]) {
