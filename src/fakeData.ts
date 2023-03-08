@@ -1,4 +1,4 @@
-export const useFakeData = true;
+export const useFakeData = false;
 export const fakeSearch = {
   foods: [
     {
