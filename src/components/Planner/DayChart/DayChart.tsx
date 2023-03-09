@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { daysToShow } from "../../../constants";
 import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
 import { useDayChart } from "../../DayChartProvider";
@@ -18,6 +19,7 @@ export function DayChart() {
       </div>
       {isLoading && <LoadingIndicator />}
       {showSearch && <FoodSearch />}
+      <Link to="/">Log Out</Link>
     </>
   );
 }
