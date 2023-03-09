@@ -1,15 +1,19 @@
 import { API_KEY, API_URL, DB_URL } from "./constants";
 import {
   DayChartDayEntry,
+  DayChartEntry,
   DaySectionEntry,
   DaySectionRowEntry,
   PortionRowEntry,
+  UserDayChartEntry,
 } from "./types/DayChartTypes";
 import { splitArrayBy } from "./utility";
 
 const foodDataCache = new Map();
 
 export type EndpointJsons = {
+  userDayCharts: UserDayChartEntry[];
+  dayCharts: DayChartEntry[];
   dayChartDays: DayChartDayEntry[];
   daySections: DaySectionEntry[];
   daySectionRows: DaySectionRowEntry[];
@@ -18,6 +22,8 @@ export type EndpointJsons = {
 
 export async function fetchEndpointJsons() {
   const endpoints = [
+    "userDayCharts",
+    "dayCharts",
     "dayChartDays",
     "daySections",
     "daySectionRows",
@@ -28,10 +34,12 @@ export async function fetchEndpointJsons() {
   );
   const jsons = await Promise.all(responses.map((response) => response.json()));
   const result: EndpointJsons = {
-    dayChartDays: jsons[0],
-    daySections: jsons[1],
-    daySectionRows: jsons[2],
-    portionRows: jsons[3],
+    userDayCharts: jsons[0],
+    dayCharts: jsons[1],
+    dayChartDays: jsons[2],
+    daySections: jsons[3],
+    daySectionRows: jsons[4],
+    portionRows: jsons[5],
   };
   return result;
 }

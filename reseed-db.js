@@ -7,6 +7,11 @@ const data = {
       email: "person@example.com",
       password: "password1234",
     },
+    {
+      id: 2,
+      email: "sally.jones@site.com",
+      password: "catsRock",
+    },
   ],
   portionRows: [
     {
@@ -32,6 +37,21 @@ const data = {
     {
       id: 5,
       fdcId: 2345004,
+      fractionOfServing: 1,
+    },
+    {
+      id: 6,
+      fdcId: 2193119,
+      fractionOfServing: 0.5,
+    },
+    {
+      id: 7,
+      fdcId: 2343697,
+      fractionOfServing: 1,
+    },
+    {
+      id: 8,
+      fdcId: 1602525,
       fractionOfServing: 1,
     },
   ],
@@ -61,6 +81,21 @@ const data = {
       daySectionId: 4,
       portionRowId: 5,
     },
+    {
+      id: 6,
+      daySectionId: 5,
+      portionRowId: 6,
+    },
+    {
+      id: 7,
+      daySectionId: 5,
+      portionRowId: 7,
+    },
+    {
+      id: 8,
+      daySectionId: 6,
+      portionRowId: 8,
+    },
   ],
   daySections: [
     {
@@ -83,6 +118,16 @@ const data = {
       dayId: 3,
       indexInDay: 0,
     },
+    {
+      id: 5,
+      dayId: 4,
+      indexInDay: 4,
+    },
+    {
+      id: 6,
+      dayId: 5,
+      indexInDay: 1,
+    },
   ],
   dayChartDays: [
     {
@@ -100,12 +145,35 @@ const data = {
       dayChartId: 1,
       indexInChart: 3,
     },
+    {
+      id: 4,
+      dayChartId: 2,
+      indexInChart: 0,
+    },
+    {
+      id: 5,
+      dayChartId: 2,
+      indexInChart: 1,
+    },
+  ],
+  dayCharts: [
+    {
+      id: 1,
+    },
+    {
+      id: 2,
+    },
   ],
   userDayCharts: [
     {
       id: 1,
-      userEmail: "person@example.com",
+      userId: 1,
       dayChartId: 1,
+    },
+    {
+      id: 2,
+      userId: 2,
+      dayChartId: 2,
     },
   ],
 };

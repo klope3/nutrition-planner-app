@@ -11,6 +11,7 @@ import {
   tryDeletePortion,
   updateDayChart,
 } from "../updateDayChart";
+import { useAccount } from "./AccountProvider";
 
 type DayChartContext = {
   dayChartData: DayChartData;
@@ -41,19 +42,23 @@ export function useDayChart() {
     setDayChart,
   } = useContext(DayChartContext);
 
-  async function addPortion(fdcId: number, fractionOfServing: number) {
+  async function addPortion(
+    userId: number,
+    fdcId: number,
+    fractionOfServing: number
+  ) {
     const added = await tryAddPortion(
       fdcId,
       fractionOfServing,
       clickedSectionIndex,
       dayChart
     );
-    if (added) updateDayChart(setDayChart, setIsLoading);
+    if (added) updateDayChart(userId, setDayChart, setIsLoading);
   }
 
-  async function deletePortion(portionId: number) {
+  async function deletePortion(userId: number, portionId: number) {
     const deleted = await tryDeletePortion(portionId);
-    if (deleted) updateDayChart(setDayChart, setIsLoading);
+    if (deleted) updateDayChart(userId, setDayChart, setIsLoading);
   }
 
   return {
@@ -75,9 +80,10 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
+  const { activeUser } = useAccount();
 
   useEffect(() => {
-    updateDayChart(setDayChart, setIsLoading);
+    updateDayChart(activeUser.dbId, setDayChart, setIsLoading);
   }, []);
 
   return (

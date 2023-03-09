@@ -24,6 +24,13 @@ export type DayChartDayEntry = DBEntry & {
   indexInChart: number;
 };
 
+export type DayChartEntry = DBEntry & {};
+
+export type UserDayChartEntry = DBEntry & {
+  userId: number;
+  dayChartId: number;
+};
+
 export type DayChartData = {
   dayChartDays: DayChartDayEntry[];
   daySections: DaySectionEntry[];
