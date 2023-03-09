@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { tryGetUser } from "../../../accounts";
+import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { setActiveUser } = useAccount();
 
-  function trySignIn() {
-    console.log("sign in attempt");
+  async function trySignIn() {
+    const user = await tryGetUser(email, password);
+    if (user) {
+      setActiveUser(user);
+      navigate("/chart");
+    }
   }
 
   return (
