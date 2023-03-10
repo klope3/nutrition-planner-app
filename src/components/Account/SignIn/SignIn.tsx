@@ -7,6 +7,7 @@ import { InputField } from "../../Common/InputField/InputField";
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signInError, setSignInError] = useState("");
   const navigate = useNavigate();
   const { setActiveUser } = useAccount();
 
@@ -15,11 +16,14 @@ export function SignIn() {
     if (user) {
       const validated = await tryValidateUser(user.dbId);
       if (!validated) {
-        console.error("Could not sign in, try again later");
+        setSignInError("Something went wrong. Try again later.");
         return;
       }
+      setSignInError("");
       setActiveUser(user);
       navigate("/chart");
+    } else {
+      setSignInError("Invalid username or password.");
     }
   }
 
@@ -43,6 +47,9 @@ export function SignIn() {
           value={password}
           changeFunction={(e) => setPassword(e.target.value)}
         />
+        {signInError.length > 0 && (
+          <div className="error-text">{signInError}</div>
+        )}
         <button
           type="submit"
           onClick={(e) => {
