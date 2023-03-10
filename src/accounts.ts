@@ -30,7 +30,10 @@ export async function tryValidateUser(userId: number) {
   return true;
 }
 
-export async function tryGetUser(email: string, password: string) {
+export async function tryGetUser(
+  emailToMatch: string,
+  passwordToMatch?: string
+) {
   const usersResponse = await fetchFromDb("users");
   if (!usersResponse.ok) {
     console.error("Could not get users data");
@@ -46,7 +49,27 @@ export async function tryGetUser(email: string, password: string) {
     return entry;
   });
   const matchingUser = userEntries.find(
-    (entry) => entry.email === email && entry.password === password
+    (entry) =>
+      entry.email === emailToMatch &&
+      (passwordToMatch === undefined || entry.password === passwordToMatch)
   );
   return matchingUser;
+}
+
+export async function tryCreateAccount(email: string, password: string) {
+  const postAccountJson = await postToDbAndReturnJson(
+    "users",
+    {
+      email,
+      password,
+    },
+    "Could not create account"
+  );
+  if (!postAccountJson) return undefined;
+  const account: UserAccount = {
+    dbId: postAccountJson.id,
+    email: postAccountJson.email,
+    password: postAccountJson.password,
+  };
+  return account;
 }
