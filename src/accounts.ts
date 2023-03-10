@@ -1,10 +1,34 @@
-import { fetchFromDb } from "./fetch";
+import { fetchFromDb, postToDbAndReturnJson } from "./fetch";
+import { UserDayChartEntry } from "./types/DayChartTypes";
 
 export type UserAccount = {
   dbId: number;
   email: string;
   password: string;
 };
+
+export async function tryValidateUser(userId: number) {
+  const userDayChartsResponse = await fetchFromDb("userDayCharts");
+  if (!userDayChartsResponse.ok) return false;
+  const json = await userDayChartsResponse.json();
+  const userHasDayChart = !!json.find(
+    (pair: UserDayChartEntry) => pair.userId === userId
+  );
+  if (userHasDayChart) return true;
+
+  const newDayChart = await postToDbAndReturnJson(
+    "dayCharts",
+    {},
+    "Could not post day chart"
+  );
+  if (!newDayChart) return false;
+  const newUserDayChart = await postToDbAndReturnJson(
+    "userDayCharts",
+    { userId, dayChartId: newDayChart.id },
+    "Could not post userDayChart"
+  );
+  return true;
+}
 
 export async function tryGetUser(email: string, password: string) {
   const usersResponse = await fetchFromDb("users");

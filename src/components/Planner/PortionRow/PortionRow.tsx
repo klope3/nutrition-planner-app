@@ -3,6 +3,7 @@ import { unknownFoodName } from "../../../constants";
 import { useFakeData } from "../../../fakeData";
 import { fetchSingleFdcFoodJson } from "../../../fetch";
 import { PortionRowState } from "../../../types/DayChartTypes";
+import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";
 import "./PortionRow.css";
 
@@ -12,14 +13,18 @@ type PortionRowProps = {
 
 export function PortionRow(props: PortionRowProps) {
   const {
-    row: { dbId, fdcId, foodData },
+    row: { dbId: rowId, fdcId, foodData },
   } = props;
   const { deletePortion } = useDayChart();
+  const { activeUser } = useAccount();
 
   return (
     <div className="portion-row">
       <div>{foodData.description}</div>
-      <button className="button-x" onClick={() => deletePortion(dbId)}>
+      <button
+        className="button-x"
+        onClick={() => deletePortion(activeUser.dbId, rowId)}
+      >
         X
       </button>
     </div>

@@ -43,6 +43,7 @@ export async function updateDayChart(
   const allFoodData = await getAllFoodData(fdcIds);
   if (!allFoodData) return;
 
+  // const dayChartId = await tryGetDayChartId(userId, endpointJsons);
   const dayChart: DayChartState = buildDayChartState(
     endpointJsons,
     userId,
@@ -85,13 +86,11 @@ function buildDayChartState(
     (dayChart: DayChartEntry) =>
       dayChart.id === userDayChartPairFromDb?.dayChartId
   );
+  const dayChartId = dayChartFromDb ? dayChartFromDb.id : 0;
   return {
-    dayChartId: 1,
-    days: Array.from(
-      { length: daysToShow },
-      (_, dayIndex) =>
-        dayChartFromDb &&
-        buildDay(dayChartFromDb.id, dayIndex, endpointJsons, allFoodData)
+    dayChartId,
+    days: Array.from({ length: daysToShow }, (_, dayIndex) =>
+      buildDay(dayChartId, dayIndex, endpointJsons, allFoodData)
     ),
   };
 }
@@ -230,7 +229,7 @@ export async function tryAddPortion(
     const postJson = await postToDbAndReturnJson(
       "dayChartDays",
       {
-        dayChartId: 1,
+        dayChartId: dayChart.dayChartId,
         indexInChart: clickedDayIndex,
       },
       "Could not add new day"

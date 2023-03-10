@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { tryGetUser } from "../../../accounts";
+import { tryGetUser, tryValidateUser } from "../../../accounts";
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
 
@@ -13,6 +13,11 @@ export function SignIn() {
   async function trySignIn() {
     const user = await tryGetUser(email, password);
     if (user) {
+      const validated = await tryValidateUser(user.dbId);
+      if (!validated) {
+        console.error("Could not sign in, try again later");
+        return;
+      }
       setActiveUser(user);
       navigate("/chart");
     }

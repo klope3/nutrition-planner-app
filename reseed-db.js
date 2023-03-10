@@ -12,6 +12,11 @@ const data = {
       email: "sally.jones@site.com",
       password: "catsRock",
     },
+    {
+      id: 3,
+      email: "rick.grimes@alexandria.com",
+      password: "cowboy",
+    },
   ],
   portionRows: [
     {
@@ -177,11 +182,5 @@ const data = {
     },
   ],
 };
-
-//to put a portion in:
-//add the portion to portionRows with correct data (keep track of the id of new portionRow)
-//add a daychartday with the dayId of that day, if there isn't one already
-//add a daySection with dayId=this day and indexInDay=the position in day desired (ONLY if there is not already a daySection with the same two values)
-//add a daySectionRow with daySectionId=(id of daySection just added) and portionRowId=(id stored from first step)
 
 writeFileSync("db.json", JSON.stringify(data), { encoding: "utf-8" });
