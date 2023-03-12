@@ -46,6 +46,10 @@ export function CreateAccount() {
   }
 
   async function clickCreateAccount() {
+    const anyErrors = Object.values(inputErrors).find((value) => !!value);
+    if (anyErrors) {
+      return;
+    }
     const existingUser = await tryGetUser(email); //currently there's no way to distinguish between a server error and a missing user here
     if (existingUser) {
       setCreateAccountError("Could not create account.");
