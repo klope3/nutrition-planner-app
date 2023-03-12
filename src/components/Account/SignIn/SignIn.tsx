@@ -27,6 +27,21 @@ export function SignIn() {
     }
   }
 
+  const fields: InputField[] = [
+    {
+      name: "email",
+      labelText: "Email Address",
+      value: email,
+      changeFunction: setEmail,
+    },
+    {
+      name: "password",
+      labelText: "Password",
+      value: password,
+      changeFunction: setPassword,
+    },
+  ];
+
   return (
     <>
       <form
@@ -35,18 +50,15 @@ export function SignIn() {
           e.preventDefault();
         }}
       >
-        <InputField
-          name="email"
-          labelText="Email Address"
-          value={email}
-          changeFunction={(e) => setEmail(e.target.value)}
-        />
-        <InputField
-          name="password"
-          labelText="Password"
-          value={password}
-          changeFunction={(e) => setPassword(e.target.value)}
-        />
+        {fields.map((field) => (
+          <InputField
+            name={field.name}
+            labelText={field.labelText}
+            value={field.value}
+            errorText={field.errorText}
+            changeFunction={(e) => field.changeFunction(e.target.value)}
+          />
+        ))}
         {signInError.length > 0 && (
           <div className="error-text">{signInError}</div>
         )}

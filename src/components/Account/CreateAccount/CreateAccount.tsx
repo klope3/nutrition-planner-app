@@ -15,14 +15,6 @@ import {
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
 
-type OptionalString = string | undefined;
-
-type InputErrors = {
-  email: OptionalString;
-  password: OptionalString;
-  passwordConfirm: OptionalString;
-};
-
 export function CreateAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +65,30 @@ export function CreateAccount() {
     navigate("/chart");
   }
 
+  const fields: InputField[] = [
+    {
+      name: "email",
+      labelText: "Email Address",
+      value: email,
+      errorText: inputErrors.email,
+      changeFunction: setEmail,
+    },
+    {
+      name: "password",
+      labelText: "Password",
+      value: password,
+      errorText: inputErrors.password,
+      changeFunction: setPassword,
+    },
+    {
+      name: "passwordConfirm",
+      labelText: "Confirm Password",
+      value: passwordConfirm,
+      errorText: inputErrors.passwordConfirm,
+      changeFunction: setPasswordConfirm,
+    },
+  ];
+
   return (
     <>
       <form
@@ -81,30 +97,16 @@ export function CreateAccount() {
           e.preventDefault();
         }}
       >
-        <InputField
-          name="email"
-          labelText={"Email Address"}
-          value={email}
-          errorText={inputErrors.email}
-          changeFunction={(e) => setEmail(e.target.value)}
-          blurFunction={(e) => blurField(e)}
-        />
-        <InputField
-          name="password"
-          labelText={"Password"}
-          value={password}
-          errorText={inputErrors.password}
-          changeFunction={(e) => setPassword(e.target.value)}
-          blurFunction={(e) => blurField(e)}
-        />
-        <InputField
-          name="passwordConfirm"
-          labelText={"Confirm Password"}
-          value={passwordConfirm}
-          errorText={inputErrors.passwordConfirm}
-          changeFunction={(e) => setPasswordConfirm(e.target.value)}
-          blurFunction={(e) => blurField(e)}
-        />
+        {fields.map((field) => (
+          <InputField
+            name={field.name}
+            labelText={field.labelText}
+            value={field.value}
+            errorText={field.errorText}
+            changeFunction={(e) => field.changeFunction(e.target.value)}
+            blurFunction={(e) => blurField(e)}
+          />
+        ))}
         {createAccountError.length > 0 && (
           <div className="error-text">{createAccountError}</div>
         )}
