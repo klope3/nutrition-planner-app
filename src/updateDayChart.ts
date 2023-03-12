@@ -1,3 +1,4 @@
+import { useAccount } from "./components/AccountProvider";
 import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {
@@ -9,17 +10,20 @@ import {
 } from "./fetch";
 import {
   DayChartDayEntry,
+  DayChartEntry,
   DayChartState,
   DaySectionEntry,
   DaySectionRowEntry,
   DayState,
   PortionRowEntry,
   PortionRowState,
+  UserDayChartEntry,
 } from "./types/DayChartTypes";
 import { FoodData } from "./types/FoodDataTypes";
 import { extractFoodDataFromJson } from "./utility";
 
 export async function updateDayChart(
+  userId: number,
   setDayChart: (state: DayChartState) => void,
   setIsLoading: (b: boolean) => void
 ) {
@@ -31,7 +35,7 @@ export async function updateDayChart(
   );
   if (useFakeData) {
     const fakeData = getAllFakeFoodData(fdcIds);
-    const dayChart = buildDayChartState(endpointJsons, fakeData);
+    const dayChart = buildDayChartState(endpointJsons, userId, fakeData);
     setDayChart(dayChart);
     return;
   }
@@ -39,8 +43,10 @@ export async function updateDayChart(
   const allFoodData = await getAllFoodData(fdcIds);
   if (!allFoodData) return;
 
+  // const dayChartId = await tryGetDayChartId(userId, endpointJsons);
   const dayChart: DayChartState = buildDayChartState(
     endpointJsons,
+    userId,
     allFoodData
   );
 
@@ -69,37 +75,56 @@ function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
 
 function buildDayChartState(
   endpointJsons: EndpointJsons,
+  userId: number,
   allFoodData: FoodData[]
 ): DayChartState {
+  const { userDayCharts, dayCharts } = endpointJsons;
+  const userDayChartPairFromDb = userDayCharts.find(
+    (pair: UserDayChartEntry) => pair.userId === userId
+  );
+  const dayChartFromDb = dayCharts.find(
+    (dayChart: DayChartEntry) =>
+      dayChart.id === userDayChartPairFromDb?.dayChartId
+  );
+  const dayChartId = dayChartFromDb ? dayChartFromDb.id : 0;
   return {
-    dayChartId: 1,
+    dayChartId,
     days: Array.from({ length: daysToShow }, (_, dayIndex) =>
-      buildDay(dayIndex, endpointJsons, allFoodData)
+      buildDay(dayChartId, dayIndex, endpointJsons, allFoodData)
     ),
   };
 }
 
 function buildDay(
+  dayChartId: number,
   indexInChart: number,
   endpointJsons: EndpointJsons,
   allFoodData: FoodData[]
 ) {
   const dayFromDb = endpointJsons.dayChartDays.find(
     (dayChartDay) =>
-      dayChartDay.dayChartId === 1 && dayChartDay.indexInChart === indexInChart
+      dayChartDay.dayChartId === dayChartId &&
+      dayChartDay.indexInChart === indexInChart
   );
   const day: DayState | undefined = dayFromDb && {
     dbId: dayFromDb.id,
-    dayChartId: 1,
+    dayChartId,
     indexInChart,
     sections: Array.from({ length: sectionsPerDay }, (_, sectionIndex) =>
-      buildSection(indexInChart, sectionIndex, endpointJsons, allFoodData)
+      buildSection(
+        dayChartId,
+        indexInChart,
+        sectionIndex,
+        endpointJsons,
+        allFoodData
+      )
     ),
   };
   return day;
 }
 
 function buildSection(
+  dayChartId: number,
   dayIndex: number,
   indexInDay: number,
   endpointJsons: EndpointJsons,
@@ -110,7 +135,8 @@ function buildSection(
 
   const dayFromDb = dayChartDays.find(
     (dayChartDay: DayChartDayEntry) =>
-      dayChartDay.dayChartId === 1 && dayChartDay.indexInChart === dayIndex
+      dayChartDay.dayChartId === dayChartId &&
+      dayChartDay.indexInChart === dayIndex
   );
   const sectionFromDb =
     dayFromDb &&
@@ -203,7 +229,7 @@ export async function tryAddPortion(
     const postJson = await postToDbAndReturnJson(
       "dayChartDays",
       {
-        dayChartId: 1,
+        dayChartId: dayChart.dayChartId,
         indexInChart: clickedDayIndex,
       },
       "Could not add new day"

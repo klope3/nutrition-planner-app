@@ -3,6 +3,7 @@ import { API_KEY, API_URL } from "../../../constants";
 import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
+import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
@@ -12,6 +13,7 @@ export function FoodSearch() {
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
   const [selectedFdcId, setSelectedFdcId] = useState(0);
   const { addPortion } = useDayChart();
+  const { activeUser } = useAccount();
 
   async function search() {
     if (useFakeData) {
@@ -24,7 +26,7 @@ export function FoodSearch() {
 
   function clickAdd() {
     setShowSearch(false);
-    addPortion(selectedFdcId, 1);
+    addPortion(activeUser.dbId, selectedFdcId, 1);
   }
 
   function selectFood(fdcId: number) {
