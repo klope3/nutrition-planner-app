@@ -6,6 +6,12 @@ export type FoodSearchResultData = {
   description: string;
   fdcId: number;
   dataType: string;
+  brandName: string;
+  brandOwner: string;
+  foodCategory: string;
+  servingSize: number;
+  servingSizeUnit: string;
+  nutrients: Nutrient[];
 };
 
 export type FoodData = {

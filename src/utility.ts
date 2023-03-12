@@ -41,3 +41,10 @@ export function splitArrayBy(array: any[], callback: (item: any) => boolean) {
     failArr,
   };
 }
+
+export const formatCamelCase = (str: string) =>
+  str
+    .replace(/([A-Z])/, " $1")
+    .split(" ")
+    .map((str) => str.charAt(0).toUpperCase() + str.substring(1))
+    .join(" ");

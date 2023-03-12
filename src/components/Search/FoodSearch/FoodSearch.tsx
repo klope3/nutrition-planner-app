@@ -17,11 +17,11 @@ export function FoodSearch() {
 
   async function search() {
     if (useFakeData) {
-      setSearchResults(fakeSearch);
+      setSearchResults(fakeSearch as FoodSearchJson);
       return;
     }
     const json = await searchFdcFoodsJson(searchText, 1);
-    if (json) setSearchResults(json);
+    if (json) setSearchResults(json as FoodSearchJson);
   }
 
   function clickAdd() {
