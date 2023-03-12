@@ -83,6 +83,7 @@ export function FoodSearch() {
                   key={result.fdcId}
                   food={result}
                   selectFood={selectFood}
+                  isSelected={result.fdcId === selectedFdcId}
                 />
               ))}
           </div>

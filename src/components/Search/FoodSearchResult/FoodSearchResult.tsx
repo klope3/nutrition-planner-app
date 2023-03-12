@@ -5,6 +5,7 @@ import "./FoodSearchResult.css";
 type FoodSearchResultProps = {
   food: FoodSearchResultData;
   selectFood: (fdcId: number) => void;
+  isSelected: boolean;
 };
 
 export function FoodSearchResult(props: FoodSearchResultProps) {
@@ -21,6 +22,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
       fdcId,
     },
     selectFood,
+    isSelected,
   } = props;
   const details = {
     brandName,
@@ -32,7 +34,10 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
     category,
   };
   return (
-    <div className="food-search-result" onClick={() => selectFood(fdcId)}>
+    <div
+      className={`food-search-result ${isSelected && "result-selected"}`}
+      onClick={() => selectFood(fdcId)}
+    >
       <div>{description}</div>
       <details>
         <summary>Details</summary>
