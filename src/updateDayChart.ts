@@ -37,6 +37,7 @@ export async function updateDayChart(
     const fakeData = getAllFakeFoodData(fdcIds);
     const dayChart = buildDayChartState(endpointJsons, userId, fakeData);
     setDayChart(dayChart);
+    setIsLoading(false);
     return;
   }
 

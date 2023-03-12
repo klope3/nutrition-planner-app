@@ -14,7 +14,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
       description,
       brandName,
       brandOwner,
-      nutrients,
+      foodNutrients,
       servingSize,
       servingSizeUnit,
       foodCategory: category,
@@ -44,6 +44,12 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
         {Object.entries(details).map((entry) => (
           <div>
             {`${formatCamelCase(entry[0])}: ${entry[1] ? entry[1] : "No data"}`}
+          </div>
+        ))}
+        {foodNutrients.map((nutrient) => (
+          <div>
+            {nutrient.nutrientName}: {nutrient.value}
+            {nutrient.unitName} {`(${nutrient.percentDailyValue}%)`}
           </div>
         ))}
       </details>
