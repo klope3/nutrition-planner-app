@@ -1,6 +1,8 @@
 import { FoodSearchResultData } from "../../../types/FoodDataTypes";
 import { formatCamelCase } from "../../../utility";
+import { nutrientInfo } from "../../../constants";
 import "./FoodSearchResult.css";
+import { sortNutrients } from "../../../calculateNutrients";
 
 type FoodSearchResultProps = {
   food: FoodSearchResultData;
@@ -33,6 +35,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
         : "No data",
     category,
   };
+  sortNutrients(foodNutrients);
   return (
     <div
       className={`food-search-result ${isSelected && "result-selected"}`}
@@ -46,12 +49,26 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
             {`${formatCamelCase(entry[0])}: ${entry[1] ? entry[1] : "No data"}`}
           </div>
         ))}
-        {foodNutrients.map((nutrient) => (
-          <div>
-            {nutrient.nutrientName}: {nutrient.value}
-            {nutrient.unitName} {`(${nutrient.percentDailyValue}%)`}
-          </div>
-        ))}
+        {(!foodNutrients || foodNutrients.length === 0) && (
+          <div>No nutrient data</div>
+        )}
+        {foodNutrients.length > 0 &&
+          foodNutrients.map((nutrient) => {
+            const matchingInfo = nutrientInfo.find(
+              (info) => info.fdcName === nutrient.fdcName
+            );
+            if (!matchingInfo) return undefined;
+            const dailyValue = Math.round(
+              (Math.round(nutrient.value) / matchingInfo.dailyValue) * 100
+            );
+            return (
+              <div>
+                {matchingInfo.displayName}: {Math.round(nutrient.value)}
+                {matchingInfo.unit}{" "}
+                {dailyValue !== undefined && `(${dailyValue}%)`}
+              </div>
+            );
+          })}
       </details>
     </div>
   );

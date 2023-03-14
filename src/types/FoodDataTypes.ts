@@ -35,7 +35,7 @@ export type Nutrient = NutrientInfo & {
 //the nutrient data provided by the API is simpler in search results
 //than for individual foods
 export type SimpleNutrient = {
-  nutrientName: string;
+  fdcName: string;
   value: number;
   unitName: string;
   percentDailyValue: number;

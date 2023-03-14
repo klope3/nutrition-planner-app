@@ -1,5 +1,5 @@
 import { nutrientInfo, unknownFoodName } from "./constants";
-import { FoodData, Nutrient } from "./types/FoodDataTypes";
+import { FoodData, FoodSearchJson, Nutrient } from "./types/FoodDataTypes";
 
 export function extractFoodDataFromJson(json: any) {
   const foodData: FoodData = {
@@ -48,3 +48,13 @@ export const formatCamelCase = (str: string) =>
     .split(" ")
     .map((str) => str.charAt(0).toUpperCase() + str.substring(1))
     .join(" ");
+
+export function convertFoodSearchJson(json: any) {
+  const converted = json as FoodSearchJson;
+  converted.foods.forEach((food) => {
+    food.foodNutrients.forEach((nutrient) => {
+      nutrient.fdcName = (nutrient as any).nutrientName;
+    });
+  });
+  return converted;
+}

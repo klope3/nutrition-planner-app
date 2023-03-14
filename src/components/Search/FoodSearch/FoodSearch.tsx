@@ -3,6 +3,7 @@ import { API_KEY, API_URL } from "../../../constants";
 import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
+import { convertFoodSearchJson } from "../../../utility";
 import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
@@ -21,7 +22,10 @@ export function FoodSearch() {
       return;
     }
     const json = await searchFdcFoodsJson(searchText, 1);
-    if (json) setSearchResults(json as FoodSearchJson);
+    if (json) {
+      const converted = convertFoodSearchJson(json);
+      setSearchResults(converted as FoodSearchJson);
+    }
   }
 
   function clickAdd() {

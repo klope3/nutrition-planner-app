@@ -12,19 +12,19 @@ export const fakeSearch = {
       servingSizeUnit: "g",
       foodNutrients: [
         {
-          nutrientName: "Fat",
+          fdcName: "Fat",
           value: 2,
           unitName: "g",
           percentDailyValue: 13,
         },
         {
-          nutrientName: "Carbohydrates",
+          fdcName: "Carbohydrates",
           value: 7,
           unitName: "g",
           percentDailyValue: 8,
         },
         {
-          nutrientName: "Vitamin C",
+          fdcName: "Vitamin C",
           value: 14,
           unitName: "mg",
           percentDailyValue: 32,
@@ -42,19 +42,19 @@ export const fakeSearch = {
       servingSizeUnit: "g",
       foodNutrients: [
         {
-          nutrientName: "Fat",
+          fdcName: "Fat",
           value: 2,
           unitName: "g",
           percentDailyValue: 13,
         },
         {
-          nutrientName: "Carbohydrates",
+          fdcName: "Carbohydrates",
           value: 7,
           unitName: "g",
           percentDailyValue: 8,
         },
         {
-          nutrientName: "Vitamin C",
+          fdcName: "Vitamin C",
           value: 14,
           unitName: "mg",
           percentDailyValue: 32,
@@ -72,19 +72,19 @@ export const fakeSearch = {
       servingSizeUnit: "g",
       foodNutrients: [
         {
-          nutrientName: "Fat",
+          fdcName: "Fat",
           value: 2,
           unitName: "g",
           percentDailyValue: 13,
         },
         {
-          nutrientName: "Carbohydrates",
+          fdcName: "Carbohydrates",
           value: 7,
           unitName: "g",
           percentDailyValue: 8,
         },
         {
-          nutrientName: "Vitamin C",
+          fdcName: "Vitamin C",
           value: 14,
           unitName: "mg",
           percentDailyValue: 32,
@@ -102,19 +102,19 @@ export const fakeSearch = {
       servingSizeUnit: "g",
       foodNutrients: [
         {
-          nutrientName: "Fat",
+          fdcName: "Fat",
           value: 2,
           unitName: "g",
           percentDailyValue: 13,
         },
         {
-          nutrientName: "Carbohydrates",
+          fdcName: "Carbohydrates",
           value: 7,
           unitName: "g",
           percentDailyValue: 8,
         },
         {
-          nutrientName: "Vitamin C",
+          fdcName: "Vitamin C",
           value: 14,
           unitName: "mg",
           percentDailyValue: 32,
@@ -132,19 +132,19 @@ export const fakeSearch = {
       servingSizeUnit: "g",
       foodNutrients: [
         {
-          nutrientName: "Fat",
+          fdcName: "Fat",
           value: 2,
           unitName: "g",
           percentDailyValue: 13,
         },
         {
-          nutrientName: "Carbohydrates",
+          fdcName: "Carbohydrates",
           value: 7,
           unitName: "g",
           percentDailyValue: 8,
         },
         {
-          nutrientName: "Vitamin C",
+          fdcName: "Vitamin C",
           value: 14,
           unitName: "mg",
           percentDailyValue: 32,
