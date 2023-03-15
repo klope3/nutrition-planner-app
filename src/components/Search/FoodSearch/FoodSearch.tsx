@@ -2,6 +2,12 @@ import { useState } from "react";
 import { API_KEY, API_URL } from "../../../constants";
 import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
+import {
+  applySearchCriteria,
+  SearchCriteria,
+  SortFunction,
+  sortFunctions,
+} from "../../../searchCriteria";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
 import { convertFoodSearchJson } from "../../../utility";
 import { useAccount } from "../../AccountProvider";
@@ -13,6 +19,7 @@ export function FoodSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
   const [selectedFdcId, setSelectedFdcId] = useState(0);
+  const [searchCriteria, setSearchCriteria] = useState({} as SearchCriteria);
   const { addPortion } = useDayChart();
   const { activeUser } = useAccount();
 
@@ -23,8 +30,26 @@ export function FoodSearch() {
     }
     const json = await searchFdcFoodsJson(searchText, 1);
     if (json) {
-      const converted = convertFoodSearchJson(json);
-      setSearchResults(converted);
+      let results = convertFoodSearchJson(json);
+      if (searchCriteria.sortFunction) {
+        results = applySearchCriteria(results, searchCriteria);
+      }
+      setSearchResults(results);
+    }
+  }
+
+  function changeSortFunction(e: React.ChangeEvent<HTMLSelectElement>) {
+    const sortFunction = sortFunctions.find(
+      (item) => item.displayName === e.target.value
+    );
+    const newCriteria = {
+      ...searchCriteria,
+      sortFunction,
+    };
+    setSearchCriteria(newCriteria);
+    if (sortFunction) {
+      const newResults = applySearchCriteria(searchResults, newCriteria);
+      setSearchResults(newResults);
     }
   }
 
@@ -79,6 +104,11 @@ export function FoodSearch() {
             <label htmlFor="">
               <input type="checkbox" name="placeholder" id="" /> Placeholder
             </label>
+            <select onChange={changeSortFunction}>
+              {sortFunctions.map((sortFunction) => (
+                <option>{sortFunction.displayName}</option>
+              ))}
+            </select>
           </form>
           <div className="search-results-view">
             {foodResults &&

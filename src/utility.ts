@@ -22,9 +22,7 @@ function foodNutrientsObjToNutrientsArr(foodNutrients: any[]): Nutrient[] {
     const matchingInfo = nutrientInfo.find((info) => info.fdcName === fdcName);
     const nutrient: Nutrient = {
       fdcName,
-      displayName: matchingInfo
-        ? matchingInfo.displayName
-        : "Nutrient name not found",
+      displayName: matchingInfo ? matchingInfo.displayName : undefined,
       amount: foodNutrient.amount,
       unit: foodNutrient.nutrient.unitName,
       dailyValue: matchingInfo ? matchingInfo.dailyValue : 0,

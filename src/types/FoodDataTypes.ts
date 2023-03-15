@@ -22,7 +22,7 @@ export type FoodData = {
 
 export type NutrientInfo = {
   fdcName: string;
-  displayName: string | undefined;
+  displayName: NutrientDisplayName | undefined;
   unit: string;
   dailyValue: number;
   isMajorNutrient: boolean;
@@ -31,3 +31,30 @@ export type NutrientInfo = {
 export type Nutrient = NutrientInfo & {
   amount: number;
 };
+
+export type NutrientDisplayName =
+  | "Calcium"
+  | "Carbohydrates"
+  | "Cholesterol"
+  | "Calories"
+  | "Fiber"
+  | "Folate"
+  | "Iron"
+  | "Magnesium"
+  | "Niacin"
+  | "Phosphorous"
+  | "Potassium"
+  | "Protein"
+  | "Riboflavin"
+  | "Sodium"
+  | "Total Sugars"
+  | "Thiamin"
+  | "Total Fat"
+  | "Vitamin A"
+  | "Vitamin B-6"
+  | "Vitamin B-12"
+  | "Vitamin C"
+  | "Vitamin D"
+  | "Vitamin E"
+  | "Vitamin K"
+  | "Zinc";
