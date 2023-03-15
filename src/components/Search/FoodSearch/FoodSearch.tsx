@@ -24,7 +24,7 @@ export function FoodSearch() {
     const json = await searchFdcFoodsJson(searchText, 1);
     if (json) {
       const converted = convertFoodSearchJson(json);
-      setSearchResults(converted as FoodSearchJson);
+      setSearchResults(converted);
     }
   }
 

@@ -3,6 +3,7 @@ import { formatCamelCase } from "../../../utility";
 import { nutrientInfo } from "../../../constants";
 import "./FoodSearchResult.css";
 import { sortNutrients } from "../../../calculateNutrients";
+import { NutrientTable } from "../../Common/NutrientTable/NutrientTable";
 
 type FoodSearchResultProps = {
   food: FoodSearchResultData;
@@ -49,26 +50,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
             {`${formatCamelCase(entry[0])}: ${entry[1] ? entry[1] : "No data"}`}
           </div>
         ))}
-        {(!foodNutrients || foodNutrients.length === 0) && (
-          <div>No nutrient data</div>
-        )}
-        {foodNutrients.length > 0 &&
-          foodNutrients.map((nutrient) => {
-            const matchingInfo = nutrientInfo.find(
-              (info) => info.fdcName === nutrient.fdcName
-            );
-            if (!matchingInfo) return undefined;
-            const dailyValue = Math.round(
-              (Math.round(nutrient.value) / matchingInfo.dailyValue) * 100
-            );
-            return (
-              <div>
-                {matchingInfo.displayName}: {Math.round(nutrient.value)}
-                {matchingInfo.unit}{" "}
-                {dailyValue !== undefined && `(${dailyValue}%)`}
-              </div>
-            );
-          })}
+        <NutrientTable nutrients={foodNutrients} />
       </details>
     </div>
   );

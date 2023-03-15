@@ -1,6 +1,6 @@
 import { nutrientInfo, nutrientOrder } from "./constants";
 import { DayChartState } from "./types/DayChartTypes";
-import { Nutrient, SimpleNutrient } from "./types/FoodDataTypes";
+import { Nutrient } from "./types/FoodDataTypes";
 
 export function getNutrientsToShow(dayChart: DayChartState, dayIndex: number) {
   const rowsThisDay =
@@ -41,7 +41,7 @@ export function getNutrientsToShow(dayChart: DayChartState, dayIndex: number) {
   return nutrientsToShow;
 }
 
-export function sortNutrients(nutrients: Nutrient[] | SimpleNutrient[]) {
+export function sortNutrients(nutrients: Nutrient[]) {
   nutrients.sort((nutrient1, nutrient2) => {
     return (
       nutrientOrder.indexOf(nutrient1.fdcName) -

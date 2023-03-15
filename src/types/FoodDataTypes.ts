@@ -11,7 +11,7 @@ export type FoodSearchResultData = {
   foodCategory: string;
   servingSize: number;
   servingSizeUnit: string;
-  foodNutrients: SimpleNutrient[];
+  foodNutrients: Nutrient[];
 };
 
 export type FoodData = {
@@ -22,7 +22,7 @@ export type FoodData = {
 
 export type NutrientInfo = {
   fdcName: string;
-  displayName: string;
+  displayName: string | undefined;
   unit: string;
   dailyValue: number;
   isMajorNutrient: boolean;
@@ -30,13 +30,4 @@ export type NutrientInfo = {
 
 export type Nutrient = NutrientInfo & {
   amount: number;
-};
-
-//the nutrient data provided by the API is simpler in search results
-//than for individual foods
-export type SimpleNutrient = {
-  fdcName: string;
-  value: number;
-  unitName: string;
-  percentDailyValue: number;
 };
