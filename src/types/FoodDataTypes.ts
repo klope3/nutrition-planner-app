@@ -1,3 +1,5 @@
+import { FdcFoodCategory } from "./FdcFoodCategories";
+
 export type FoodSearchJson = {
   foods: FoodSearchResultData[];
 };
@@ -8,7 +10,7 @@ export type FoodSearchResultData = {
   dataType: string;
   brandName: string;
   brandOwner: string;
-  foodCategory: string;
+  foodCategory: FdcFoodCategory;
   servingSize: number;
   servingSizeUnit: string;
   foodNutrients: Nutrient[];

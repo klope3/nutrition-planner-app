@@ -42,7 +42,9 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
       className={`food-search-result ${isSelected && "result-selected"}`}
       onClick={() => selectFood(fdcId)}
     >
-      <div>{description}</div>
+      <div>
+        {description} <span className="minor-text">{`(${category})`}</span>
+      </div>
       <details>
         <summary>Details</summary>
         {Object.entries(details).map((entry) => (

@@ -1,4 +1,9 @@
 import {
+  FdcFoodCategory,
+  foodCategories,
+  FoodCategoryName,
+} from "./types/FdcFoodCategories";
+import {
   FoodSearchJson,
   FoodSearchResultData,
   NutrientDisplayName,
@@ -11,7 +16,7 @@ export type SortFunction = {
 };
 export type FilterFunction = {
   displayName: string;
-  function: (foods: FoodSearchResultData[]) => FoodSearchResultData[];
+  function: (singleFood: FoodSearchResultData) => boolean;
 };
 
 export type SearchCriteria = {
@@ -24,10 +29,25 @@ export function applySearchCriteria(
   criteria: SearchCriteria
 ) {
   let newResults = { ...originalResults };
+  if (criteria.filterFunctions.length > 0) {
+    newResults.foods = originalResults.foods.filter((food) =>
+      doesFoodMatchAnyFilter(criteria.filterFunctions, food)
+    );
+  }
   if (criteria.sortFunction) {
     criteria.sortFunction.function(newResults.foods);
   }
   return newResults;
+}
+
+function doesFoodMatchAnyFilter(
+  filterFunctions: FilterFunction[],
+  food: FoodSearchResultData
+) {
+  for (const f of filterFunctions) {
+    if (f.function(food)) return true;
+  }
+  return false;
 }
 
 function sortByNutrient(
@@ -68,6 +88,21 @@ function sortByBrandName(
       return 0;
     }
   });
+}
+
+function filterByCategory(
+  foods: FoodSearchResultData[],
+  categoryName: FoodCategoryName
+) {
+  if (!foods) return foods;
+  const category = foodCategories.find(
+    (foodCategory) => foodCategory.categoryName === categoryName
+  );
+  if (!category) return foods;
+  const filtered = foods.filter((food) =>
+    category.fdcCategories.includes(food.foodCategory)
+  );
+  return filtered;
 }
 
 export const sortFunctions: SortFunction[] = [
@@ -156,3 +191,14 @@ export const sortFunctions: SortFunction[] = [
     },
   },
 ];
+
+const categoryFilterFunctions: FilterFunction[] = foodCategories.map(
+  (foodCategory) => ({
+    displayName: foodCategory.categoryName,
+    function: (singleFood) =>
+      foodCategory.fdcCategories.includes(singleFood.foodCategory),
+  })
+);
+
+//ALL filter functions used for search; currently only category-based, but more could be added
+export const filterFunctions: FilterFunction[] = categoryFilterFunctions;

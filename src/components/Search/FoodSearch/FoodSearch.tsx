@@ -4,6 +4,8 @@ import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
 import {
   applySearchCriteria,
+  FilterFunction,
+  filterFunctions,
   SearchCriteria,
   SortFunction,
   sortFunctions,
@@ -15,11 +17,16 @@ import { useDayChart } from "../../DayChartProvider";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
 
+const initialCriteria: SearchCriteria = {
+  sortFunction: undefined,
+  filterFunctions: [],
+};
+
 export function FoodSearch() {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
   const [selectedFdcId, setSelectedFdcId] = useState(0);
-  const [searchCriteria, setSearchCriteria] = useState({} as SearchCriteria);
+  const [searchCriteria, setSearchCriteria] = useState(initialCriteria);
   const { addPortion } = useDayChart();
   const { activeUser } = useAccount();
 
@@ -31,7 +38,10 @@ export function FoodSearch() {
     const json = await searchFdcFoodsJson(searchText, 1);
     if (json) {
       let results = convertFoodSearchJson(json);
-      if (searchCriteria.sortFunction) {
+      if (
+        searchCriteria.sortFunction ||
+        searchCriteria.filterFunctions.length > 0
+      ) {
         results = applySearchCriteria(results, searchCriteria);
       }
       setSearchResults(results);
@@ -47,10 +57,24 @@ export function FoodSearch() {
       sortFunction,
     };
     setSearchCriteria(newCriteria);
-    if (sortFunction) {
-      const newResults = applySearchCriteria(searchResults, newCriteria);
-      setSearchResults(newResults);
-    }
+  }
+
+  function clickFilter(e: React.ChangeEvent<HTMLInputElement>) {
+    const clickedName = e.target.name;
+    const newCriteria = { ...searchCriteria };
+    newCriteria.filterFunctions = newCriteria.filterFunctions.filter(
+      (filterFunction) => filterFunction.displayName !== clickedName
+    );
+    const shouldAdd =
+      newCriteria.filterFunctions.length ===
+      searchCriteria.filterFunctions.length;
+    if (shouldAdd)
+      newCriteria.filterFunctions.push(
+        filterFunctions.find(
+          (filterFunction) => filterFunction.displayName === clickedName
+        ) as FilterFunction
+      );
+    setSearchCriteria(newCriteria);
   }
 
   function clickAdd() {
@@ -62,7 +86,9 @@ export function FoodSearch() {
     setSelectedFdcId(fdcId);
   }
 
-  const foodResults = searchResults && searchResults.foods;
+  const refinedResults =
+    searchResults && applySearchCriteria(searchResults, searchCriteria);
+  const foodResults = refinedResults && refinedResults.foods;
   const { setShowSearch } = useDayChart();
 
   return (
@@ -83,27 +109,17 @@ export function FoodSearch() {
               onChange={(e) => setSearchText(e.target.value)}
             />
             <button type="submit">Search</button>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
+            {filterFunctions.map((filterFunction) => (
+              <label>
+                <input
+                  type="checkbox"
+                  name={filterFunction.displayName}
+                  id={filterFunction.displayName}
+                  onChange={clickFilter}
+                />
+                {filterFunction.displayName}
+              </label>
+            ))}
             <select onChange={changeSortFunction}>
               {sortFunctions.map((sortFunction) => (
                 <option>{sortFunction.displayName}</option>
@@ -111,6 +127,7 @@ export function FoodSearch() {
             </select>
           </form>
           <div className="search-results-view">
+            <div>{foodResults ? foodResults.length : 0} results</div>
             {foodResults &&
               foodResults.map((result) => (
                 <FoodSearchResult
