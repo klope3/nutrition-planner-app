@@ -62,9 +62,7 @@ function sortByNutrient(
     const nutrientB = b.foodNutrients.find(
       (nutrient) => nutrient.displayName === nutrientName
     )?.amount;
-    if (nutrientA !== undefined && nutrientB === undefined) return -1;
-    if (nutrientA === undefined && nutrientB !== undefined) return 1;
-    if (nutrientA === undefined || nutrientB === undefined) return -1;
+    if (nutrientA === undefined || nutrientB === undefined) return 1;
     return direction === "asc" ? nutrientA - nutrientB : nutrientB - nutrientA;
   });
 }
