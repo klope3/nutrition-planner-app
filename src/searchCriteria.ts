@@ -1,8 +1,4 @@
-import {
-  FdcFoodCategory,
-  foodCategories,
-  FoodCategoryName,
-} from "./types/FdcFoodCategories";
+import { foodCategories } from "./types/FdcFoodCategories";
 import {
   FoodSearchJson,
   FoodSearchResultData,
@@ -56,15 +52,20 @@ function sortByNutrient(
   direction: SortDirection
 ) {
   foods.sort((a, b) => {
-    const nutrientA = a.foodNutrients.find(
-      (nutrient) => nutrient.displayName === nutrientName
-    )?.amount;
-    const nutrientB = b.foodNutrients.find(
-      (nutrient) => nutrient.displayName === nutrientName
-    )?.amount;
+    const nutrientA = getNutrientAmount(a, nutrientName);
+    const nutrientB = getNutrientAmount(b, nutrientName);
     if (nutrientA === undefined || nutrientB === undefined) return 1;
     return direction === "asc" ? nutrientA - nutrientB : nutrientB - nutrientA;
   });
+}
+
+function getNutrientAmount(
+  food: FoodSearchResultData,
+  nutrientName: NutrientDisplayName
+) {
+  return food.foodNutrients.find(
+    (nutrient) => nutrient.displayName === nutrientName
+  )?.amount;
 }
 
 function sortByBrandName(
@@ -75,32 +76,15 @@ function sortByBrandName(
     const a = foodA.brandName;
     const b = foodB.brandName;
     if (sortDirection === "asc") {
-      console.log("alpha ascending");
       if (a < b) return -1;
       if (a > b) return 1;
       return 0;
     } else {
-      console.log("alpha descending");
       if (a < b) return 1;
       if (a > b) return -1;
       return 0;
     }
   });
-}
-
-function filterByCategory(
-  foods: FoodSearchResultData[],
-  categoryName: FoodCategoryName
-) {
-  if (!foods) return foods;
-  const category = foodCategories.find(
-    (foodCategory) => foodCategory.categoryName === categoryName
-  );
-  if (!category) return foods;
-  const filtered = foods.filter((food) =>
-    category.fdcCategories.includes(food.foodCategory)
-  );
-  return filtered;
 }
 
 export const sortFunctions: SortFunction[] = [

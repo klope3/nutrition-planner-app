@@ -1,6 +1,5 @@
 import { FoodSearchResultData } from "../../../types/FoodDataTypes";
 import { formatCamelCase } from "../../../utility";
-import { nutrientInfo } from "../../../constants";
 import "./FoodSearchResult.css";
 import { sortNutrients } from "../../../calculateNutrients";
 import { NutrientTable } from "../../Common/NutrientTable/NutrientTable";
@@ -21,7 +20,6 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
       servingSize,
       servingSizeUnit,
       foodCategory: category,
-      dataType,
       fdcId,
     },
     selectFood,
