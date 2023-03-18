@@ -18,7 +18,7 @@ import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
 
 const initialCriteria: SearchCriteria = {
-  sortFunction: undefined,
+  sortFunction: sortFunctions[0],
   filterFunctions: [],
 };
 
@@ -38,12 +38,6 @@ export function FoodSearch() {
     const json = await searchFdcFoodsJson(searchText, 1);
     if (json) {
       let results = convertFoodSearchJson(json);
-      if (
-        searchCriteria.sortFunction ||
-        searchCriteria.filterFunctions.length > 0
-      ) {
-        results = applySearchCriteria(results, searchCriteria);
-      }
       setSearchResults(results);
     }
   }
@@ -87,7 +81,10 @@ export function FoodSearch() {
   }
 
   const refinedResults =
-    searchResults && applySearchCriteria(searchResults, searchCriteria);
+    searchResults &&
+    searchResults.foods &&
+    searchResults.foods.length > 0 &&
+    applySearchCriteria(searchResults, searchCriteria);
   const foodResults = refinedResults && refinedResults.foods;
   const { setShowSearch } = useDayChart();
 
