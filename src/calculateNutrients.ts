@@ -40,3 +40,12 @@ export function getNutrientsToShow(dayChart: DayChartState, dayIndex: number) {
 
   return nutrientsToShow;
 }
+
+export function sortNutrients(nutrients: Nutrient[]) {
+  nutrients.sort((nutrient1, nutrient2) => {
+    return (
+      nutrientOrder.indexOf(nutrient1.fdcName) -
+      nutrientOrder.indexOf(nutrient2.fdcName)
+    );
+  });
+}

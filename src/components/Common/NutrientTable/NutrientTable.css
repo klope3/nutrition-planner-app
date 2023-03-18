@@ -1,0 +1,12 @@
+.nutrient-table {
+  padding: 5px;
+}
+
+.nutrient-table > div:nth-child(odd) {
+  background-color: lightgray;
+}
+
+.nutrient-table div {
+  display: flex;
+  justify-content: space-between;
+}

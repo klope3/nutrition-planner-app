@@ -1,28 +1,24 @@
 import { useState } from "react";
-import { API_KEY, API_URL } from "../../../constants";
-import { fakeSearch, useFakeData } from "../../../fakeData";
-import { searchFdcFoodsJson } from "../../../fetch";
+import { SearchCriteria, sortFunctions } from "../../../searchCriteria";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
 import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";
+import { FoodSearchForm } from "../FoodSearchForm/FoodSearchForm";
 import { FoodSearchResult } from "../FoodSearchResult/FoodSearchResult";
 import "./FoodSearch.css";
+import { refineFoodResults } from "./FoodSearchFunctions";
+
+const initialCriteria: SearchCriteria = {
+  sortFunction: sortFunctions[0],
+  filterFunctions: [],
+};
 
 export function FoodSearch() {
-  const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
   const [selectedFdcId, setSelectedFdcId] = useState(0);
-  const { addPortion } = useDayChart();
+  const [searchCriteria, setSearchCriteria] = useState(initialCriteria);
+  const { addPortion, setShowSearch } = useDayChart();
   const { activeUser } = useAccount();
-
-  async function search() {
-    if (useFakeData) {
-      setSearchResults(fakeSearch);
-      return;
-    }
-    const json = await searchFdcFoodsJson(searchText, 1);
-    if (json) setSearchResults(json);
-  }
 
   function clickAdd() {
     setShowSearch(false);
@@ -33,56 +29,26 @@ export function FoodSearch() {
     setSelectedFdcId(fdcId);
   }
 
-  const foodResults = searchResults && searchResults.foods;
-  const { setShowSearch } = useDayChart();
+  const foodResults = refineFoodResults(searchResults, searchCriteria);
 
   return (
     <div className="modal-bg">
       <div className="food-search-modal">
         <div className="food-search-flex">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              search();
-            }}
-          >
-            <input
-              type="text"
-              name="search"
-              id="search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-            <button type="submit">Search</button>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-            <label htmlFor="">
-              <input type="checkbox" name="placeholder" id="" /> Placeholder
-            </label>
-          </form>
+          <FoodSearchForm
+            searchCriteria={searchCriteria}
+            setSearchCriteria={setSearchCriteria}
+            setSearchResults={setSearchResults}
+          />
           <div className="search-results-view">
+            <div>{foodResults ? foodResults.length : 0} results</div>
             {foodResults &&
               foodResults.map((result) => (
                 <FoodSearchResult
                   key={result.fdcId}
                   food={result}
                   selectFood={selectFood}
+                  isSelected={result.fdcId === selectedFdcId}
                 />
               ))}
           </div>

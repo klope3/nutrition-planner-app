@@ -23,3 +23,8 @@ body {
 .error-text {
   color: red;
 }
+
+.minor-text {
+  color: gray;
+  font-size: 0.95rem;
+}
