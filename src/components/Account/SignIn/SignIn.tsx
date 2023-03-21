@@ -1,31 +1,64 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { tryGetUser, tryValidateUser } from "../../../accounts";
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
+import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
+  const [tryingAutoSignIn, setTryingAutoSignIn] = useState(true);
   const navigate = useNavigate();
   const { setActiveUser } = useAccount();
 
-  async function trySignIn() {
+  async function trySignIn(
+    email: string,
+    password: string | undefined,
+    validateFailureCb?: () => void,
+    signInFailureCb?: () => void
+  ) {
     const user = await tryGetUser(email, password);
     if (user) {
       const validated = await tryValidateUser(user.dbId);
       if (!validated) {
-        setSignInError("Something went wrong. Try again later.");
+        if (validateFailureCb) validateFailureCb();
         return;
       }
       setSignInError("");
       setActiveUser(user);
+      localStorage.setItem("user", email);
       navigate("/chart");
     } else {
-      setSignInError("Invalid username or password.");
+      if (signInFailureCb) signInFailureCb();
     }
   }
+
+  function clickSignIn() {
+    trySignIn(
+      email,
+      password,
+      () => {
+        setSignInError("Something went wrong. Try again later.");
+      },
+      () => {
+        setSignInError("Invalid username or password.");
+      }
+    );
+  }
+
+  useEffect(() => {
+    const existingEmail = localStorage.getItem("user");
+    if (!existingEmail) {
+      setTryingAutoSignIn(false);
+      return;
+    }
+    const cb = () => {
+      setTryingAutoSignIn(false);
+    };
+    trySignIn(existingEmail, undefined, cb, cb);
+  }, []);
 
   const fields: InputField[] = [
     {
@@ -66,12 +99,13 @@ export function SignIn() {
           type="submit"
           onClick={(e) => {
             e.preventDefault();
-            trySignIn();
+            clickSignIn();
           }}
         >
           Sign In
         </button>
       </form>
+      {tryingAutoSignIn && <LoadingIndicator />}
       <Link to="/createAccount">Create Account</Link>
     </>
   );

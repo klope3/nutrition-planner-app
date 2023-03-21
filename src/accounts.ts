@@ -32,7 +32,7 @@ export async function tryValidateUser(userId: number) {
 
 export async function tryGetUser(
   emailToMatch: string,
-  passwordToMatch?: string
+  passwordToMatch: string | undefined
 ) {
   const usersResponse = await fetchFromDb("users");
   if (!usersResponse.ok) {
