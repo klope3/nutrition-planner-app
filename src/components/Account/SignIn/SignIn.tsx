@@ -13,12 +13,17 @@ export function SignIn() {
   const navigate = useNavigate();
   const { setActiveUser } = useAccount();
 
-  async function trySignIn() {
+  async function trySignIn(
+    email: string,
+    password: string | undefined,
+    validateFailureCb?: () => void,
+    signInFailureCb?: () => void
+  ) {
     const user = await tryGetUser(email, password);
     if (user) {
       const validated = await tryValidateUser(user.dbId);
       if (!validated) {
-        setSignInError("Something went wrong. Try again later.");
+        if (validateFailureCb) validateFailureCb();
         return;
       }
       setSignInError("");
@@ -26,31 +31,33 @@ export function SignIn() {
       localStorage.setItem("user", email);
       navigate("/chart");
     } else {
-      setSignInError("Invalid username or password.");
+      if (signInFailureCb) signInFailureCb();
     }
   }
 
-  useEffect(() => {
-    async function tryAutoSignIn(email: string) {
-      const user = await tryGetUser(email);
-      if (user) {
-        const validated = await tryValidateUser(user.dbId);
-        if (!validated) {
-          setTryingAutoSignIn(false);
-          return;
-        }
-        setActiveUser(user);
-        navigate("/chart");
-      } else {
-        setTryingAutoSignIn(false);
+  function clickSignIn() {
+    trySignIn(
+      email,
+      password,
+      () => {
+        setSignInError("Something went wrong. Try again later.");
+      },
+      () => {
+        setSignInError("Invalid username or password.");
       }
-    }
+    );
+  }
+
+  useEffect(() => {
     const existingEmail = localStorage.getItem("user");
     if (!existingEmail) {
       setTryingAutoSignIn(false);
       return;
     }
-    tryAutoSignIn(existingEmail);
+    const cb = () => {
+      setTryingAutoSignIn(false);
+    };
+    trySignIn(existingEmail, undefined, cb, cb);
   }, []);
 
   const fields: InputField[] = [
@@ -92,7 +99,7 @@ export function SignIn() {
           type="submit"
           onClick={(e) => {
             e.preventDefault();
-            trySignIn();
+            clickSignIn();
           }}
         >
           Sign In
