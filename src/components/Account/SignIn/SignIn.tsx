@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { tryGetUser, tryValidateUser } from "../../../accounts";
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
+import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
+  const [tryingAutoSignIn, setTryingAutoSignIn] = useState(true);
   const navigate = useNavigate();
   const { setActiveUser } = useAccount();
 
@@ -21,11 +23,35 @@ export function SignIn() {
       }
       setSignInError("");
       setActiveUser(user);
+      localStorage.setItem("user", email);
       navigate("/chart");
     } else {
       setSignInError("Invalid username or password.");
     }
   }
+
+  useEffect(() => {
+    async function tryAutoSignIn(email: string) {
+      const user = await tryGetUser(email);
+      if (user) {
+        const validated = await tryValidateUser(user.dbId);
+        if (!validated) {
+          setTryingAutoSignIn(false);
+          return;
+        }
+        setActiveUser(user);
+        navigate("/chart");
+      } else {
+        setTryingAutoSignIn(false);
+      }
+    }
+    const existingEmail = localStorage.getItem("user");
+    if (!existingEmail) {
+      setTryingAutoSignIn(false);
+      return;
+    }
+    tryAutoSignIn(existingEmail);
+  }, []);
 
   const fields: InputField[] = [
     {
@@ -72,6 +98,7 @@ export function SignIn() {
           Sign In
         </button>
       </form>
+      {tryingAutoSignIn && <LoadingIndicator />}
       <Link to="/createAccount">Create Account</Link>
     </>
   );

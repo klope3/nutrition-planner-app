@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { daysToShow } from "../../../constants";
 import { useAccount } from "../../AccountProvider";
 import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
@@ -11,6 +11,12 @@ export function DayChart() {
   const { showSearch, isLoading } = useDayChart();
   const days = new Array(daysToShow).fill({});
   const { activeUser } = useAccount();
+  const navigate = useNavigate();
+
+  function signOut() {
+    localStorage.removeItem("user");
+    navigate("/");
+  }
 
   return (
     <>
@@ -21,7 +27,7 @@ export function DayChart() {
       </div>
       {isLoading && <LoadingIndicator />}
       {showSearch && <FoodSearch />}
-      <Link to="/">Log Out</Link>
+      <button onClick={signOut}>Log Out</button>
       <p>{activeUser.email}</p>
     </>
   );
