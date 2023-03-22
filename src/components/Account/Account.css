@@ -1,0 +1,29 @@
+.account-box {
+  width: 320px;
+  padding: var(--gap-lg);
+}
+
+.account-box-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  height: 100%;
+  width: 320px;
+}
+
+.account-box button {
+  display: block;
+  margin: auto
+}
+
+.account-box .input-field-container,
+.account-box button,
+.account-box a {
+  margin-top: var(--gap-sm);
+}
+
+.account-box a {
+  display: block;
+  text-align: center;
+}

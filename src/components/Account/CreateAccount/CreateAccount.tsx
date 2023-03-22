@@ -14,6 +14,8 @@ import {
 } from "../../../validations";
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
+import "../Account.css";
+import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
 
 export function CreateAccount() {
   const [email, setEmail] = useState("");
@@ -94,37 +96,39 @@ export function CreateAccount() {
   ];
 
   return (
-    <>
-      <form
-        className="account-box"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        {fields.map((field) => (
-          <InputField
-            name={field.name}
-            labelText={field.labelText}
-            value={field.value}
-            errorText={field.errorText}
-            changeFunction={(e) => field.changeFunction(e.target.value)}
-            blurFunction={(e) => blurField(e)}
-          />
-        ))}
-        {createAccountError.length > 0 && (
-          <div className="error-text">{createAccountError}</div>
-        )}
-        <button
-          type="submit"
-          onClick={(e) => {
+    <div className="account-box-container">
+      <div className="form-container account-box">
+        <AccountBoxHeader />
+        <form
+          onSubmit={(e) => {
             e.preventDefault();
-            clickCreateAccount();
           }}
         >
-          Create Account
-        </button>
-      </form>
-      <Link to="/">Sign In</Link>
-    </>
+          {fields.map((field) => (
+            <InputField
+              name={field.name}
+              labelText={field.labelText}
+              value={field.value}
+              errorText={field.errorText}
+              changeFunction={(e) => field.changeFunction(e.target.value)}
+              blurFunction={(e) => blurField(e)}
+            />
+          ))}
+          {createAccountError.length > 0 && (
+            <div className="error-text">{createAccountError}</div>
+          )}
+          <button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              clickCreateAccount();
+            }}
+          >
+            Create Account
+          </button>
+        </form>
+        <Link to="/">Sign In</Link>
+      </div>
+    </div>
   );
 }

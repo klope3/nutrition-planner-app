@@ -1,0 +1,23 @@
+.input-field-container label {
+  display: block;
+}
+
+.input-field-container input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgb(173, 173, 173);
+}
+
+.input-field-sub-container {
+  display: flex;
+}
+
+.field-error input {
+  border: 2px solid var(--danger);
+}
+
+.field-success input {
+  border: 2px solid var(--success)
+}
