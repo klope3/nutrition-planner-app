@@ -1,18 +1,24 @@
 .nutrient-progress-bar-container {
-  background-color: black;
+  background-color: var(--epsilon-1);
   padding: 3px;
   position: relative;
   color: white;
 }
 
 .nutrient-progress-bar {
-  background-color: lightgray;
+  background-color: var(--progress-bar-success);
   position: absolute;
   left: 3px;
   top: 3px;
   bottom: 3px;
 }
 
+.nutrient-progress-bar-container,
+.nutrient-progress-bar {
+  border-radius: var(--border-radius-sm);
+}
+
 .nutrient-progress-text {
   position: relative;
+  translate: 3px 0;
 }

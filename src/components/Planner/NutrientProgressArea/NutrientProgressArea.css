@@ -1,7 +1,6 @@
 .nutrient-progress-area {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 5px;
-  background-color: lightgray;
+  gap: var(--gap-xsm);
+  padding: var(--gap-xsm);
 }
