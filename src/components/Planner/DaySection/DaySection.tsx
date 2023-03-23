@@ -25,13 +25,17 @@ export function DaySection(props: DaySectionProps) {
   const portionRowsHere = section && section.rows;
 
   return (
-    <div className="day-section">
+    <div className="day-section day-chart-sub-container">
       {portionRowsHere &&
         portionRowsHere.map(
           (portionRow, i) =>
             portionRow && <PortionRow key={i} row={portionRow} />
         )}
-      <button onClick={clickAddPortion}>+</button>
+      <div>
+        <button className="add-portion-button" onClick={clickAddPortion}>
+          <span>+</span>
+        </button>
+      </div>
     </div>
   );
 }

@@ -3,6 +3,8 @@
   --alpha-2: rgb(90, 192, 247);
   --alpha-3: rgb(112, 224, 255);
   --beta-1: rgb(237, 255, 236);
+  --beta-hover: rgb(200, 255, 198);
+  --beta-border: rgb(161, 197, 159);
   --gamma-1: rgb(97, 231, 134);
   --epsilon-1: rgb(43, 45, 66);
   --danger: red;
@@ -12,6 +14,7 @@
   --border-radius-med: 10px;
   --border-radius-lg: 15px;
 
+  --gap-xsm: 5px;
   --gap-sm: 10px;
   --gap-med: 20px;
   --gap-lg: 30px;

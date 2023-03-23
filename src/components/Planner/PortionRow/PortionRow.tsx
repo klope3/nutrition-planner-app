@@ -22,7 +22,7 @@ export function PortionRow(props: PortionRowProps) {
     <div className="portion-row">
       <div>{foodData.description}</div>
       <button
-        className="button-x"
+        className="remove-portion-button"
         onClick={() => deletePortion(activeUser.dbId, rowId)}
       >
         X

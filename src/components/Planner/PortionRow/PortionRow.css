@@ -1,5 +1,23 @@
 .portion-row {
-  border: 1px solid black;
-  padding: 5px;
+  border: 1px solid var(--beta-border);
+  padding: var(--gap-xsm);
   position: relative;
+  background-color: white;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.remove-portion-button {
+  font-size: initial;
+  padding: initial;
+  width: 30px;
+  height: 30px;
+  background: none;
+  color: black;
+}
+
+.remove-portion-button:hover {
+  background: none;
 }
