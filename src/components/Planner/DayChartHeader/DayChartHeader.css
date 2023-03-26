@@ -1,0 +1,28 @@
+.day-chart-header {
+  padding: calc(var(--gap-sm) - 2px);
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--epsilon-1);
+  color: white;
+}
+
+.day-chart-header .day-chart-header-account-container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: right;
+  gap: var(--gap-sm);
+}
+
+.day-chart-header .logo-container {
+  height: 30px;
+}
+
+.day-chart-header button {
+  padding: var(--gap-sm);
+}
+
+.day-chart-header, 
+.day-chart-header button {
+  font-size: var(--size-12);
+}

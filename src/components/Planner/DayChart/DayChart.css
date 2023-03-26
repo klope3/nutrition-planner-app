@@ -2,4 +2,5 @@
   gap: 20px;
   display: flex;
   position: relative;
+  padding: var(--gap-sm);
 }

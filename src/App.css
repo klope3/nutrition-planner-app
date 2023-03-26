@@ -21,6 +21,7 @@
   --gap-med: 20px;
   --gap-lg: 30px;
 
+  --size-12: 0.75rem;
   --size-20: 1.25rem;
   --size-28: 1.75rem;
 }
@@ -36,6 +37,7 @@
 
 body {
   background-color: var(--alpha-1);
+  margin: 0;
 }
 
 .button-x {
@@ -97,4 +99,10 @@ button:hover {
 
 select {
   padding: var(--gap-sm);
+}
+
+.logo-container {
+  height: 50px;
+  width: 50px;
+  margin: auto;
 }
