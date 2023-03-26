@@ -5,6 +5,7 @@
   --beta-1: rgb(237, 255, 236);
   --beta-hover: rgb(200, 255, 198);
   --beta-border: rgb(161, 197, 159);
+  --beta-border-dark: rgb(92, 137, 89);
   --gamma-1: rgb(97, 231, 134);
   --epsilon-1: rgb(43, 45, 66);
   --danger: red;
@@ -39,11 +40,16 @@ body {
 
 .button-x {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 3px;
+  right: 7px;
   cursor: pointer;
   background-color: transparent;
-  border: none;
+  color: var(--beta-border-dark);
+  padding: 0;
+}
+
+.button-x:hover {
+  background: none;
 }
 
 .modal-bg {
@@ -81,4 +87,14 @@ button {
 
 button:hover {
   background-color: var(--alpha-3);
+}
+
+.sub-container {
+  padding: var(--gap-sm);
+  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--beta-border);
+}
+
+select {
+  padding: var(--gap-sm);
 }

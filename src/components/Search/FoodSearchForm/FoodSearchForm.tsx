@@ -5,6 +5,9 @@ import {
   sortFunctions,
 } from "../../../searchCriteria";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
+import { InputField } from "../../Common/InputField/InputField";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import {
   changeSortFunction,
   clickFilter,
@@ -28,34 +31,41 @@ export function FoodSearchForm(props: FoodSearchFormProps) {
         search(searchText, setSearchResults);
       }}
     >
-      <input
-        type="text"
+      <InputField
         name="search"
         id="search"
         value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
+        changeFunction={(e) => setSearchText(e.target.value)}
+        buttonChildren={<FontAwesomeIcon icon={faArrowRight} />}
+        buttonType="submit"
       />
-      <button type="submit">Search</button>
-      {filterFunctions.map((filterFunction) => (
-        <label>
-          <input
-            type="checkbox"
-            name={filterFunction.displayName}
-            id={filterFunction.displayName}
-            onChange={(e) => clickFilter(e, searchCriteria, setSearchCriteria)}
-          />
-          {filterFunction.displayName}
-        </label>
-      ))}
-      <select
-        onChange={(e) =>
-          changeSortFunction(e, searchCriteria, setSearchCriteria)
-        }
-      >
-        {sortFunctions.map((sortFunction) => (
-          <option>{sortFunction.displayName}</option>
+      <div className="sub-container">
+        {filterFunctions.map((filterFunction) => (
+          <label>
+            <input
+              type="checkbox"
+              name={filterFunction.displayName}
+              id={filterFunction.displayName}
+              onChange={(e) =>
+                clickFilter(e, searchCriteria, setSearchCriteria)
+              }
+            />
+            {filterFunction.displayName}
+          </label>
         ))}
-      </select>
+      </div>
+      <div>
+        <div>Sort By:</div>
+        <select
+          onChange={(e) =>
+            changeSortFunction(e, searchCriteria, setSearchCriteria)
+          }
+        >
+          {sortFunctions.map((sortFunction) => (
+            <option>{sortFunction.displayName}</option>
+          ))}
+        </select>
+      </div>
     </form>
   );
 }

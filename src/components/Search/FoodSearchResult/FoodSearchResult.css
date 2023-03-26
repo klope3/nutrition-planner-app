@@ -4,9 +4,11 @@
 }
 
 .food-search-result:hover {
-  background-color: lightgray;
+  background-color: var(--beta-border);
 }
 
-.result-selected {
-  border: 1px solid black;
+.result-selected,
+.result-selected:hover {
+  border: 2px solid var(--beta-border-dark);
+  background-color: var(--beta-1);
 }

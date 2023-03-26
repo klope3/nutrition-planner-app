@@ -25,7 +25,7 @@ export function DaySection(props: DaySectionProps) {
   const portionRowsHere = section && section.rows;
 
   return (
-    <div className="day-section day-chart-sub-container">
+    <div className="day-section sub-container">
       {portionRowsHere &&
         portionRowsHere.map(
           (portionRow, i) =>

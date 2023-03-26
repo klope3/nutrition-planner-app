@@ -15,7 +15,7 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
 
   return (
     <div>
-      <div className="nutrient-progress-area day-chart-sub-container">
+      <div className="nutrient-progress-area sub-container">
         {nutrientsToShow.map(
           (nutrient) =>
             nutrient &&

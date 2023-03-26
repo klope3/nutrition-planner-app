@@ -3,9 +3,3 @@
   display: flex;
   position: relative;
 }
-
-.day-chart-sub-container {
-  padding: var(--gap-sm);
-  border-radius: var(--border-radius-sm);
-  border: 2px solid var(--beta-border);
-}

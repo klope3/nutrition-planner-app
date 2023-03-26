@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import "./InputField.css";
 
 type InputFieldProps = {
@@ -6,8 +7,11 @@ type InputFieldProps = {
   value: any;
   labelText?: string;
   errorText?: string;
+  buttonChildren?: ReactNode;
+  buttonType?: "submit" | undefined;
   changeFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   blurFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  buttonFunction?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
 export function InputField(props: InputFieldProps) {
@@ -19,6 +23,9 @@ export function InputField(props: InputFieldProps) {
     value,
     changeFunction,
     blurFunction,
+    buttonFunction,
+    buttonChildren,
+    buttonType,
   } = props;
 
   let validationClass = errorText && "field-error";
@@ -35,6 +42,11 @@ export function InputField(props: InputFieldProps) {
           onChange={changeFunction}
           onBlur={blurFunction}
         />
+        {(buttonFunction || buttonChildren) && (
+          <button type={buttonType} onClick={buttonFunction}>
+            {buttonChildren}
+          </button>
+        )}
       </div>
       {errorText && <div className="error-text">{errorText}</div>}
     </div>
