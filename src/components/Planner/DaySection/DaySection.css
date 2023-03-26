@@ -1,7 +1,25 @@
 .day-section {
-  background-color: lightgray;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 5px;
+}
+
+.add-portion-button {
+  margin: auto;
+  display: block;
+  padding: initial;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid var(--beta-border);
+}
+
+.add-portion-button:hover {
+  background-color: var(--beta-hover);
+}
+
+.add-portion-button span {
+  display: block;
+  translate: 0px -3px;
+  color: black;
 }

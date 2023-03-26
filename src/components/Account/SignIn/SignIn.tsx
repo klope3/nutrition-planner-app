@@ -4,6 +4,9 @@ import { tryGetUser, tryValidateUser } from "../../../accounts";
 import { useAccount } from "../../AccountProvider";
 import { InputField } from "../../Common/InputField/InputField";
 import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
+import { Logo } from "../../Common/Logo/Logo";
+import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
+import "../Account.css";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
@@ -76,37 +79,39 @@ export function SignIn() {
   ];
 
   return (
-    <>
-      <form
-        className="account-box"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        {fields.map((field) => (
-          <InputField
-            name={field.name}
-            labelText={field.labelText}
-            value={field.value}
-            errorText={field.errorText}
-            changeFunction={(e) => field.changeFunction(e.target.value)}
-          />
-        ))}
-        {signInError.length > 0 && (
-          <div className="error-text">{signInError}</div>
-        )}
-        <button
-          type="submit"
-          onClick={(e) => {
+    <div className="account-box-container">
+      <div className="form-container account-box">
+        <AccountBoxHeader />
+        <form
+          onSubmit={(e) => {
             e.preventDefault();
-            clickSignIn();
           }}
         >
-          Sign In
-        </button>
-      </form>
-      {tryingAutoSignIn && <LoadingIndicator />}
-      <Link to="/createAccount">Create Account</Link>
-    </>
+          {fields.map((field) => (
+            <InputField
+              name={field.name}
+              labelText={field.labelText}
+              value={field.value}
+              errorText={field.errorText}
+              changeFunction={(e) => field.changeFunction(e.target.value)}
+            />
+          ))}
+          {signInError.length > 0 && (
+            <div className="error-text">{signInError}</div>
+          )}
+          <button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              clickSignIn();
+            }}
+          >
+            Sign In
+          </button>
+        </form>
+        {tryingAutoSignIn && <LoadingIndicator />}
+        <Link to="/createAccount">Create Account</Link>
+      </div>
+    </div>
   );
 }

@@ -1,17 +1,18 @@
 .food-search-modal {
   position: absolute;
-  background-color: white;
+  background-color: var(--beta-1);
   top: 20px;
-  max-width: 600px;
-  padding: 20px;
+  width: 600px;
+  padding: calc(var(--gap-med) + 3px);
   left: 50%;
   translate: -50%;
 }
 
 .search-results-view {
-  width: 500px;
+  /* width: 500px; */
   overflow-y: scroll;
   height: 400px;
+  background-color: rgb(197, 227, 195);
 }
 
 .food-search-modal label {
@@ -20,4 +21,31 @@
 
 .food-search-flex {
   display: flex;
+  gap: var(--gap-sm);
+}
+
+.search-add-button {
+  display: block;
+  width: 100%;
+  margin-top: var(--gap-med);
+}
+
+#search {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+button[type="submit"] {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.search-results-view-container {
+  flex: 1;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

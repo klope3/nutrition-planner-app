@@ -1,3 +1,5 @@
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { SearchCriteria, sortFunctions } from "../../../searchCriteria";
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
@@ -40,23 +42,27 @@ export function FoodSearch() {
             setSearchCriteria={setSearchCriteria}
             setSearchResults={setSearchResults}
           />
-          <div className="search-results-view">
+          <div className="search-results-view-container">
             <div>{foodResults ? foodResults.length : 0} results</div>
-            {foodResults &&
-              foodResults.map((result) => (
-                <FoodSearchResult
-                  key={result.fdcId}
-                  food={result}
-                  selectFood={selectFood}
-                  isSelected={result.fdcId === selectedFdcId}
-                />
-              ))}
+            <div className="search-results-view sub-container">
+              {foodResults &&
+                foodResults.map((result) => (
+                  <FoodSearchResult
+                    key={result.fdcId}
+                    food={result}
+                    selectFood={selectFood}
+                    isSelected={result.fdcId === selectedFdcId}
+                  />
+                ))}
+            </div>
           </div>
         </div>
         <button className="button-x" onClick={() => setShowSearch(false)}>
-          X
+          <FontAwesomeIcon icon={faXmark} />
         </button>
-        <button onClick={clickAdd}>ADD</button>
+        <button className="search-add-button" onClick={clickAdd}>
+          ADD
+        </button>
       </div>
     </div>
   );

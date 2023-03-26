@@ -1,0 +1,8 @@
+.logo-container svg {
+  height: 100%;
+  fill: var(--gamma-1);
+}
+
+.logo-container circle {
+  stroke: var(--gamma-1);
+}
