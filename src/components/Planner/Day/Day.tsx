@@ -1,4 +1,4 @@
-import { sectionsPerDay } from "../../../constants";
+import { dayNames, sectionsPerDay } from "../../../constants";
 import { useDayChart } from "../../DayChartProvider";
 import { DaySection } from "../DaySection/DaySection";
 import { NutrientProgressArea } from "../NutrientProgressArea/NutrientProgressArea";
@@ -14,16 +14,19 @@ export function Day(props: DayProps) {
   const { dayChart } = useDayChart();
   const day = dayChart.days && dayChart.days[indexInChart];
   return (
-    <div className="day">
-      {sections.map((section, i) => (
-        <DaySection
-          key={i}
-          indexInDay={i}
-          dayId={day && day.dbId}
-          dayIndex={indexInChart}
-        />
-      ))}
-      <NutrientProgressArea dayIndex={indexInChart} />
+    <div>
+      <div className="day-title">{dayNames[indexInChart]}</div>
+      <div className="day">
+        {sections.map((section, i) => (
+          <DaySection
+            key={i}
+            indexInDay={i}
+            dayId={day && day.dbId}
+            dayIndex={indexInChart}
+          />
+        ))}
+        <NutrientProgressArea dayIndex={indexInChart} />
+      </div>
     </div>
   );
 }

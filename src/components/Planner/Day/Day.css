@@ -9,3 +9,9 @@
   margin-bottom: auto;
   border-radius: var(--border-radius-lg);
 }
+
+.day-title {
+  color: white;
+  text-align: center;
+  font-size: var(--size-20);
+}

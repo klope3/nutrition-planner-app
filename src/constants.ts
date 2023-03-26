@@ -211,6 +211,16 @@ export const API_KEY = import.meta.env.VITE_API_KEY;
 export const DB_URL = "http://localhost:3000";
 
 export const sectionsPerDay = 5;
-export const daysToShow = 4; //should be 7 in final version
+export const daysToShow = 7;
 
 export const unknownFoodName = "Unknown Food";
+
+export const dayNames = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
