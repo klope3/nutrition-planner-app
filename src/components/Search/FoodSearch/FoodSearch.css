@@ -6,6 +6,7 @@
   padding: calc(var(--gap-med) + 3px);
   left: 50%;
   translate: -50%;
+  border-radius: var(--border-radius-med);
 }
 
 .search-results-view {
