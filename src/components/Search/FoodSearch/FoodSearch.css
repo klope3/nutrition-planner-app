@@ -50,3 +50,17 @@ form {
   flex-direction: column;
   justify-content: space-between;
 }
+
+@media screen and (max-width: 768px) {
+  .food-search-flex {
+    flex-direction: column;
+  }
+
+  .food-search-modal {
+    left: 0;
+    right: 0;
+    translate: initial;
+    width: initial;
+    top: initial;
+  }
+}
