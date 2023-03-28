@@ -7,6 +7,7 @@ import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator
 import { Logo } from "../../Common/Logo/Logo";
 import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
 import "../Account.css";
+import { InputFieldProps } from "../../../types/InputFieldTypes";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
@@ -63,18 +64,23 @@ export function SignIn() {
     trySignIn(existingEmail, undefined, cb, cb);
   }, []);
 
-  const fields: InputField[] = [
+  const fields: InputFieldProps[] = [
     {
       name: "email",
       labelText: "Email Address",
       value: email,
-      changeFunction: setEmail,
+      changeFunction: (e) => {
+        setEmail(e.target.value);
+      },
     },
     {
       name: "password",
       labelText: "Password",
       value: password,
-      changeFunction: setPassword,
+      changeFunction: (e) => {
+        setPassword(e.target.value);
+      },
+      hideablePassword: true,
     },
   ];
 
@@ -93,7 +99,8 @@ export function SignIn() {
               labelText={field.labelText}
               value={field.value}
               errorText={field.errorText}
-              changeFunction={(e) => field.changeFunction(e.target.value)}
+              changeFunction={field.changeFunction}
+              hideablePassword={field.hideablePassword}
             />
           ))}
           {signInError.length > 0 && (

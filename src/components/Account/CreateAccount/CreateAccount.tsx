@@ -5,6 +5,7 @@ import {
   tryGetUser,
   tryValidateUser,
 } from "../../../accounts";
+import { InputErrors, InputFieldProps } from "../../../types/InputFieldTypes";
 import {
   checkValidEmail,
   checkValidPassword,
@@ -71,27 +72,33 @@ export function CreateAccount() {
     navigate("/chart");
   }
 
-  const fields: InputField[] = [
+  const fields: InputFieldProps[] = [
     {
       name: "email",
       labelText: "Email Address",
       value: email,
       errorText: inputErrors.email,
-      changeFunction: setEmail,
+      changeFunction: (e) => {
+        setEmail(e.target.value);
+      },
     },
     {
       name: "password",
       labelText: "Password",
       value: password,
       errorText: inputErrors.password,
-      changeFunction: setPassword,
+      changeFunction: (e) => {
+        setPassword(e.target.value);
+      },
     },
     {
       name: "passwordConfirm",
       labelText: "Confirm Password",
       value: passwordConfirm,
       errorText: inputErrors.passwordConfirm,
-      changeFunction: setPasswordConfirm,
+      changeFunction: (e) => {
+        setPasswordConfirm(e.target.value);
+      },
     },
   ];
 
@@ -110,7 +117,7 @@ export function CreateAccount() {
               labelText={field.labelText}
               value={field.value}
               errorText={field.errorText}
-              changeFunction={(e) => field.changeFunction(e.target.value)}
+              changeFunction={field.changeFunction}
               blurFunction={(e) => blurField(e)}
             />
           ))}

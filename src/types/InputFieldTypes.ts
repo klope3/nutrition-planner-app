@@ -1,15 +1,23 @@
+import { ReactNode } from "react";
+
 type OptionalString = string | undefined;
 
-type InputErrors = {
+export type InputErrors = {
   email: OptionalString;
   password: OptionalString;
   passwordConfirm: OptionalString;
 };
 
-type InputField = {
+export type InputFieldProps = {
   name: string;
-  labelText: string;
-  value: string;
+  id?: string;
+  value: any;
+  labelText?: string;
   errorText?: string;
-  changeFunction: (value: string) => void;
+  hideablePassword?: boolean;
+  buttonChildren?: ReactNode;
+  buttonType?: "submit" | undefined;
+  changeFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  blurFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  buttonFunction?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };

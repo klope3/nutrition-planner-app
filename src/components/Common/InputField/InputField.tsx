@@ -1,18 +1,8 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import "./InputField.css";
-
-type InputFieldProps = {
-  name: string;
-  id?: string;
-  value: any;
-  labelText?: string;
-  errorText?: string;
-  buttonChildren?: ReactNode;
-  buttonType?: "submit" | undefined;
-  changeFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  blurFunction?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  buttonFunction?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-};
+import { InputFieldProps } from "../../../types/InputFieldTypes";
 
 export function InputField(props: InputFieldProps) {
   const {
@@ -21,12 +11,14 @@ export function InputField(props: InputFieldProps) {
     name,
     id,
     value,
+    hideablePassword,
     changeFunction,
     blurFunction,
     buttonFunction,
     buttonChildren,
     buttonType,
   } = props;
+  const [hidePassword, setHidePassword] = useState(true);
 
   let validationClass = errorText && "field-error";
   if (!errorText && value) validationClass = "field-success";
@@ -36,12 +28,20 @@ export function InputField(props: InputFieldProps) {
       <label htmlFor={id ? id : name}>{labelText}</label>
       <div className="input-field-sub-container">
         <input
-          type="text"
+          type={hidePassword ? "password" : "text"}
           name={name}
           id={id ? id : name}
           onChange={changeFunction}
           onBlur={blurFunction}
         />
+        {hideablePassword && (
+          <button
+            className="hide-password-button"
+            onClick={() => setHidePassword(!hidePassword)}
+          >
+            <FontAwesomeIcon icon={faEye} />
+          </button>
+        )}
         {(buttonFunction || buttonChildren) && (
           <button type={buttonType} onClick={buttonFunction}>
             {buttonChildren}

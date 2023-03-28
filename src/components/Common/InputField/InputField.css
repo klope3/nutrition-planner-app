@@ -21,3 +21,7 @@
 .field-success input {
   border: 2px solid var(--success)
 }
+
+.hide-password-button {
+  display: block;
+}
