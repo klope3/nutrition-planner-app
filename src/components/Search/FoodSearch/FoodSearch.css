@@ -36,7 +36,7 @@
   border-bottom-right-radius: 0;
 }
 
-button[type="submit"] {
+.food-search-modal button[type="submit"] {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }

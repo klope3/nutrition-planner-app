@@ -90,6 +90,7 @@ export function CreateAccount() {
       changeFunction: (e) => {
         setPassword(e.target.value);
       },
+      hideablePassword: true,
     },
     {
       name: "passwordConfirm",
@@ -99,6 +100,7 @@ export function CreateAccount() {
       changeFunction: (e) => {
         setPasswordConfirm(e.target.value);
       },
+      hideablePassword: true,
     },
   ];
 
@@ -119,6 +121,7 @@ export function CreateAccount() {
               errorText={field.errorText}
               changeFunction={field.changeFunction}
               blurFunction={(e) => blurField(e)}
+              hideablePassword={field.hideablePassword}
             />
           ))}
           {createAccountError.length > 0 && (
