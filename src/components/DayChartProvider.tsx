@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { tryGetUser } from "../accounts";
 import { DayChartData, DayChartState } from "../types/DayChartTypes";
 import {
   tryAddPortion,
@@ -80,10 +81,25 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
-  const { activeUser } = useAccount();
+  const { activeUser, setActiveUser } = useAccount();
 
   useEffect(() => {
-    updateDayChart(activeUser.dbId, setDayChart, setIsLoading);
+    const initial = async () => {
+      let userData = activeUser;
+      const notActiveUser = activeUser.email === undefined;
+      if (notActiveUser) {
+        const savedEmail = localStorage.getItem("user");
+        if (savedEmail) {
+          const user = await tryGetUser(savedEmail, undefined);
+          if (user) {
+            setActiveUser(user);
+            userData = user;
+          }
+        }
+      }
+      updateDayChart(userData.dbId, setDayChart, setIsLoading);
+    };
+    initial();
   }, []);
 
   return (
