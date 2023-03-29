@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { tryGetUser } from "../accounts";
 import { DayChartData, DayChartState } from "../types/DayChartTypes";
 import {
@@ -79,9 +80,10 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [dayChartData, setDayChartData] = useState({} as DayChartData);
   const [dayChart, setDayChart] = useState({} as DayChartState);
   const [showSearch, setShowSearch] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
   const { activeUser, setActiveUser } = useAccount();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initial = async () => {
@@ -91,9 +93,12 @@ export function DayChartProvider({ children }: ChildrenProps) {
         const savedEmail = localStorage.getItem("user");
         if (savedEmail) {
           const user = await tryGetUser(savedEmail, undefined);
-          if (user) {
-            setActiveUser(user);
-            userData = user;
+          if (user && user.userAccount) {
+            setActiveUser(user.userAccount);
+            userData = user.userAccount;
+          } else {
+            navigate("/error");
+            return;
           }
         }
       }
