@@ -49,26 +49,34 @@ export function CreateAccount() {
   }
 
   async function clickCreateAccount() {
-    const anyErrors = Object.values(inputErrors).find((value) => !!value);
+    const errors = getNewErrors();
+    const anyErrors = Object.values(errors).find((value) => !!value);
     if (anyErrors) {
+      setInputErrors(errors);
       return;
     }
-    const existingUser = await tryGetUser(email); //currently there's no way to distinguish between a server error and a missing user here
-    if (existingUser) {
-      setCreateAccountError("Could not create account.");
+    const existingUserResponse = await tryGetUser(email);
+    if (existingUserResponse.userAccount) {
+      setCreateAccountError("An account with that email already exists.");
       return;
     }
-    const createdAccount = await tryCreateAccount(email, password);
-    if (!createdAccount) {
-      setCreateAccountError("Could not create account.");
+    if (existingUserResponse.error === "serverError") {
+      setCreateAccountError("Server error - try again later.");
       return;
     }
-    const validated = await tryValidateUser(createdAccount.dbId);
+    const createdAccountResponse = await tryCreateAccount(email, password);
+    if (!createdAccountResponse.userAccount) {
+      setCreateAccountError("Server error - try again later.");
+      return;
+    }
+    const validated = await tryValidateUser(
+      createdAccountResponse.userAccount.dbId
+    );
     if (!validated) {
-      setCreateAccountError("Could not create account.");
+      setCreateAccountError("Server error - try again later.");
       return;
     }
-    setActiveUser(createdAccount);
+    setActiveUser(createdAccountResponse.userAccount);
     navigate("/chart");
   }
 
