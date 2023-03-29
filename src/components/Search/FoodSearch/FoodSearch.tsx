@@ -60,7 +60,11 @@ export function FoodSearch() {
         <button className="button-x" onClick={() => setShowSearch(false)}>
           <FontAwesomeIcon icon={faXmark} />
         </button>
-        <button className="search-add-button" onClick={clickAdd}>
+        <button
+          className="search-add-button"
+          onClick={clickAdd}
+          disabled={selectedFdcId === 0}
+        >
           ADD
         </button>
       </div>

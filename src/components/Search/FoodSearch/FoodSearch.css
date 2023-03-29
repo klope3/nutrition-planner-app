@@ -31,6 +31,11 @@
   margin-top: var(--gap-med);
 }
 
+.search-add-button:disabled {
+  background-color: lightgray;
+  cursor: initial;
+}
+
 #search {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
