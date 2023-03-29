@@ -10,18 +10,21 @@ import {
 import { FoodSearchJson } from "../../../types/FoodDataTypes";
 import { convertFoodSearchJson } from "../../../utility";
 
-export async function search(
+export async function trySearch(
   searchText: string,
   setSearchResults: (json: FoodSearchJson) => void
 ) {
   if (useFakeData) {
     setSearchResults(fakeSearch as FoodSearchJson);
-    return;
+    return false;
   }
   const json = await searchFdcFoodsJson(searchText, 1);
   if (json) {
     let results = convertFoodSearchJson(json);
     setSearchResults(results);
+    return true;
+  } else {
+    return false;
   }
 }
 

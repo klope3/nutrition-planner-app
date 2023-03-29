@@ -101,17 +101,21 @@ export async function searchFdcFoodsJson(
   searchText: string,
   pageNumber: number
 ) {
-  const response = await fetch(
-    `${API_URL}/foods/search?query=${searchText}&api_key=${API_KEY}&pageNumber=${pageNumber}`,
-    {
-      method: "GET",
+  try {
+    const response = await fetch(
+      `${API_URL}/foods/search?query=${searchText}&api_key=${API_KEY}&pageNumber=${pageNumber}`,
+      {
+        method: "GET",
+      }
+    );
+    if (!response.ok) {
+      console.error("Searching FDC foods FAILED: " + response.status);
+      return undefined;
     }
-  );
-  if (!response.ok) {
-    console.error("Searching FDC foods FAILED: " + response.status);
+    return await response.json();
+  } catch (error) {
     return undefined;
   }
-  return await response.json();
 }
 
 export function fetchSingleFdcFood(fdcId: number) {
