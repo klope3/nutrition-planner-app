@@ -20,18 +20,26 @@ export function SignIn() {
   async function trySignIn(
     email: string,
     password: string | undefined,
-    validateFailureCb?: () => void,
-    signInFailureCb?: () => void
+    signInFailureCb?: () => void,
+    otherFailureCb?: () => void
   ) {
+    if (email.length === 0 || !password || password.length === 0) {
+      if (signInFailureCb) signInFailureCb();
+      return;
+    }
     const user = await tryGetUser(email, password);
-    if (user) {
-      const validated = await tryValidateUser(user.dbId);
+    if (user.error === "serverError") {
+      if (otherFailureCb) otherFailureCb();
+      return;
+    }
+    if (user && user.userAccount) {
+      const validated = await tryValidateUser(user.userAccount.dbId);
       if (!validated) {
-        if (validateFailureCb) validateFailureCb();
+        if (otherFailureCb) otherFailureCb();
         return;
       }
       setSignInError("");
-      setActiveUser(user);
+      setActiveUser(user.userAccount);
       localStorage.setItem("user", email);
       navigate("/chart");
     } else {
@@ -44,10 +52,10 @@ export function SignIn() {
       email,
       password,
       () => {
-        setSignInError("Something went wrong. Try again later.");
+        setSignInError("Invalid username or password.");
       },
       () => {
-        setSignInError("Invalid username or password.");
+        setSignInError("Something went wrong. Try again later.");
       }
     );
   }
