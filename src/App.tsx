@@ -4,6 +4,7 @@ import "./App.css";
 import { CreateAccount } from "./components/Account/CreateAccount/CreateAccount";
 import { SignIn } from "./components/Account/SignIn/SignIn";
 import { AccountProvider } from "./components/AccountProvider";
+import { ErrorScreen } from "./components/Common/ErrorScreen/ErrorScreen";
 import { DayChartProvider } from "./components/DayChartProvider";
 import { DayChart } from "./components/Planner/DayChart/DayChart";
 
@@ -22,6 +23,7 @@ function App() {
               </DayChartProvider>
             }
           />
+          <Route path="/error" element={<ErrorScreen />} />
         </Routes>
       </AccountProvider>
     </div>

@@ -11,8 +11,9 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import {
   changeSortFunction,
   clickFilter,
-  search,
+  trySearch,
 } from "../FoodSearch/FoodSearchFunctions";
+import { useNavigate } from "react-router-dom";
 
 type FoodSearchFormProps = {
   setSearchResults: (results: FoodSearchJson) => void;
@@ -23,12 +24,20 @@ type FoodSearchFormProps = {
 export function FoodSearchForm(props: FoodSearchFormProps) {
   const { setSearchResults, searchCriteria, setSearchCriteria } = props;
   const [searchText, setSearchText] = useState("");
+  const navigate = useNavigate();
+
+  async function clickSearch() {
+    const success = await trySearch(searchText, setSearchResults);
+    if (!success) {
+      navigate("/error");
+    }
+  }
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        search(searchText, setSearchResults);
+        clickSearch();
       }}
     >
       <InputField

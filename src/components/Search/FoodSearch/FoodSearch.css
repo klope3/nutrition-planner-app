@@ -31,6 +31,11 @@
   margin-top: var(--gap-med);
 }
 
+.search-add-button:disabled {
+  background-color: lightgray;
+  cursor: initial;
+}
+
 #search {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -49,4 +54,18 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+  .food-search-flex {
+    flex-direction: column;
+  }
+
+  .food-search-modal {
+    left: 0;
+    right: 0;
+    translate: initial;
+    width: initial;
+    top: initial;
+  }
 }

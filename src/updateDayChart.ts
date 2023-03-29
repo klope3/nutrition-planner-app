@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useAccount } from "./components/AccountProvider";
 import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
@@ -25,34 +26,39 @@ import { extractFoodDataFromJson } from "./utility";
 export async function updateDayChart(
   userId: number,
   setDayChart: (state: DayChartState) => void,
-  setIsLoading: (b: boolean) => void
+  setIsLoading: (b: boolean) => void,
+  failureCb: () => void
 ) {
   setIsLoading(true);
-  const endpointJsons = await fetchEndpointJsons();
+  try {
+    const endpointJsons = await fetchEndpointJsons();
 
-  const fdcIds = endpointJsons.portionRows.map(
-    (portionRow) => portionRow.fdcId
-  );
-  if (useFakeData) {
-    const fakeData = getAllFakeFoodData(fdcIds);
-    const dayChart = buildDayChartState(endpointJsons, userId, fakeData);
+    const fdcIds = endpointJsons.portionRows.map(
+      (portionRow) => portionRow.fdcId
+    );
+    if (useFakeData) {
+      const fakeData = getAllFakeFoodData(fdcIds);
+      const dayChart = buildDayChartState(endpointJsons, userId, fakeData);
+      setDayChart(dayChart);
+      setIsLoading(false);
+      return;
+    }
+
+    const allFoodData = await getAllFoodData(fdcIds);
+    if (!allFoodData) return;
+
+    const dayChart: DayChartState = buildDayChartState(
+      endpointJsons,
+      userId,
+      allFoodData
+    );
+
     setDayChart(dayChart);
     setIsLoading(false);
+  } catch (error) {
+    if (failureCb) failureCb();
     return;
   }
-
-  const allFoodData = await getAllFoodData(fdcIds);
-  if (!allFoodData) return;
-
-  // const dayChartId = await tryGetDayChartId(userId, endpointJsons);
-  const dayChart: DayChartState = buildDayChartState(
-    endpointJsons,
-    userId,
-    allFoodData
-  );
-
-  setDayChart(dayChart);
-  setIsLoading(false);
 }
 
 async function getAllFoodData(fdcIds: number[]) {

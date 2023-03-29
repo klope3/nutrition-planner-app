@@ -7,6 +7,26 @@ export type UserAccount = {
   password: string;
 };
 
+type UserAccountResponse = {
+  userAccount: UserAccount | undefined;
+  error?: UserAccountResponseError;
+};
+
+type UserAccountResponseError =
+  | "noDuplicateUsers"
+  | "userNotFound"
+  | "serverError";
+
+const accountServerErrorResponse: UserAccountResponse = {
+  userAccount: undefined,
+  error: "serverError",
+};
+
+const accountNotFoundResponse: UserAccountResponse = {
+  userAccount: undefined,
+  error: "userNotFound",
+};
+
 export async function tryValidateUser(userId: number) {
   const userDayChartsResponse = await fetchFromDb("userDayCharts");
   if (!userDayChartsResponse.ok) return false;
@@ -32,28 +52,36 @@ export async function tryValidateUser(userId: number) {
 
 export async function tryGetUser(
   emailToMatch: string,
-  passwordToMatch: string | undefined
+  passwordToMatch?: string
 ) {
-  const usersResponse = await fetchFromDb("users");
-  if (!usersResponse.ok) {
-    console.error("Could not get users data");
-    return undefined;
-  }
-  const usersJson = await usersResponse.json();
-  const userEntries: UserAccount[] = usersJson.map((json: any) => {
-    const entry: UserAccount = {
-      dbId: json.id,
-      email: json.email,
-      password: json.password,
+  try {
+    const usersResponse = await fetchFromDb("users");
+    if (!usersResponse.ok) {
+      console.error("Could not get users data");
+      return accountServerErrorResponse;
+    }
+    const usersJson = await usersResponse.json();
+    const userEntries: UserAccount[] = usersJson.map((json: any) => {
+      const entry: UserAccount = {
+        dbId: json.id,
+        email: json.email,
+        password: json.password,
+      };
+      return entry;
+    });
+    const matchingUser = userEntries.find(
+      (entry) =>
+        entry.email === emailToMatch &&
+        (passwordToMatch === undefined || entry.password === passwordToMatch)
+    );
+    const response: UserAccountResponse = {
+      userAccount: matchingUser,
+      error: matchingUser ? undefined : "userNotFound",
     };
-    return entry;
-  });
-  const matchingUser = userEntries.find(
-    (entry) =>
-      entry.email === emailToMatch &&
-      (passwordToMatch === undefined || entry.password === passwordToMatch)
-  );
-  return matchingUser;
+    return response;
+  } catch (error) {
+    return accountServerErrorResponse;
+  }
 }
 
 export async function tryCreateAccount(email: string, password: string) {
@@ -65,11 +93,13 @@ export async function tryCreateAccount(email: string, password: string) {
     },
     "Could not create account"
   );
-  if (!postAccountJson) return undefined;
-  const account: UserAccount = {
-    dbId: postAccountJson.id,
-    email: postAccountJson.email,
-    password: postAccountJson.password,
+  const response: UserAccountResponse = {
+    userAccount: postAccountJson && {
+      dbId: postAccountJson.id,
+      email: postAccountJson.email,
+      password: postAccountJson.password,
+    },
+    error: postAccountJson ? undefined : "serverError",
   };
-  return account;
+  return response;
 }

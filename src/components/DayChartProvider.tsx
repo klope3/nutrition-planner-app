@@ -5,6 +5,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
+import { tryGetUser } from "../accounts";
 import { DayChartData, DayChartState } from "../types/DayChartTypes";
 import {
   tryAddPortion,
@@ -24,6 +26,7 @@ type DayChartContext = {
   setClickedSectionIndex: (i: number) => void;
   dayChart: DayChartState;
   setDayChart: (state: DayChartState) => void;
+  updateFailure: () => void;
 };
 
 type ChildrenProps = { children: ReactNode };
@@ -40,6 +43,7 @@ export function useDayChart() {
     setClickedSectionIndex,
     dayChart,
     setDayChart,
+    updateFailure,
   } = useContext(DayChartContext);
 
   async function addPortion(
@@ -53,12 +57,13 @@ export function useDayChart() {
       clickedSectionIndex,
       dayChart
     );
-    if (added) updateDayChart(userId, setDayChart, setIsLoading);
+    if (added) updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
   }
 
   async function deletePortion(userId: number, portionId: number) {
     const deleted = await tryDeletePortion(portionId);
-    if (deleted) updateDayChart(userId, setDayChart, setIsLoading);
+    if (deleted)
+      updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
   }
 
   return {
@@ -78,12 +83,35 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [dayChartData, setDayChartData] = useState({} as DayChartData);
   const [dayChart, setDayChart] = useState({} as DayChartState);
   const [showSearch, setShowSearch] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
-  const { activeUser } = useAccount();
+  const { activeUser, setActiveUser } = useAccount();
+  const navigate = useNavigate();
+
+  function updateFailure() {
+    navigate("/error");
+  }
 
   useEffect(() => {
-    updateDayChart(activeUser.dbId, setDayChart, setIsLoading);
+    const initial = async () => {
+      let userData = activeUser;
+      const notActiveUser = activeUser.email === undefined;
+      if (notActiveUser) {
+        const savedEmail = localStorage.getItem("user");
+        if (savedEmail) {
+          const user = await tryGetUser(savedEmail, undefined);
+          if (user && user.userAccount) {
+            setActiveUser(user.userAccount);
+            userData = user.userAccount;
+          } else {
+            navigate("/error");
+            return;
+          }
+        }
+      }
+      updateDayChart(userData.dbId, setDayChart, setIsLoading, updateFailure);
+    };
+    initial();
   }, []);
 
   return (
@@ -99,6 +127,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
         setClickedSectionIndex,
         dayChart,
         setDayChart,
+        updateFailure,
       }}
     >
       {children}

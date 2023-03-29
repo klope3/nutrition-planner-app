@@ -28,7 +28,7 @@ export function InputField(props: InputFieldProps) {
       <label htmlFor={id ? id : name}>{labelText}</label>
       <div className="input-field-sub-container">
         <input
-          type={hidePassword ? "password" : "text"}
+          type={hideablePassword && hidePassword ? "password" : "text"}
           name={name}
           id={id ? id : name}
           onChange={changeFunction}
