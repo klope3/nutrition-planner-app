@@ -26,6 +26,7 @@ type DayChartContext = {
   setClickedSectionIndex: (i: number) => void;
   dayChart: DayChartState;
   setDayChart: (state: DayChartState) => void;
+  updateFailure: () => void;
 };
 
 type ChildrenProps = { children: ReactNode };
@@ -42,6 +43,7 @@ export function useDayChart() {
     setClickedSectionIndex,
     dayChart,
     setDayChart,
+    updateFailure,
   } = useContext(DayChartContext);
 
   async function addPortion(
@@ -55,12 +57,13 @@ export function useDayChart() {
       clickedSectionIndex,
       dayChart
     );
-    if (added) updateDayChart(userId, setDayChart, setIsLoading);
+    if (added) updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
   }
 
   async function deletePortion(userId: number, portionId: number) {
     const deleted = await tryDeletePortion(portionId);
-    if (deleted) updateDayChart(userId, setDayChart, setIsLoading);
+    if (deleted)
+      updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
   }
 
   return {
@@ -85,6 +88,10 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const { activeUser, setActiveUser } = useAccount();
   const navigate = useNavigate();
 
+  function updateFailure() {
+    navigate("/error");
+  }
+
   useEffect(() => {
     const initial = async () => {
       let userData = activeUser;
@@ -102,7 +109,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
           }
         }
       }
-      updateDayChart(userData.dbId, setDayChart, setIsLoading);
+      updateDayChart(userData.dbId, setDayChart, setIsLoading, updateFailure);
     };
     initial();
   }, []);
@@ -120,6 +127,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
         setClickedSectionIndex,
         dayChart,
         setDayChart,
+        updateFailure,
       }}
     >
       {children}
