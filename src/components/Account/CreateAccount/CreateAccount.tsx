@@ -1,22 +1,11 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import {
-  tryCreateAccount,
-  tryGetUser,
-  tryValidateUser,
-} from "../../../accounts";
+import { Link, useNavigate } from "react-router-dom";
 import { InputErrors, InputFieldProps } from "../../../types/InputFieldTypes";
-import {
-  checkValidEmail,
-  checkValidPassword,
-  matchPasswordsMessage,
-  provideEmailMessage,
-  validPasswordMessage,
-} from "../../../validations";
 import { useAccount } from "../../AccountProvider";
-import { InputField } from "../../Common/InputField/InputField";
+import { InputFieldGroup } from "../../Common/InputFieldGroup/InputFieldGroup";
 import "../Account.css";
 import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
+import { blurField, clickCreateAccount } from "./CreateAccountFunctions";
 
 export function CreateAccount() {
   const [email, setEmail] = useState("");
@@ -27,59 +16,9 @@ export function CreateAccount() {
   const navigate = useNavigate();
   const { setActiveUser } = useAccount();
 
-  function getNewErrors() {
-    const newErrors: InputErrors = {
-      email: checkValidEmail(email) ? undefined : provideEmailMessage,
-      password: checkValidPassword(password) ? undefined : validPasswordMessage,
-      passwordConfirm:
-        password === passwordConfirm ? undefined : matchPasswordsMessage,
-    };
-    return newErrors;
-  }
-
-  function blurField(event: React.ChangeEvent<HTMLInputElement>) {
-    const sender = event.target.name as keyof InputErrors;
-    const errorsToSet = { ...inputErrors };
-    const newErrors = getNewErrors();
-    errorsToSet[sender] = newErrors[sender];
-    if (sender === "password") {
-      errorsToSet.passwordConfirm = newErrors.passwordConfirm;
-    }
-    setInputErrors(errorsToSet);
-  }
-
-  async function clickCreateAccount() {
-    const errors = getNewErrors();
-    const anyErrors = Object.values(errors).find((value) => !!value);
-    if (anyErrors) {
-      setInputErrors(errors);
-      return;
-    }
-    const existingUserResponse = await tryGetUser(email);
-    if (existingUserResponse.userAccount) {
-      setCreateAccountError("An account with that email already exists.");
-      return;
-    }
-    if (existingUserResponse.error === "serverError") {
-      setCreateAccountError("Server error - try again later.");
-      return;
-    }
-    const createdAccountResponse = await tryCreateAccount(email, password);
-    if (!createdAccountResponse.userAccount) {
-      setCreateAccountError("Server error - try again later.");
-      return;
-    }
-    const validated = await tryValidateUser(
-      createdAccountResponse.userAccount.dbId
-    );
-    if (!validated) {
-      setCreateAccountError("Server error - try again later.");
-      return;
-    }
-    setActiveUser(createdAccountResponse.userAccount);
-    navigate("/chart");
-  }
-
+  const blur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    blurField(e, inputErrors, email, password, passwordConfirm, setInputErrors);
+  };
   const fields: InputFieldProps[] = [
     {
       name: "email",
@@ -89,6 +28,7 @@ export function CreateAccount() {
       changeFunction: (e) => {
         setEmail(e.target.value);
       },
+      blurFunction: blur,
     },
     {
       name: "password",
@@ -98,6 +38,7 @@ export function CreateAccount() {
       changeFunction: (e) => {
         setPassword(e.target.value);
       },
+      blurFunction: blur,
       hideablePassword: true,
     },
     {
@@ -108,6 +49,7 @@ export function CreateAccount() {
       changeFunction: (e) => {
         setPasswordConfirm(e.target.value);
       },
+      blurFunction: blur,
       hideablePassword: true,
     },
   ];
@@ -121,17 +63,7 @@ export function CreateAccount() {
             e.preventDefault();
           }}
         >
-          {fields.map((field) => (
-            <InputField
-              name={field.name}
-              labelText={field.labelText}
-              value={field.value}
-              errorText={field.errorText}
-              changeFunction={field.changeFunction}
-              blurFunction={(e) => blurField(e)}
-              hideablePassword={field.hideablePassword}
-            />
-          ))}
+          <InputFieldGroup fieldData={fields} />
           {createAccountError.length > 0 && (
             <div className="error-text">{createAccountError}</div>
           )}
@@ -139,7 +71,15 @@ export function CreateAccount() {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
-              clickCreateAccount();
+              clickCreateAccount(
+                email,
+                password,
+                passwordConfirm,
+                setInputErrors,
+                setCreateAccountError,
+                setActiveUser,
+                navigate
+              );
             }}
           >
             Create Account
