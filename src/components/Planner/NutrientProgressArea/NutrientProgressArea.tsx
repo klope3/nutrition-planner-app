@@ -1,5 +1,6 @@
 import { getNutrientsToShow } from "../../../calculateNutrients";
 import {} from "../../../types/FoodDataTypes";
+import { splitArrayBy } from "../../../utility";
 import { useDayChart } from "../../DayChartProvider";
 import { NutrientProgressBar } from "../NutrientProgressBar/NutrientProgressBar";
 import "./NutrientProgressArea.css";
@@ -12,28 +13,24 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
   const { dayIndex } = props;
   const { dayChart } = useDayChart();
   const nutrientsToShow = getNutrientsToShow(dayChart, dayIndex);
+  const { passArr: majorNutrients, failArr: minorNutrients } = splitArrayBy(
+    nutrientsToShow,
+    (nutrient) => nutrient.isMajorNutrient
+  );
 
   return (
     <div>
       <div className="nutrient-progress-area sub-container">
-        {nutrientsToShow.map(
-          (nutrient) =>
-            nutrient &&
-            nutrient.isMajorNutrient && (
-              <NutrientProgressBar nutrient={nutrient} />
-            )
-        )}
+        {majorNutrients.map((nutrient) => (
+          <NutrientProgressBar nutrient={nutrient} />
+        ))}
       </div>
       <details>
         <summary>More Nutrients</summary>
         <div className="nutrient-progress-area">
-          {nutrientsToShow.map(
-            (nutrient) =>
-              nutrient &&
-              !nutrient.isMajorNutrient && (
-                <NutrientProgressBar nutrient={nutrient} />
-              )
-          )}
+          {minorNutrients.map((nutrient) => (
+            <NutrientProgressBar nutrient={nutrient} />
+          ))}
         </div>
       </details>
     </div>
