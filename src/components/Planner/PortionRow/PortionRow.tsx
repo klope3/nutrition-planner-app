@@ -13,7 +13,7 @@ type PortionRowProps = {
 
 export function PortionRow(props: PortionRowProps) {
   const {
-    row: { dbId: rowId, fdcId, foodData },
+    row: { id: rowId, fdcId, foodData },
   } = props;
   const { deletePortion } = useDayChart();
   const { activeUser } = useAccount();

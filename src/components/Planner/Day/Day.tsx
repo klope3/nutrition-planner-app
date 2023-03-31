@@ -21,7 +21,7 @@ export function Day(props: DayProps) {
           <DaySection
             key={i}
             indexInDay={i}
-            dayId={day && day.dbId}
+            dayId={day && day.id}
             dayIndex={indexInChart}
           />
         ))}

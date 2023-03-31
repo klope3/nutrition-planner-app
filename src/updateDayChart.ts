@@ -114,7 +114,7 @@ function buildDay(
       dayChartDay.indexInChart === indexInChart
   );
   const day: DayState | undefined = dayFromDb && {
-    dbId: dayFromDb.id,
+    id: dayFromDb.id,
     dayChartId,
     indexInChart,
     sections: Array.from({ length: sectionsPerDay }, (_, sectionIndex) =>
@@ -191,7 +191,7 @@ function buildRow(
   };
   const builtRow: PortionRowState | undefined = rowFromDb &&
     foodData && {
-      dbId: rowFromDb.id,
+      id: rowFromDb.id,
       fdcId: rowFromDb.fdcId,
       foodData,
     };
@@ -199,6 +199,8 @@ function buildRow(
 }
 
 export async function tryDeletePortion(portionId: number) {
+  console.log("trying to delete portionId:");
+  console.log(portionId);
   const deletePortionRowResponse = await deleteFromDb("portionRows", portionId);
   if (!deletePortionRowResponse.ok) {
     console.log(
@@ -231,7 +233,7 @@ export async function tryAddPortion(
   //add a dayChartDay with the correct dayId, OR skip if there already is one
   const clickedDayIndex = Math.floor(clickedSectionIndex / sectionsPerDay);
   const existingDay = dayChart.days[clickedDayIndex];
-  let dbDayId = existingDay?.dbId;
+  let dbDayId = existingDay?.id;
   if (!existingDay) {
     const postJson = await postToDbAndReturnJson(
       "dayChartDays",

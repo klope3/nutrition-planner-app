@@ -6,7 +6,6 @@ type DBEntry = {
 
 export type PortionRowEntry = DBEntry & {
   fdcId: number;
-  fractionOfServing: number;
 };
 
 export type DaySectionRowEntry = DBEntry & {
@@ -24,6 +23,7 @@ export type DayChartDayEntry = DBEntry & {
   indexInChart: number;
 };
 
+//this would be used in a future version where a user can have multiple day charts
 export type DayChartEntry = DBEntry & {};
 
 export type UserDayChartEntry = DBEntry & {
@@ -44,10 +44,7 @@ export type DayChartState = {
   days: (DayState | undefined)[];
 };
 
-export type DayState = {
-  dbId: number;
-  dayChartId: number;
-  indexInChart: number;
+export type DayState = DayChartDayEntry & {
   sections: (DaySectionState | undefined)[];
 };
 
@@ -56,8 +53,6 @@ export type DaySectionState = {
   rows: (PortionRowState | undefined)[] | undefined;
 };
 
-export type PortionRowState = {
-  dbId: number;
-  fdcId: number;
+export type PortionRowState = PortionRowEntry & {
   foodData: FoodData;
 };
