@@ -38,7 +38,6 @@ export type DayChartData = {
   portionRows: PortionRowEntry[];
 };
 
-//these State types should maybe be merged with the Data types using &; they end up inheriting lots of the same properties anyway
 export type DayChartState = {
   dayChartId: number;
   days: (DayState | undefined)[];

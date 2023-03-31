@@ -22,11 +22,6 @@ const accountServerErrorResponse: UserAccountResponse = {
   error: "serverError",
 };
 
-const accountNotFoundResponse: UserAccountResponse = {
-  userAccount: undefined,
-  error: "userNotFound",
-};
-
 export async function tryValidateUser(userId: number) {
   const userDayChartsResponse = await fetchFromDb("userDayCharts");
   if (!userDayChartsResponse.ok) return false;
@@ -61,14 +56,7 @@ export async function tryGetUser(
       return accountServerErrorResponse;
     }
     const usersJson = await usersResponse.json();
-    const userEntries: UserAccount[] = usersJson.map((json: any) => {
-      const entry: UserAccount = {
-        dbId: json.id,
-        email: json.email,
-        password: json.password,
-      };
-      return entry;
-    });
+    const userEntries: UserAccount[] = usersJson.map(convertAccountJson);
     const matchingUser = userEntries.find(
       (entry) =>
         entry.email === emailToMatch &&
@@ -102,4 +90,12 @@ export async function tryCreateAccount(email: string, password: string) {
     error: postAccountJson ? undefined : "serverError",
   };
   return response;
+}
+
+function convertAccountJson(json: any): UserAccount {
+  return {
+    dbId: json.id,
+    email: json.email,
+    password: json.password,
+  };
 }
