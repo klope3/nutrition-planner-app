@@ -20,28 +20,21 @@ export type EndpointJsons = {
   portionRows: PortionRowEntry[];
 };
 
+const endpoints = [
+  "userDayCharts",
+  "dayCharts",
+  "dayChartDays",
+  "daySections",
+  "daySectionRows",
+  "portionRows",
+];
+
 export async function fetchEndpointJsons() {
-  const endpoints = [
-    "userDayCharts",
-    "dayCharts",
-    "dayChartDays",
-    "daySections",
-    "daySectionRows",
-    "portionRows",
-  ];
   const responses = await Promise.all(
     endpoints.map((endpoint) => fetchFromDb(endpoint))
   );
   const jsons = await Promise.all(responses.map((response) => response.json()));
-  const result: EndpointJsons = {
-    userDayCharts: jsons[0],
-    dayCharts: jsons[1],
-    dayChartDays: jsons[2],
-    daySections: jsons[3],
-    daySectionRows: jsons[4],
-    portionRows: jsons[5],
-  };
-  return result;
+  return convertEndpointJsons(jsons);
 }
 
 async function fetchRequestWithJson(
@@ -81,17 +74,6 @@ export function fetchFromDb(endpoint: string) {
   return fetch(`${DB_URL}/${endpoint}`, requestOptions);
 }
 
-export function postToDb(endpoint: string, bodyData: Object) {
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bodyData),
-  };
-  return fetch(`${DB_URL}/${endpoint}`, requestOptions);
-}
-
 export function deleteFromDb(endpoint: string, id: number) {
   const requestOptions = { method: "DELETE" };
   return fetch(`${DB_URL}/${endpoint}/${id}`, requestOptions);
@@ -116,13 +98,6 @@ export async function searchFdcFoodsJson(
   } catch (error) {
     return undefined;
   }
-}
-
-export function fetchSingleFdcFood(fdcId: number) {
-  const fetchPromise = fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
-    method: "GET",
-  });
-  return fetchPromise;
 }
 
 export async function fetchAllFdcFoodJsons(fdcIds: number[]) {
@@ -151,4 +126,15 @@ export async function fetchSingleFdcFoodJson(fdcId: number) {
     return undefined;
   }
   return await response.json();
+}
+
+function convertEndpointJsons(jsons: any): EndpointJsons {
+  return {
+    userDayCharts: jsons[0],
+    dayCharts: jsons[1],
+    dayChartDays: jsons[2],
+    daySections: jsons[3],
+    daySectionRows: jsons[4],
+    portionRows: jsons[5],
+  };
 }
