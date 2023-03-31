@@ -7,14 +7,3 @@ export const validPasswordMessage =
   "Password must be 8-20 characters, including at least one capital letter, at least one small letter, one number and one special character - !@#$%^&*()_+";
 export const provideEmailMessage = "Please provide a valid email.";
 export const matchPasswordsMessage = "The passwords must match.";
-
-// type StringKeyObj = {
-//   [key: string]: any
-// }
-
-// export const inputValidationFunctions: StringKeyObj = {
-//   email: (email: string) =>
-//     !checkValidEmail(email) ? provideEmailMessage : undefined,
-//   password: (password: string) =>
-//     !checkValidPassword(password) ? validPasswordMessage : undefined,
-// };

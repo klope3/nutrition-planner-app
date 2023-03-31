@@ -199,8 +199,6 @@ function buildRow(
 }
 
 export async function tryDeletePortion(portionId: number) {
-  console.log("trying to delete portionId:");
-  console.log(portionId);
   const deletePortionRowResponse = await deleteFromDb("portionRows", portionId);
   if (!deletePortionRowResponse.ok) {
     console.log(
