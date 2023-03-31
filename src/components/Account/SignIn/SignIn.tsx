@@ -22,7 +22,8 @@ export function SignIn() {
     signInFailureCb?: () => void,
     otherFailureCb?: () => void
   ) {
-    const emptyInput = email.length === 0 || !password || password.length === 0;
+    const emptyInput =
+      email.length === 0 || (password && password.length === 0);
     if (emptyInput) {
       if (signInFailureCb) signInFailureCb();
       return;
