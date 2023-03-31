@@ -10,7 +10,6 @@
 }
 
 .search-results-view {
-  /* width: 500px; */
   overflow-y: scroll;
   height: 400px;
   background-color: rgb(197, 227, 195);

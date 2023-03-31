@@ -92,25 +92,24 @@ export function DayChartProvider({ children }: ChildrenProps) {
     navigate("/error");
   }
 
-  useEffect(() => {
-    const initial = async () => {
-      let userData = activeUser;
-      const notActiveUser = activeUser.email === undefined;
-      if (notActiveUser) {
-        const savedEmail = localStorage.getItem("user");
-        if (savedEmail) {
-          const user = await tryGetUser(savedEmail, undefined);
-          if (user && user.userAccount) {
-            setActiveUser(user.userAccount);
-            userData = user.userAccount;
-          } else {
-            navigate("/error");
-            return;
-          }
-        }
+  async function initial() {
+    let userData = activeUser;
+    const signedIn = activeUser.email !== undefined;
+    const savedEmail = localStorage.getItem("user");
+    if (!signedIn && savedEmail) {
+      const savedUserResponse = await tryGetUser(savedEmail, undefined);
+      const savedAccount = savedUserResponse.userAccount;
+      if (!savedAccount) {
+        navigate("/error");
+        return;
       }
-      updateDayChart(userData.dbId, setDayChart, setIsLoading, updateFailure);
-    };
+      setActiveUser(savedAccount);
+      userData = savedAccount;
+    }
+    updateDayChart(userData.dbId, setDayChart, setIsLoading, updateFailure);
+  }
+
+  useEffect(() => {
     initial();
   }, []);
 
