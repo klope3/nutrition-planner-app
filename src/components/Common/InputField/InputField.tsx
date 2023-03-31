@@ -36,6 +36,7 @@ export function InputField(props: InputFieldProps) {
         />
         {hideablePassword && (
           <button
+            type="button"
             className="hide-password-button"
             onClick={() => setHidePassword(!hidePassword)}
           >
