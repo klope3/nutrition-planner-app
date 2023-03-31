@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { tryGetUser, tryValidateUser } from "../../../accounts";
-import { useAccount } from "../../AccountProvider";
-import { InputField } from "../../Common/InputField/InputField";
-import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
-import { Logo } from "../../Common/Logo/Logo";
-import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
-import "../Account.css";
 import { InputFieldProps } from "../../../types/InputFieldTypes";
+import { useAccount } from "../../AccountProvider";
+import { InputFieldGroup } from "../../Common/InputFieldGroup/InputFieldGroup";
+import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
+import "../Account.css";
+import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
@@ -23,28 +22,34 @@ export function SignIn() {
     signInFailureCb?: () => void,
     otherFailureCb?: () => void
   ) {
-    if (email.length === 0 || !password || password.length === 0) {
+    const emptyInput =
+      email.length === 0 || (password && password.length === 0);
+    if (emptyInput) {
       if (signInFailureCb) signInFailureCb();
       return;
     }
-    const user = await tryGetUser(email, password);
-    if (user.error === "serverError") {
+
+    const userDataResponse = await tryGetUser(email, password);
+    if (userDataResponse.error === "serverError") {
       if (otherFailureCb) otherFailureCb();
       return;
     }
-    if (user && user.userAccount) {
-      const validated = await tryValidateUser(user.userAccount.dbId);
-      if (!validated) {
-        if (otherFailureCb) otherFailureCb();
-        return;
-      }
-      setSignInError("");
-      setActiveUser(user.userAccount);
-      localStorage.setItem("user", email);
-      navigate("/chart");
-    } else {
+
+    if (!userDataResponse.userAccount) {
       if (signInFailureCb) signInFailureCb();
+      return;
     }
+
+    const validated = await tryValidateUser(userDataResponse.userAccount.dbId);
+    if (!validated) {
+      if (otherFailureCb) otherFailureCb();
+      return;
+    }
+
+    setSignInError("");
+    setActiveUser(userDataResponse.userAccount);
+    localStorage.setItem("user", email);
+    navigate("/chart");
   }
 
   function clickSignIn() {
@@ -101,16 +106,7 @@ export function SignIn() {
             e.preventDefault();
           }}
         >
-          {fields.map((field) => (
-            <InputField
-              name={field.name}
-              labelText={field.labelText}
-              value={field.value}
-              errorText={field.errorText}
-              changeFunction={field.changeFunction}
-              hideablePassword={field.hideablePassword}
-            />
-          ))}
+          <InputFieldGroup fieldData={fields} />
           {signInError.length > 0 && (
             <div className="error-text">{signInError}</div>
           )}

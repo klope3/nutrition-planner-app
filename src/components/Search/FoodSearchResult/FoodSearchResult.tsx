@@ -34,7 +34,7 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
         : "No data",
     category,
   };
-  sortNutrients(foodNutrients);
+
   return (
     <div
       className={`food-search-result ${isSelected && "result-selected"}`}

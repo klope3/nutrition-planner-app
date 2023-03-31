@@ -17,11 +17,11 @@ export function Day(props: DayProps) {
     <div>
       <div className="day-title">{dayNames[indexInChart]}</div>
       <div className="day">
-        {sections.map((section, i) => (
+        {sections.map((_, i) => (
           <DaySection
             key={i}
             indexInDay={i}
-            dayId={day && day.dbId}
+            dayId={day && day.id}
             dayIndex={indexInChart}
           />
         ))}

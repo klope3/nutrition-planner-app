@@ -16,7 +16,7 @@ export function DayChart() {
     <>
       <DayChartHeader />
       <div className="day-chart-container">
-        {days.map((day, i) => (
+        {days.map((_, i) => (
           <Day key={i} indexInChart={i} />
         ))}
       </div>
