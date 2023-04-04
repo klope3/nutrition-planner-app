@@ -4,16 +4,11 @@ const data = {
   users: [
     {
       id: 1,
-      email: "person@example.com",
-      password: "password1234",
-    },
-    {
-      id: 2,
       email: "sally.jones@site.com",
       password: "catsRock",
     },
     {
-      id: 3,
+      id: 2,
       email: "rick.grimes@alexandria.com",
       password: "cowboy",
     },
