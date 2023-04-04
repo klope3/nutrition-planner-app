@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { tryGetUser, tryValidateUser } from "../../../accounts";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { invalidCredentialsError } from "../../../constants";
 import { InputFieldProps } from "../../../types/InputFieldTypes";
 import { useAccount } from "../../AccountProvider";
 import { InputFieldGroup } from "../../Common/InputFieldGroup/InputFieldGroup";
-import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
 import "../Account.css";
 import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
 
@@ -12,70 +11,20 @@ export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
-  const [tryingAutoSignIn, setTryingAutoSignIn] = useState(true);
-  const navigate = useNavigate();
-  const { setActiveUser } = useAccount();
+  const { signIn } = useAccount();
 
-  async function trySignIn(
-    email: string,
-    password: string | undefined,
-    signInFailureCb?: () => void,
-    otherFailureCb?: () => void
-  ) {
-    const emptyInput =
-      email.length === 0 || (password && password.length === 0);
-    if (emptyInput) {
-      if (signInFailureCb) signInFailureCb();
+  function clickSignIn(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const data = new FormData(form);
+    const email = data.get("email") as string;
+    const password = data.get("password") as string;
+    if (!email || !password) {
+      setSignInError(invalidCredentialsError);
       return;
     }
-
-    const userDataResponse = await tryGetUser(email, password);
-    if (userDataResponse.error === "serverError") {
-      if (otherFailureCb) otherFailureCb();
-      return;
-    }
-
-    if (!userDataResponse.userAccount) {
-      if (signInFailureCb) signInFailureCb();
-      return;
-    }
-
-    const validated = await tryValidateUser(userDataResponse.userAccount.dbId);
-    if (!validated) {
-      if (otherFailureCb) otherFailureCb();
-      return;
-    }
-
-    setSignInError("");
-    setActiveUser(userDataResponse.userAccount);
-    localStorage.setItem("user", email);
-    navigate("/chart");
+    signIn(email, password, setSignInError);
   }
-
-  function clickSignIn() {
-    trySignIn(
-      email,
-      password,
-      () => {
-        setSignInError("Invalid username or password.");
-      },
-      () => {
-        setSignInError("Something went wrong. Try again later.");
-      }
-    );
-  }
-
-  useEffect(() => {
-    const existingEmail = localStorage.getItem("user");
-    if (!existingEmail) {
-      setTryingAutoSignIn(false);
-      return;
-    }
-    const cb = () => {
-      setTryingAutoSignIn(false);
-    };
-    trySignIn(existingEmail, undefined, cb, cb);
-  }, []);
 
   const fields: InputFieldProps[] = [
     {
@@ -101,26 +50,13 @@ export function SignIn() {
     <div className="account-box-container">
       <div className="form-container account-box">
         <AccountBoxHeader />
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <form onSubmit={clickSignIn}>
           <InputFieldGroup fieldData={fields} />
           {signInError.length > 0 && (
             <div className="error-text">{signInError}</div>
           )}
-          <button
-            type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              clickSignIn();
-            }}
-          >
-            Sign In
-          </button>
+          <button type="submit">Sign In</button>
         </form>
-        {tryingAutoSignIn && <LoadingIndicator />}
         <Link to="/createAccount">Create Account</Link>
       </div>
     </div>

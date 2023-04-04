@@ -224,3 +224,6 @@ export const dayNames = [
   "Friday",
   "Saturday",
 ];
+
+export const invalidCredentialsError = "Invalid username or password.";
+export const miscError = "Something went wrong. Try again later.";

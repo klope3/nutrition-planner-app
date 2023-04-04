@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { tryGetUser } from "../accounts";
 import { DayChartData, DayChartState } from "../types/DayChartTypes";
 import {
   tryAddPortion,
@@ -92,26 +91,10 @@ export function DayChartProvider({ children }: ChildrenProps) {
     navigate("/error");
   }
 
-  async function initial() {
-    let userData = activeUser;
-    const signedIn = activeUser.email !== undefined;
-    const savedEmail = localStorage.getItem("user");
-    if (!signedIn && savedEmail) {
-      const savedUserResponse = await tryGetUser(savedEmail, undefined);
-      const savedAccount = savedUserResponse.userAccount;
-      if (!savedAccount) {
-        navigate("/error");
-        return;
-      }
-      setActiveUser(savedAccount);
-      userData = savedAccount;
-    }
-    updateDayChart(userData.dbId, setDayChart, setIsLoading, updateFailure);
-  }
-
   useEffect(() => {
-    initial();
-  }, []);
+    if (activeUser.dbId)
+      updateDayChart(activeUser.dbId, setDayChart, setIsLoading, updateFailure);
+  }, [activeUser]);
 
   return (
     <DayChartContext.Provider

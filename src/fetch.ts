@@ -118,14 +118,19 @@ export async function fetchAllFdcFoodJsons(fdcIds: number[]) {
 }
 
 export async function fetchSingleFdcFoodJson(fdcId: number) {
-  const response = await fetch(`${API_URL}/food/${fdcId}?api_key=${API_KEY}`, {
-    method: "GET",
-  });
-  if (!response.ok) {
-    console.error("FAILED to fetch food: " + response.status);
-    return undefined;
-  }
-  return await response.json();
+  try {
+    const response = await fetch(
+      `${API_URL}/food/${fdcId}?api_key=${API_KEY}`,
+      {
+        method: "GET",
+      }
+    );
+    if (!response.ok) {
+      console.error("FAILED to fetch food: " + response.status);
+      return undefined;
+    }
+    return await response.json();
+  } catch (error) {}
 }
 
 function convertEndpointJsons(jsons: any): EndpointJsons {

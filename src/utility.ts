@@ -10,7 +10,10 @@ export function extractFoodDataFromJson(json: any) {
   const foodData: FoodData = {
     fdcId: json ? json.fdcId : 0,
     description: json ? json.description : unknownFoodName,
-    nutrients: json ? foodNutrientsObjToNutrientsArr(json.foodNutrients) : [],
+    nutrients:
+      json && json.foodNutrients
+        ? foodNutrientsObjToNutrientsArr(json.foodNutrients)
+        : [],
   };
 
   return foodData;
