@@ -51,6 +51,7 @@ export async function clickCreateAccount(
     return;
   }
   setActiveUser(createdAccountResponse.userAccount);
+  localStorage.setItem("user", createdAccountResponse.userAccount.email);
   navigate("/chart");
 }
 
