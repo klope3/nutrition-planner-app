@@ -1,5 +1,5 @@
-import { Nutrient } from "../../../types/DayChartTypes";
 import "./NutrientProgressBar.css";
+import { Nutrient } from "../../../types/FoodDataTypes";
 
 type NutrientProgressBarProps = {
   nutrient: Nutrient;

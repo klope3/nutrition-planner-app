@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom";
 import { daysToShow } from "../../../constants";
-import { useAccount } from "../../AccountProvider";
 import { LoadingIndicator } from "../../Common/LoadingIndicator/LoadingIndicator";
 import { useDayChart } from "../../DayChartProvider";
 import { FoodSearch } from "../../Search/FoodSearch/FoodSearch";

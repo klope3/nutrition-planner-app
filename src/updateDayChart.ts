@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-import { useAccount } from "./components/AccountProvider";
 import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
 import { fakeSingleFoods, useFakeData } from "./fakeData";
 import {

@@ -1,7 +1,3 @@
-import { useEffect, useState } from "react";
-import { unknownFoodName } from "../../../constants";
-import { useFakeData } from "../../../fakeData";
-import { fetchSingleFdcFoodJson } from "../../../fetch";
 import { PortionRowState } from "../../../types/DayChartTypes";
 import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";

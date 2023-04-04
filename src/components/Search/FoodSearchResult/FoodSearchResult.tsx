@@ -1,8 +1,7 @@
 import { FoodSearchResultData } from "../../../types/FoodDataTypes";
 import { formatCamelCase } from "../../../utility";
-import "./FoodSearchResult.css";
-import { sortNutrients } from "../../../calculateNutrients";
 import { NutrientTable } from "../../Common/NutrientTable/NutrientTable";
+import "./FoodSearchResult.css";
 
 type FoodSearchResultProps = {
   food: FoodSearchResultData;
