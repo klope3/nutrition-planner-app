@@ -45,8 +45,8 @@ export function FoodSearchResult(props: FoodSearchResultProps) {
       </div>
       <details>
         <summary>Details</summary>
-        {Object.entries(details).map((entry) => (
-          <div>
+        {Object.entries(details).map((entry, i) => (
+          <div key={i}>
             {`${formatCamelCase(entry[0])}: ${entry[1] ? entry[1] : "No data"}`}
           </div>
         ))}

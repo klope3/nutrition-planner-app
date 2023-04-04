@@ -10,10 +10,10 @@ export function NutrientTable({ nutrients }: NutrientTableProps) {
     <div className="nutrient-table">
       {(!nutrients || nutrients.length === 0) && <div>No nutrient data</div>}
       {nutrients.length > 0 &&
-        nutrients.map((nutrient) => {
+        nutrients.map((nutrient, i) => {
           if (!nutrient.displayName) return undefined;
           return (
-            <div>
+            <div key={i}>
               <div>{`${nutrient.displayName} ${nutrient.amount}${nutrient.unit}`}</div>
               <div>{`${nutrient.dailyValue}%`}</div>
             </div>

@@ -10,6 +10,7 @@ export function InputFieldGroup({ fieldData }: InputFieldGroupProps) {
     <>
       {fieldData.map((field) => (
         <InputField
+          key={field.name}
           name={field.name}
           labelText={field.labelText}
           value={field.value}

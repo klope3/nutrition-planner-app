@@ -21,15 +21,15 @@ export function NutrientProgressArea(props: NutrientProgressAreaProps) {
   return (
     <div>
       <div className="nutrient-progress-area sub-container">
-        {majorNutrients.map((nutrient) => (
-          <NutrientProgressBar nutrient={nutrient} />
+        {majorNutrients.map((nutrient, i) => (
+          <NutrientProgressBar key={i} nutrient={nutrient} />
         ))}
       </div>
       <details>
         <summary>More Nutrients</summary>
         <div className="nutrient-progress-area">
-          {minorNutrients.map((nutrient) => (
-            <NutrientProgressBar nutrient={nutrient} />
+          {minorNutrients.map((nutrient, i) => (
+            <NutrientProgressBar key={i} nutrient={nutrient} />
           ))}
         </div>
       </details>

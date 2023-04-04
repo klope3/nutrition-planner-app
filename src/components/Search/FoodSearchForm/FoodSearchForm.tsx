@@ -50,7 +50,7 @@ export function FoodSearchForm(props: FoodSearchFormProps) {
       />
       <div className="sub-container">
         {filterFunctions.map((filterFunction) => (
-          <label>
+          <label key={filterFunction.displayName}>
             <input
               type="checkbox"
               name={filterFunction.displayName}
@@ -70,8 +70,8 @@ export function FoodSearchForm(props: FoodSearchFormProps) {
             changeSortFunction(e, searchCriteria, setSearchCriteria)
           }
         >
-          {sortFunctions.map((sortFunction) => (
-            <option>{sortFunction.displayName}</option>
+          {sortFunctions.map((sortFunction, i) => (
+            <option key={i}>{sortFunction.displayName}</option>
           ))}
         </select>
       </div>
