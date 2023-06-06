@@ -29,30 +29,31 @@ export async function clickCreateAccount(
     setInputErrors(errors);
     return;
   }
-  const existingUserResponse = await tryGetUser(email);
-  if (existingUserResponse.userAccount) {
-    setCreateAccountError("An account with that email already exists.");
-    return;
-  }
-  if (existingUserResponse.error === "serverError") {
-    setCreateAccountError("Server error - try again later.");
-    return;
-  }
-  const createdAccountResponse = await tryCreateAccount(email, password);
-  if (!createdAccountResponse.userAccount) {
-    setCreateAccountError("Server error - try again later.");
-    return;
-  }
-  const validated = await tryValidateUser(
-    createdAccountResponse.userAccount.dbId
-  );
-  if (!validated) {
-    setCreateAccountError("Server error - try again later.");
-    return;
-  }
-  setActiveUser(createdAccountResponse.userAccount);
-  localStorage.setItem("user", createdAccountResponse.userAccount.email);
-  navigate("/chart");
+  console.log("Trying create account with " + email + ", " + password);
+  // const existingUserResponse = await tryGetUser(email);
+  // if (existingUserResponse.userAccount) {
+  //   setCreateAccountError("An account with that email already exists.");
+  //   return;
+  // }
+  // if (existingUserResponse.error === "serverError") {
+  //   setCreateAccountError("Server error - try again later.");
+  //   return;
+  // }
+  // const createdAccountResponse = await tryCreateAccount(email, password);
+  // if (!createdAccountResponse.userAccount) {
+  //   setCreateAccountError("Server error - try again later.");
+  //   return;
+  // }
+  // const validated = await tryValidateUser(
+  //   createdAccountResponse.userAccount.dbId
+  // );
+  // if (!validated) {
+  //   setCreateAccountError("Server error - try again later.");
+  //   return;
+  // }
+  // setActiveUser(createdAccountResponse.userAccount);
+  // localStorage.setItem("user", createdAccountResponse.userAccount.email);
+  // navigate("/chart");
 }
 
 export function getNewErrors(

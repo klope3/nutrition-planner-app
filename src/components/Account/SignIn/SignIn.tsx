@@ -23,7 +23,8 @@ export function SignIn() {
       setSignInError(invalidCredentialsError);
       return;
     }
-    signIn(email, password, setSignInError);
+    console.log("Try sign in with " + email + ", " + password);
+    // signIn(email, password, setSignInError);
   }
 
   const fields: InputFieldProps[] = [

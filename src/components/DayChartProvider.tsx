@@ -6,7 +6,11 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { DayChartData, DayChartState } from "../types/DayChartTypes";
+import {
+  DayChartData,
+  DayChartState,
+  PortionRowState,
+} from "../types/DayChartTypes";
 import {
   tryAddPortion,
   tryDeletePortion,
@@ -65,6 +69,19 @@ export function useDayChart() {
       updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
   }
 
+  function getRowsForSection(
+    dayIndexInChart: number,
+    sectionIndexInDay: number
+  ): PortionRowState[] {
+    console.log(
+      "Getting rows for section " +
+        sectionIndexInDay +
+        " in day " +
+        dayIndexInChart
+    );
+    return [];
+  }
+
   return {
     showSearch,
     setShowSearch,
@@ -73,6 +90,7 @@ export function useDayChart() {
     setClickedSectionIndex,
     addPortion,
     deletePortion,
+    getRowsForSection,
     dayChart,
     updateDayChart,
   };

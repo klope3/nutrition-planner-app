@@ -11,8 +11,8 @@ type DayProps = {
 export function Day(props: DayProps) {
   const { indexInChart } = props;
   const sections = new Array(sectionsPerDay).fill({});
-  const { dayChart } = useDayChart();
-  const day = dayChart.days && dayChart.days[indexInChart];
+  // const { dayChart } = useDayChart();
+  // const day = dayChart.days && dayChart.days[indexInChart];
   return (
     <div>
       <div className="day-title">{dayNames[indexInChart]}</div>
@@ -21,7 +21,7 @@ export function Day(props: DayProps) {
           <DaySection
             key={i}
             indexInDay={i}
-            dayId={day && day.id}
+            // dayId={day && day.id}
             dayIndex={indexInChart}
           />
         ))}
