@@ -224,5 +224,7 @@ export const dayNames = [
   "Saturday",
 ];
 
-export const invalidCredentialsError = "Invalid username or password.";
+export const invalidSignInError = "Invalid username or password.";
 export const miscError = "Something went wrong. Try again later.";
+export const serverError = "Unable to contact server. Try again later.";
+export const fetchFailure = "Failed to fetch";
