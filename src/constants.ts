@@ -208,7 +208,6 @@ export const nutrientOrder = [
 
 export const API_URL = "https://api.nal.usda.gov/fdc/v1";
 export const API_KEY = import.meta.env.VITE_API_KEY;
-export const DB_URL = "http://localhost:3000";
 
 export const sectionsPerDay = 5;
 export const daysToShow = 7;

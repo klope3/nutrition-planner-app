@@ -24,7 +24,7 @@ export function FoodSearch() {
 
   function clickAdd() {
     setShowSearch(false);
-    addPortion(activeUser.dbId, selectedFdcId, 1);
+    addPortion(activeUser.dbId, selectedFdcId);
   }
 
   function selectFood(fdcId: number) {

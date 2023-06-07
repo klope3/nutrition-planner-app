@@ -11,11 +11,7 @@ import {
   DayChartState,
   PortionRowState,
 } from "../types/DayChartTypes";
-import {
-  tryAddPortion,
-  tryDeletePortion,
-  updateDayChart,
-} from "../updateDayChart";
+import { updateDayChart } from "../updateDayChart";
 import { useAccount } from "./AccountProvider";
 
 type DayChartContext = {
@@ -49,24 +45,12 @@ export function useDayChart() {
     updateFailure,
   } = useContext(DayChartContext);
 
-  async function addPortion(
-    userId: number,
-    fdcId: number,
-    fractionOfServing: number
-  ) {
-    const added = await tryAddPortion(
-      fdcId,
-      fractionOfServing,
-      clickedSectionIndex,
-      dayChart
-    );
-    if (added) updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
+  async function addPortion(userId: number, fdcId: number) {
+    console.log("Add fdcId " + fdcId + " for user " + userId);
   }
 
   async function deletePortion(userId: number, portionId: number) {
-    const deleted = await tryDeletePortion(portionId);
-    if (deleted)
-      updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
+    console.log("delete portion " + portionId + " for user " + userId);
   }
 
   function getRowsForSection(

@@ -1,12 +1,5 @@
 import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
-import { fakeSingleFoods, useFakeData } from "./fakeData";
-import {
-  deleteFromDb,
-  EndpointJsons,
-  fetchAllFdcFoodJsons,
-  fetchEndpointJsons,
-  postToDbAndReturnJson,
-} from "./fetch";
+import { EndpointJsons, fetchAllFdcFoodJsons } from "./fetch";
 import {
   DayChartDayEntry,
   DayChartEntry,
@@ -27,36 +20,7 @@ export async function updateDayChart(
   setIsLoading: (b: boolean) => void,
   failureCb: () => void
 ) {
-  setIsLoading(true);
-  try {
-    const endpointJsons = await fetchEndpointJsons();
-
-    const fdcIds = endpointJsons.portionRows.map(
-      (portionRow) => portionRow.fdcId
-    );
-    if (useFakeData) {
-      const fakeData = getAllFakeFoodData(fdcIds);
-      const dayChart = buildDayChartState(endpointJsons, userId, fakeData);
-      setDayChart(dayChart);
-      setIsLoading(false);
-      return;
-    }
-
-    const allFoodData = await getAllFoodData(fdcIds);
-    if (!allFoodData) return;
-
-    const dayChart: DayChartState = buildDayChartState(
-      endpointJsons,
-      userId,
-      allFoodData
-    );
-
-    setDayChart(dayChart);
-    setIsLoading(false);
-  } catch (error) {
-    if (failureCb) failureCb();
-    return;
-  }
+  console.log("update day chart");
 }
 
 async function getAllFoodData(fdcIds: number[]) {
@@ -67,15 +31,6 @@ async function getAllFoodData(fdcIds: number[]) {
   );
 
   return allFoodData;
-}
-
-function getAllFakeFoodData(fdcIds: number[]): FoodData[] {
-  const allFakeData: FoodData[] = fdcIds.map((id) => {
-    const match = fakeSingleFoods.find((food) => food.fdcId === id);
-    const data: FoodData = extractFoodDataFromJson(match);
-    return data;
-  });
-  return allFakeData;
 }
 
 function buildDayChartState(
@@ -196,82 +151,82 @@ function buildRow(
   return builtRow;
 }
 
-export async function tryDeletePortion(portionId: number) {
-  const deletePortionRowResponse = await deleteFromDb("portionRows", portionId);
-  if (!deletePortionRowResponse.ok) {
-    console.log(
-      "Deleting portion FAILED: could not delete portionRow: " +
-        deletePortionRowResponse.status
-    );
-    return false;
-  }
-  return true;
-}
+// export async function tryDeletePortion(portionId: number) {
+//   const deletePortionRowResponse = await deleteFromDb("portionRows", portionId);
+//   if (!deletePortionRowResponse.ok) {
+//     console.log(
+//       "Deleting portion FAILED: could not delete portionRow: " +
+//         deletePortionRowResponse.status
+//     );
+//     return false;
+//   }
+//   return true;
+// }
 
-export async function tryAddPortion(
-  fdcId: number,
-  fractionOfServing: number,
-  clickedSectionIndex: number,
-  dayChart: DayChartState
-) {
-  //add a portionRow with the given data
-  const postJson = await postToDbAndReturnJson(
-    "portionRows",
-    {
-      fdcId,
-      fractionOfServing,
-    },
-    "Could not add new portion row"
-  );
-  if (!postJson) return false;
-  const portionRowId = postJson.id;
+// export async function tryAddPortion(
+//   fdcId: number,
+//   fractionOfServing: number,
+//   clickedSectionIndex: number,
+//   dayChart: DayChartState
+// ) {
+//   //add a portionRow with the given data
+//   const postJson = await postToDbAndReturnJson(
+//     "portionRows",
+//     {
+//       fdcId,
+//       fractionOfServing,
+//     },
+//     "Could not add new portion row"
+//   );
+//   if (!postJson) return false;
+//   const portionRowId = postJson.id;
 
-  //add a dayChartDay with the correct dayId, OR skip if there already is one
-  const clickedDayIndex = Math.floor(clickedSectionIndex / sectionsPerDay);
-  const existingDay = dayChart.days[clickedDayIndex];
-  let dbDayId = existingDay?.id;
-  if (!existingDay) {
-    const postJson = await postToDbAndReturnJson(
-      "dayChartDays",
-      {
-        dayChartId: dayChart.dayChartId,
-        indexInChart: clickedDayIndex,
-      },
-      "Could not add new day"
-    );
-    if (!postJson) return false;
-    dbDayId = postJson.id;
-  }
+//   //add a dayChartDay with the correct dayId, OR skip if there already is one
+//   const clickedDayIndex = Math.floor(clickedSectionIndex / sectionsPerDay);
+//   const existingDay = dayChart.days[clickedDayIndex];
+//   let dbDayId = existingDay?.id;
+//   if (!existingDay) {
+//     const postJson = await postToDbAndReturnJson(
+//       "dayChartDays",
+//       {
+//         dayChartId: dayChart.dayChartId,
+//         indexInChart: clickedDayIndex,
+//       },
+//       "Could not add new day"
+//     );
+//     if (!postJson) return false;
+//     dbDayId = postJson.id;
+//   }
 
-  //add a daySection with this dayId and the selected indexInDay, OR skip if there is already one with the same values
-  //(take note of the id of the daySection created, OR the daySection that already existed)
-  const indexInDay = clickedSectionIndex - sectionsPerDay * clickedDayIndex;
-  const existingSection =
-    existingDay && existingDay.sections && existingDay.sections[indexInDay];
-  let dbSectionId = existingSection && existingSection.dbId;
-  if (!existingSection) {
-    const postJson = await postToDbAndReturnJson(
-      "daySections",
-      {
-        dayId: dbDayId,
-        indexInDay,
-      },
-      "Could not add new section"
-    );
-    if (!postJson) return false;
-    dbSectionId = postJson.id;
-  }
+//   //add a daySection with this dayId and the selected indexInDay, OR skip if there is already one with the same values
+//   //(take note of the id of the daySection created, OR the daySection that already existed)
+//   const indexInDay = clickedSectionIndex - sectionsPerDay * clickedDayIndex;
+//   const existingSection =
+//     existingDay && existingDay.sections && existingDay.sections[indexInDay];
+//   let dbSectionId = existingSection && existingSection.dbId;
+//   if (!existingSection) {
+//     const postJson = await postToDbAndReturnJson(
+//       "daySections",
+//       {
+//         dayId: dbDayId,
+//         indexInDay,
+//       },
+//       "Could not add new section"
+//     );
+//     if (!postJson) return false;
+//     dbSectionId = postJson.id;
+//   }
 
-  //add a daySectionRow with daySectionId=(previously noted daySection id) and portionRowId=(id of row already added)
-  const daySectionRowJson = await postToDbAndReturnJson(
-    "daySectionRows",
-    {
-      daySectionId: dbSectionId,
-      portionRowId,
-    },
-    "Could not add new daySectionRow"
-  );
-  if (!daySectionRowJson) return false;
+//   //add a daySectionRow with daySectionId=(previously noted daySection id) and portionRowId=(id of row already added)
+//   const daySectionRowJson = await postToDbAndReturnJson(
+//     "daySectionRows",
+//     {
+//       daySectionId: dbSectionId,
+//       portionRowId,
+//     },
+//     "Could not add new daySectionRow"
+//   );
+//   if (!daySectionRowJson) return false;
 
-  return true;
-}
+//   return true;
+// }

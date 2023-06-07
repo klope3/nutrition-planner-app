@@ -1,4 +1,4 @@
-import { API_KEY, API_URL, DB_URL } from "./constants";
+import { API_KEY, API_URL } from "./constants";
 import {
   DayChartDayEntry,
   DayChartEntry,
@@ -19,65 +19,6 @@ export type EndpointJsons = {
   daySectionRows: DaySectionRowEntry[];
   portionRows: PortionRowEntry[];
 };
-
-const endpoints = [
-  "userDayCharts",
-  "dayCharts",
-  "dayChartDays",
-  "daySections",
-  "daySectionRows",
-  "portionRows",
-];
-
-export async function fetchEndpointJsons() {
-  const responses = await Promise.all(
-    endpoints.map((endpoint) => fetchFromDb(endpoint))
-  );
-  const jsons = await Promise.all(responses.map((response) => response.json()));
-  return convertEndpointJsons(jsons);
-}
-
-async function fetchRequestWithJson(
-  endpoint: string,
-  requestOptions: Object,
-  badResponseMessage?: string
-) {
-  const response = await fetch(`${DB_URL}/${endpoint}`, requestOptions);
-  if (!response.ok) {
-    console.error(badResponseMessage ? badResponseMessage : "Fetch FAILED");
-    return undefined;
-  }
-  const json = await response.json();
-  return json;
-}
-
-export async function postToDbAndReturnJson(
-  endpoint: string,
-  bodyData: Object,
-  badResponseMessage?: string
-) {
-  return await fetchRequestWithJson(
-    endpoint,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bodyData),
-    },
-    badResponseMessage
-  );
-}
-
-export function fetchFromDb(endpoint: string) {
-  const requestOptions = { method: "GET" };
-  return fetch(`${DB_URL}/${endpoint}`, requestOptions);
-}
-
-export function deleteFromDb(endpoint: string, id: number) {
-  const requestOptions = { method: "DELETE" };
-  return fetch(`${DB_URL}/${endpoint}/${id}`, requestOptions);
-}
 
 export async function searchFdcFoodsJson(
   searchText: string,
@@ -131,15 +72,4 @@ export async function fetchSingleFdcFoodJson(fdcId: number) {
     }
     return await response.json();
   } catch (error) {}
-}
-
-function convertEndpointJsons(jsons: any): EndpointJsons {
-  return {
-    userDayCharts: jsons[0],
-    dayCharts: jsons[1],
-    dayChartDays: jsons[2],
-    daySections: jsons[3],
-    daySectionRows: jsons[4],
-    portionRows: jsons[5],
-  };
 }

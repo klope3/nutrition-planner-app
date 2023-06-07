@@ -5,7 +5,6 @@ import "./DaySection.css";
 
 type DaySectionProps = {
   indexInDay: number;
-  // dayId: number | undefined;
   dayIndex: number;
 };
 
@@ -20,9 +19,6 @@ export function DaySection(props: DaySectionProps) {
   }
 
   const { getRowsForSection } = useDayChart();
-  // const day = dayChart.days && dayChart.days[dayIndex];
-  // const section = day && day.sections[indexInDay];
-  // const portionRowsHere = section && section.rows;
   const portionRowsHere = getRowsForSection(dayIndex, indexInDay);
 
   return (

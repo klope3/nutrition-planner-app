@@ -1,14 +1,12 @@
 import {
-  ReactNode,
-  useState,
   createContext,
+  ReactNode,
   useContext,
   useEffect,
+  useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAccount } from "../accounts";
-import { invalidCredentialsError, miscError } from "../constants";
-import { fetchFromDb } from "../fetch";
 
 type ChildrenProps = {
   children: ReactNode;
@@ -51,35 +49,7 @@ export function AccountProvider({ children }: ChildrenProps) {
     checkCredentialsCb: (user: any) => void,
     setSignInError?: (error: string) => void
   ) {
-    fetchFromDb("users")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error();
-        } else {
-          return res.json();
-        }
-      })
-      .then((res) => res.find(checkCredentialsCb))
-      .then((res) => {
-        if (res) {
-          const user: UserAccountSimple = {
-            dbId: res.id,
-            email: res.email,
-          };
-          setActiveUser(user);
-          localStorage.setItem("user", user.email);
-          navigate("/chart");
-        } else {
-          throw new Error(invalidCredentialsError);
-        }
-      })
-      .catch((error: Error) => {
-        let errorMessage =
-          error.message === invalidCredentialsError
-            ? invalidCredentialsError
-            : miscError;
-        if (setSignInError) setSignInError(errorMessage);
-      });
+    console.log("try sign in ");
   }
 
   useEffect(() => {

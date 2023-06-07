@@ -11,7 +11,6 @@ export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
-  const { signIn } = useAccount();
 
   function clickSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +23,6 @@ export function SignIn() {
       return;
     }
     console.log("Try sign in with " + email + ", " + password);
-    // signIn(email, password, setSignInError);
   }
 
   const fields: InputFieldProps[] = [
