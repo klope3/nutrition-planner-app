@@ -1,155 +1,27 @@
 import { daysToShow, sectionsPerDay, unknownFoodName } from "./constants";
 import { EndpointJsons, fetchAllFdcFoodJsons } from "./fetch";
-import {
-  DayChartDayEntry,
-  DayChartEntry,
-  DayChartState,
-  DaySectionEntry,
-  DaySectionRowEntry,
-  DayState,
-  PortionRowEntry,
-  PortionRowState,
-  UserDayChartEntry,
-} from "./types/DayChartTypes";
+import { DayChart } from "./types/DayChartNew";
 import { FoodData } from "./types/FoodDataTypes";
 import { extractFoodDataFromJson } from "./utility";
 
 export async function updateDayChart(
   userId: number,
-  setDayChart: (state: DayChartState) => void,
+  setDayChart: (state: DayChart) => void,
   setIsLoading: (b: boolean) => void,
   failureCb: () => void
 ) {
   console.log("update day chart");
 }
 
-async function getAllFoodData(fdcIds: number[]) {
-  const allFoodDataJsons = await fetchAllFdcFoodJsons(fdcIds);
+// async function getAllFoodData(fdcIds: number[]) {
+//   const allFoodDataJsons = await fetchAllFdcFoodJsons(fdcIds);
 
-  const allFoodData: FoodData[] = allFoodDataJsons.map((json) =>
-    extractFoodDataFromJson(json)
-  );
+//   const allFoodData: FoodData[] = allFoodDataJsons.map((json) =>
+//     extractFoodDataFromJson(json)
+//   );
 
-  return allFoodData;
-}
-
-function buildDayChartState(
-  endpointJsons: EndpointJsons,
-  userId: number,
-  allFoodData: FoodData[]
-): DayChartState {
-  const { userDayCharts, dayCharts } = endpointJsons;
-  const userDayChartPairFromDb = userDayCharts.find(
-    (pair: UserDayChartEntry) => pair.userId === userId
-  );
-  const dayChartFromDb = dayCharts.find(
-    (dayChart: DayChartEntry) =>
-      dayChart.id === userDayChartPairFromDb?.dayChartId
-  );
-  const dayChartId = dayChartFromDb ? dayChartFromDb.id : 0;
-  return {
-    dayChartId,
-    days: Array.from({ length: daysToShow }, (_, dayIndex) =>
-      buildDay(dayChartId, dayIndex, endpointJsons, allFoodData)
-    ),
-  };
-}
-
-function buildDay(
-  dayChartId: number,
-  indexInChart: number,
-  endpointJsons: EndpointJsons,
-  allFoodData: FoodData[]
-) {
-  const dayFromDb = endpointJsons.dayChartDays.find(
-    (dayChartDay) =>
-      dayChartDay.dayChartId === dayChartId &&
-      dayChartDay.indexInChart === indexInChart
-  );
-  const day: DayState | undefined = dayFromDb && {
-    id: dayFromDb.id,
-    dayChartId,
-    indexInChart,
-    sections: Array.from({ length: sectionsPerDay }, (_, sectionIndex) =>
-      buildSection(
-        dayChartId,
-        indexInChart,
-        sectionIndex,
-        endpointJsons,
-        allFoodData
-      )
-    ),
-  };
-  return day;
-}
-
-function buildSection(
-  dayChartId: number,
-  dayIndex: number,
-  indexInDay: number,
-  endpointJsons: EndpointJsons,
-  allFoodData: FoodData[]
-) {
-  const { dayChartDays, daySections, daySectionRows, portionRows } =
-    endpointJsons;
-
-  const dayFromDb = dayChartDays.find(
-    (dayChartDay: DayChartDayEntry) =>
-      dayChartDay.dayChartId === dayChartId &&
-      dayChartDay.indexInChart === dayIndex
-  );
-  const sectionFromDb =
-    dayFromDb &&
-    daySections.find(
-      (daySection: DaySectionEntry) =>
-        daySection.dayId === dayFromDb.id &&
-        daySection.indexInDay === indexInDay
-    );
-  const sectionRowPairsFromDb =
-    sectionFromDb &&
-    daySectionRows.filter(
-      (daySectionRow: DaySectionRowEntry) =>
-        daySectionRow.daySectionId === sectionFromDb.id
-    );
-  const rows =
-    sectionRowPairsFromDb &&
-    sectionRowPairsFromDb.map((daySectionRow: DaySectionRowEntry) =>
-      buildRow(daySectionRow, portionRows, allFoodData)
-    );
-  return (
-    sectionFromDb && {
-      dbId: sectionFromDb.id,
-      indexInDay,
-      rows,
-    }
-  );
-}
-
-function buildRow(
-  daySectionRow: DaySectionRowEntry,
-  portionRows: PortionRowEntry[],
-  allFoodData: FoodData[]
-) {
-  const rowFromDb = portionRows.find(
-    (portionRow: PortionRowEntry) =>
-      portionRow.id === daySectionRow.portionRowId
-  );
-  const foodDataMatch = allFoodData.find(
-    (foodData) => foodData.fdcId === rowFromDb?.fdcId
-  );
-  const foodData: FoodData = {
-    fdcId: rowFromDb ? rowFromDb.fdcId : 0,
-    description: foodDataMatch ? foodDataMatch.description : unknownFoodName,
-    nutrients: foodDataMatch ? foodDataMatch.nutrients : [],
-  };
-  const builtRow: PortionRowState | undefined = rowFromDb &&
-    foodData && {
-      id: rowFromDb.id,
-      fdcId: rowFromDb.fdcId,
-      foodData,
-    };
-  return builtRow;
-}
+//   return allFoodData;
+// }
 
 // export async function tryDeletePortion(portionId: number) {
 //   const deletePortionRowResponse = await deleteFromDb("portionRows", portionId);

@@ -6,25 +6,19 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  DayChartData,
-  DayChartState,
-  PortionRowState,
-} from "../types/DayChartTypes";
+import { DayChart, dayChartSchema, Portion } from "../types/DayChartNew";
 import { updateDayChart } from "../updateDayChart";
 import { useAccount } from "./AccountProvider";
 
 type DayChartContext = {
-  dayChartData: DayChartData;
-  setDayChartData: (data: DayChartData) => void;
   showSearch: boolean;
   setShowSearch: (showSearch: boolean) => void;
   isLoading: boolean;
   setIsLoading: (b: boolean) => void;
   clickedSectionIndex: number;
   setClickedSectionIndex: (i: number) => void;
-  dayChart: DayChartState;
-  setDayChart: (state: DayChartState) => void;
+  dayChart: DayChart;
+  setDayChart: (state: DayChart) => void;
   updateFailure: () => void;
 };
 
@@ -56,14 +50,11 @@ export function useDayChart() {
   function getRowsForSection(
     dayIndexInChart: number,
     sectionIndexInDay: number
-  ): PortionRowState[] {
-    console.log(
-      "Getting rows for section " +
-        sectionIndexInDay +
-        " in day " +
-        dayIndexInChart
-    );
-    return [];
+  ): Portion[] {
+    const days = dayChart?.days;
+    const sections = days && days[dayIndexInChart]?.sections;
+    const rows = sections && sections[sectionIndexInDay]?.portions;
+    return rows ? rows : [];
   }
 
   return {
@@ -81,12 +72,10 @@ export function useDayChart() {
 }
 
 export function DayChartProvider({ children }: ChildrenProps) {
-  const [dayChartData, setDayChartData] = useState({} as DayChartData);
-  const [dayChart, setDayChart] = useState({} as DayChartState);
+  const [dayChart, setDayChart] = useState({} as DayChart);
   const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
-  const { activeUser, setActiveUser } = useAccount();
   const navigate = useNavigate();
 
   function updateFailure() {
@@ -94,15 +83,49 @@ export function DayChartProvider({ children }: ChildrenProps) {
   }
 
   useEffect(() => {
-    if (activeUser.dbId)
-      updateDayChart(activeUser.dbId, setDayChart, setIsLoading, updateFailure);
-  }, [activeUser]);
+    const loggedInId = localStorage.getItem("userId");
+    const loggedInToken = localStorage.getItem("token");
+    if (loggedInId === undefined || loggedInToken === undefined) {
+      navigate("/");
+    }
+
+    const headers = new Headers();
+    headers.append("Authorization", `Bearer ${loggedInToken}`);
+    const requestOptions = {
+      method: "GET",
+      headers,
+    };
+    console.log("Trying to get chart for user " + loggedInId);
+    fetch(`http://localhost:3000/users/${loggedInId}/chart`, requestOptions)
+      .then((res) => {
+        if (!res.ok) {
+          res
+            .clone()
+            .json()
+            .then((json) => {
+              if (json.message !== undefined) {
+                throw new Error(json.message);
+              }
+            });
+        }
+        return res.json();
+      })
+      .then((json) => {
+        try {
+          const parsedDayChart = dayChartSchema.parse(json);
+          setDayChart(parsedDayChart);
+        } catch (error) {
+          console.error(error);
+        }
+      })
+      .catch((e) => console.error(e));
+  }, []);
 
   return (
     <DayChartContext.Provider
       value={{
-        dayChartData,
-        setDayChartData,
+        // dayChartData,
+        // setDayChartData,
         showSearch,
         setShowSearch,
         isLoading,
