@@ -1,5 +1,5 @@
 import { getNutrientsToShow } from "../../../calculateNutrients";
-import {} from "../../../types/FoodDataTypes";
+import { Nutrient } from "../../../types/FoodDataNew";
 import { splitArrayBy } from "../../../utility";
 import { useDayChart } from "../../DayChartProvider";
 import { NutrientProgressBar } from "../NutrientProgressBar/NutrientProgressBar";
@@ -11,11 +11,11 @@ type NutrientProgressAreaProps = {
 
 export function NutrientProgressArea(props: NutrientProgressAreaProps) {
   const { dayIndex } = props;
-  const { dayChart } = useDayChart();
-  const nutrientsToShow = getNutrientsToShow(dayChart, dayIndex);
+  const { dayChart, foodData } = useDayChart();
+  const nutrientsToShow = getNutrientsToShow(dayChart, foodData, dayIndex);
   const { passArr: majorNutrients, failArr: minorNutrients } = splitArrayBy(
     nutrientsToShow,
-    (nutrient) => nutrient.isMajorNutrient
+    (nutrient: Nutrient) => nutrient.nutrientInfo.isMajorNutrient
   );
 
   return (

@@ -6,8 +6,11 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { getFoodDataFor, loadUserDayChart } from "../fetch";
 import { DayChart, dayChartSchema, Portion } from "../types/DayChartNew";
+import { FoodData } from "../types/FoodDataNew";
 import { updateDayChart } from "../updateDayChart";
+import { getPortionsFromDayChart } from "../utility";
 import { useAccount } from "./AccountProvider";
 
 type DayChartContext = {
@@ -20,6 +23,7 @@ type DayChartContext = {
   dayChart: DayChart;
   setDayChart: (state: DayChart) => void;
   updateFailure: () => void;
+  foodData: FoodData[];
 };
 
 type ChildrenProps = { children: ReactNode };
@@ -37,6 +41,7 @@ export function useDayChart() {
     dayChart,
     setDayChart,
     updateFailure,
+    foodData,
   } = useContext(DayChartContext);
 
   async function addPortion(userId: number, fdcId: number) {
@@ -68,6 +73,7 @@ export function useDayChart() {
     getRowsForSection,
     dayChart,
     updateDayChart,
+    foodData,
   };
 }
 
@@ -76,6 +82,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
+  const [foodData, setFoodData] = useState([] as FoodData[]);
   const navigate = useNavigate();
 
   function updateFailure() {
@@ -85,38 +92,27 @@ export function DayChartProvider({ children }: ChildrenProps) {
   useEffect(() => {
     const loggedInId = localStorage.getItem("userId");
     const loggedInToken = localStorage.getItem("token");
-    if (loggedInId === undefined || loggedInToken === undefined) {
+    if (!loggedInId || !loggedInToken) {
       navigate("/");
+      return;
     }
 
-    const headers = new Headers();
-    headers.append("Authorization", `Bearer ${loggedInToken}`);
-    const requestOptions = {
-      method: "GET",
-      headers,
-    };
-    console.log("Trying to get chart for user " + loggedInId);
-    fetch(`http://localhost:3000/users/${loggedInId}/chart`, requestOptions)
-      .then((res) => {
-        if (!res.ok) {
-          res
-            .clone()
-            .json()
-            .then((json) => {
-              if (json.message !== undefined) {
-                throw new Error(json.message);
-              }
-            });
+    loadUserDayChart(loggedInId, loggedInToken)
+      .then((dayChart) => {
+        if (!dayChart) {
+          throw new Error("Error loading dayChart");
         }
-        return res.json();
+        setDayChart(dayChart);
+        return dayChart;
       })
-      .then((json) => {
-        try {
-          const parsedDayChart = dayChartSchema.parse(json);
-          setDayChart(parsedDayChart);
-        } catch (error) {
-          console.error(error);
-        }
+      .then((dayChart) => {
+        const allPortions = getPortionsFromDayChart(dayChart);
+        const allIds = allPortions.map((portion) => portion.fdcId);
+        return getFoodDataFor(allIds);
+      })
+      .then((foodData) => {
+        setFoodData(foodData);
+        setIsLoading(false);
       })
       .catch((e) => console.error(e));
   }, []);
@@ -135,6 +131,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
         dayChart,
         setDayChart,
         updateFailure,
+        foodData,
       }}
     >
       {children}

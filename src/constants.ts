@@ -1,4 +1,4 @@
-import { NutrientInfo } from "./types/FoodDataTypes";
+import { NutrientInfo } from "./types/FoodDataNew";
 
 export const nutrientInfo: NutrientInfo[] = [
   {
