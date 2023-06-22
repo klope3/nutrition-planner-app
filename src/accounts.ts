@@ -53,6 +53,7 @@ export async function trySignIn(email: string, password: string) {
         const parsed = schema.parse(json);
         localStorage.setItem("userId", `${parsed.userId}`);
         localStorage.setItem("token", parsed.token);
+        localStorage.setItem("userEmail", email);
       } catch (error) {
         console.error("The response did not have the correct data shape.");
         throw new Error(miscError);

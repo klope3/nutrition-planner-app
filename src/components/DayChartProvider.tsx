@@ -6,7 +6,8 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFoodDataFor, loadUserDayChart } from "../fetch";
+import { sectionsPerDay } from "../constants";
+import { addPortionFetch, getFoodDataFor, loadUserDayChart } from "../fetch";
 import { DayChart, dayChartSchema, Portion } from "../types/DayChartNew";
 import { FoodData } from "../types/FoodDataNew";
 import { updateDayChart } from "../updateDayChart";
@@ -22,6 +23,7 @@ type DayChartContext = {
   setClickedSectionIndex: (i: number) => void;
   dayChart: DayChart;
   setDayChart: (state: DayChart) => void;
+  updateDayChart: () => void;
   updateFailure: () => void;
   foodData: FoodData[];
 };
@@ -41,11 +43,20 @@ export function useDayChart() {
     dayChart,
     setDayChart,
     updateFailure,
+    updateDayChart,
     foodData,
   } = useContext(DayChartContext);
 
-  async function addPortion(userId: number, fdcId: number) {
-    console.log("Add fdcId " + fdcId + " for user " + userId);
+  async function addPortion(
+    userId: number,
+    fdcId: number,
+    clickedSectionIndex: number
+  ) {
+    const dayIndexInChart = Math.floor(clickedSectionIndex / sectionsPerDay);
+    const sectionIndexInDay = clickedSectionIndex % sectionsPerDay;
+    addPortionFetch(fdcId, userId, dayIndexInChart, sectionIndexInDay)
+      .then(() => updateDayChart())
+      .catch((e) => console.error(e));
   }
 
   async function deletePortion(userId: number, portionId: number) {
@@ -57,8 +68,14 @@ export function useDayChart() {
     sectionIndexInDay: number
   ): Portion[] {
     const days = dayChart?.days;
-    const sections = days && days[dayIndexInChart]?.sections;
-    const rows = sections && sections[sectionIndexInDay]?.portions;
+    const dayAtDayIndex = days?.find(
+      (day) => day.indexInChart === dayIndexInChart
+    );
+    const sections = dayAtDayIndex?.sections;
+    const sectionAtSectionIndex = sections?.find(
+      (section) => section.indexInDay === sectionIndexInDay
+    );
+    const rows = sectionAtSectionIndex?.portions;
     return rows ? rows : [];
   }
 
@@ -89,7 +106,9 @@ export function DayChartProvider({ children }: ChildrenProps) {
     navigate("/error");
   }
 
-  useEffect(() => {
+  function updateDayChart() {
+    setIsLoading(true);
+
     const loggedInId = localStorage.getItem("userId");
     const loggedInToken = localStorage.getItem("token");
     if (!loggedInId || !loggedInToken) {
@@ -115,6 +134,10 @@ export function DayChartProvider({ children }: ChildrenProps) {
         setIsLoading(false);
       })
       .catch((e) => console.error(e));
+  }
+
+  useEffect(() => {
+    updateDayChart();
   }, []);
 
   return (
@@ -131,6 +154,7 @@ export function DayChartProvider({ children }: ChildrenProps) {
         dayChart,
         setDayChart,
         updateFailure,
+        updateDayChart,
         foodData,
       }}
     >

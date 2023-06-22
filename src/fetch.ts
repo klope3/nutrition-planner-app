@@ -142,3 +142,46 @@ function extractFoodDataFromJson(json: any) {
   };
   return foodData;
 }
+
+export function addPortionFetch(
+  fdcId: number,
+  userId: number,
+  dayIndexInChart: number,
+  sectionIndexInDay: number
+) {
+  const token = localStorage.getItem("token");
+  const headers = new Headers();
+  headers.append("Content-Type", "application/json");
+  headers.append("Authorization", `Bearer ${token}`);
+
+  const body = JSON.stringify({
+    dayIndexInChart: dayIndexInChart,
+    sectionIndexInDay: sectionIndexInDay,
+    fdcId: fdcId,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers,
+    body,
+  };
+
+  return fetch(
+    `http://localhost:3000/users/${userId}/chart`,
+    requestOptions
+  ).then((res) => {
+    if (!res.ok) {
+      res.json().then((json) => {
+        if (json.message !== undefined) {
+          throw new Error(
+            `Adding portion FAILED with a status code of ${res.status} and the message: "${json.message}`
+          );
+        } else {
+          throw new Error(
+            `Adding portion FAILED with status code ${res.status}`
+          );
+        }
+      });
+    }
+  });
+}

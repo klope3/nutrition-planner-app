@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "../../AccountProvider";
 import { Logo } from "../../Common/Logo/Logo";
 import "./DayChartHeader.css";
 
 export function DayChartHeader() {
-  const { activeUser } = useAccount();
   const navigate = useNavigate();
+  const email = localStorage.getItem("userEmail");
 
   function signOut() {
     localStorage.removeItem("user");
@@ -16,7 +15,7 @@ export function DayChartHeader() {
     <div className="day-chart-header">
       <Logo />
       <div className="day-chart-header-account-container">
-        <div>{activeUser.email}</div>
+        <div>{email}</div>
         <button onClick={signOut}>Sign Out</button>
       </div>
     </div>

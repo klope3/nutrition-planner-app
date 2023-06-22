@@ -1,3 +1,4 @@
+//!Account context might be unnecessary if active user is stored in local storage.
 import {
   createContext,
   ReactNode,
