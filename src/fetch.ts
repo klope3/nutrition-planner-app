@@ -28,6 +28,13 @@ export type EndpointJsons = {
   portionRows: PortionRowEntry[];
 };
 
+function createHeadersWithAuthorization() {
+  const token = localStorage.getItem("token");
+  const headers = new Headers();
+  headers.append("Authorization", `Bearer ${token}`);
+  return headers;
+}
+
 export function loadUserDayChart(userId: string, token: string) {
   const headers = new Headers();
   headers.append("Authorization", `Bearer ${token}`);
@@ -149,10 +156,8 @@ export function addPortionFetch(
   dayIndexInChart: number,
   sectionIndexInDay: number
 ) {
-  const token = localStorage.getItem("token");
-  const headers = new Headers();
+  const headers = createHeadersWithAuthorization();
   headers.append("Content-Type", "application/json");
-  headers.append("Authorization", `Bearer ${token}`);
 
   const body = JSON.stringify({
     dayIndexInChart: dayIndexInChart,
@@ -179,6 +184,34 @@ export function addPortionFetch(
         } else {
           throw new Error(
             `Adding portion FAILED with status code ${res.status}`
+          );
+        }
+      });
+    }
+  });
+}
+
+export function deletePortionFetch(userId: number, portionId: number) {
+  const headers = createHeadersWithAuthorization();
+
+  const requestOptions = {
+    method: "DELETE",
+    headers,
+  };
+
+  return fetch(
+    `http://localhost:3000/users/${userId}/chart/portions/${portionId}`,
+    requestOptions
+  ).then((res) => {
+    if (!res.ok) {
+      res.json().then((json) => {
+        if (json.message !== undefined) {
+          throw new Error(
+            `Deleting portion FAILED with a status code of ${res.status} and the message: ${json.message}`
+          );
+        } else {
+          throw new Error(
+            `Deleting portion FAILED with a status code of ${res.status}`
           );
         }
       });

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Portion } from "../../../types/DayChartNew";
 import { FoodData } from "../../../types/FoodDataNew";
-import { useAccount } from "../../AccountProvider";
 import { useDayChart } from "../../DayChartProvider";
 import "./PortionRow.css";
 
@@ -14,7 +13,6 @@ export function PortionRow(props: PortionRowProps) {
     row: { id: rowId, fdcId },
   } = props;
   const { deletePortion, foodData } = useDayChart();
-  const { activeUser } = useAccount();
   const data = foodData.find((data) => data.fdcId === fdcId);
   const text = data ? data.description : "Unknown Item";
 
@@ -23,7 +21,11 @@ export function PortionRow(props: PortionRowProps) {
       <div>{text}</div>
       <button
         className="remove-portion-button"
-        onClick={() => deletePortion(activeUser.dbId, rowId)}
+        onClick={() => {
+          const id = localStorage.getItem("userId");
+          if (!id) return;
+          deletePortion(+id, rowId);
+        }}
       >
         X
       </button>

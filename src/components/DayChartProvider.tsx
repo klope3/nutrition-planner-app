@@ -7,7 +7,12 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { sectionsPerDay } from "../constants";
-import { addPortionFetch, getFoodDataFor, loadUserDayChart } from "../fetch";
+import {
+  addPortionFetch,
+  deletePortionFetch,
+  getFoodDataFor,
+  loadUserDayChart,
+} from "../fetch";
 import { DayChart, dayChartSchema, Portion } from "../types/DayChartNew";
 import { FoodData } from "../types/FoodDataNew";
 import { updateDayChart } from "../updateDayChart";
@@ -60,7 +65,9 @@ export function useDayChart() {
   }
 
   async function deletePortion(userId: number, portionId: number) {
-    console.log("delete portion " + portionId + " for user " + userId);
+    deletePortionFetch(userId, portionId)
+      .then(() => updateDayChart())
+      .catch((e) => console.error(e));
   }
 
   function getRowsForSection(
