@@ -1,5 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { UserAccount } from "../../../accounts";
+import { createAccountFetch } from "../../../fetch";
 import { InputErrors } from "../../../types/InputFieldTypes";
 import {
   checkValidEmail,
@@ -24,7 +25,15 @@ export async function clickCreateAccount(
     setInputErrors(errors);
     return;
   }
-  console.log("Trying create account with " + email + ", " + password);
+
+  createAccountFetch(email, password)
+    .then((parsedJson) => {
+      localStorage.setItem("token", parsedJson.token);
+      localStorage.setItem("userId", `${parsedJson.id}`);
+      localStorage.setItem("userEmail", email);
+      navigate("/chart");
+    })
+    .catch((e) => console.error(e));
 }
 
 export function getNewErrors(

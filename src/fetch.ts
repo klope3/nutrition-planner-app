@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { API_KEY, API_URL, nutrientInfo } from "./constants";
 import { DayChart, dayChartSchema } from "./types/DayChartNew";
 import {
@@ -217,4 +218,43 @@ export function deletePortionFetch(userId: number, portionId: number) {
       });
     }
   });
+}
+
+export function createAccountFetch(email: string, password: string) {
+  const headers = new Headers();
+  headers.append("Content-Type", "application/json");
+
+  const body = JSON.stringify({
+    email: email,
+    password: password,
+  });
+
+  const requestOptions = {
+    method: "POST",
+    headers,
+    body,
+  };
+
+  return fetch("http://localhost:3000/users", requestOptions)
+    .then((res) => {
+      if (!res.ok) {
+        res.json().then((json) => {
+          if (json.message !== undefined) {
+            throw new Error(
+              `Creating account FAILED with status code ${res.status} and message: ${json.message}`
+            );
+          } else {
+            throw new Error(
+              `Creating account FAILED with status code ${res.status}`
+            );
+          }
+        });
+      } else return res.json();
+    })
+    .then((json) => {
+      const parsedJson = z
+        .object({ token: z.string(), id: z.number() })
+        .parse(json);
+      return parsedJson;
+    });
 }
