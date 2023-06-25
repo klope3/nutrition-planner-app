@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { invalidCredentialsError } from "../../../constants";
+import { Link, useNavigate } from "react-router-dom";
+import { trySignIn } from "../../../accounts";
+import {
+  fetchFailure,
+  invalidSignInError,
+  serverError,
+} from "../../../constants";
 import { InputFieldProps } from "../../../types/InputFieldTypes";
-import { useAccount } from "../../AccountProvider";
 import { InputFieldGroup } from "../../Common/InputFieldGroup/InputFieldGroup";
 import "../Account.css";
 import { AccountBoxHeader } from "../AccountBoxHeader/AccountBoxHeader";
@@ -11,7 +15,7 @@ export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signInError, setSignInError] = useState("");
-  const { signIn } = useAccount();
+  const navigate = useNavigate();
 
   function clickSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,10 +24,20 @@ export function SignIn() {
     const email = data.get("email") as string;
     const password = data.get("password") as string;
     if (!email || !password) {
-      setSignInError(invalidCredentialsError);
+      setSignInError(invalidSignInError);
       return;
     }
-    signIn(email, password, setSignInError);
+
+    trySignIn(email, password)
+      .then(() => navigate("/chart"))
+      .catch((e) => {
+        if (e instanceof TypeError && e.message === fetchFailure) {
+          setSignInError(serverError);
+        } else if (e instanceof Error) {
+          setSignInError(e.message);
+        }
+        console.error(e);
+      });
   }
 
   const fields: InputFieldProps[] = [

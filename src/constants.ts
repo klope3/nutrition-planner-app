@@ -1,4 +1,4 @@
-import { NutrientInfo } from "./types/FoodDataTypes";
+import { NutrientInfo } from "./types/FoodDataNew";
 
 export const nutrientInfo: NutrientInfo[] = [
   {
@@ -208,7 +208,6 @@ export const nutrientOrder = [
 
 export const API_URL = "https://api.nal.usda.gov/fdc/v1";
 export const API_KEY = import.meta.env.VITE_API_KEY;
-export const DB_URL = "http://localhost:3000";
 
 export const sectionsPerDay = 5;
 export const daysToShow = 7;
@@ -225,5 +224,7 @@ export const dayNames = [
   "Saturday",
 ];
 
-export const invalidCredentialsError = "Invalid username or password.";
+export const invalidSignInError = "Invalid username or password.";
 export const miscError = "Something went wrong. Try again later.";
+export const serverError = "Unable to contact server. Try again later.";
+export const fetchFailure = "Failed to fetch";

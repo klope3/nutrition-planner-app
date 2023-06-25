@@ -6,26 +6,31 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { DayChartData, DayChartState } from "../types/DayChartTypes";
+import { sectionsPerDay } from "../constants";
 import {
-  tryAddPortion,
-  tryDeletePortion,
-  updateDayChart,
-} from "../updateDayChart";
+  addPortionFetch,
+  deletePortionFetch,
+  getFoodDataFor,
+  loadUserDayChart,
+} from "../fetch";
+import { DayChart, dayChartSchema, Portion } from "../types/DayChartNew";
+import { FoodData } from "../types/FoodDataNew";
+import { updateDayChart } from "../updateDayChart";
+import { getPortionsFromDayChart } from "../utility";
 import { useAccount } from "./AccountProvider";
 
 type DayChartContext = {
-  dayChartData: DayChartData;
-  setDayChartData: (data: DayChartData) => void;
   showSearch: boolean;
   setShowSearch: (showSearch: boolean) => void;
   isLoading: boolean;
   setIsLoading: (b: boolean) => void;
   clickedSectionIndex: number;
   setClickedSectionIndex: (i: number) => void;
-  dayChart: DayChartState;
-  setDayChart: (state: DayChartState) => void;
+  dayChart: DayChart;
+  setDayChart: (state: DayChart) => void;
+  updateDayChart: () => void;
   updateFailure: () => void;
+  foodData: FoodData[];
 };
 
 type ChildrenProps = { children: ReactNode };
@@ -43,26 +48,42 @@ export function useDayChart() {
     dayChart,
     setDayChart,
     updateFailure,
+    updateDayChart,
+    foodData,
   } = useContext(DayChartContext);
 
   async function addPortion(
     userId: number,
     fdcId: number,
-    fractionOfServing: number
+    clickedSectionIndex: number
   ) {
-    const added = await tryAddPortion(
-      fdcId,
-      fractionOfServing,
-      clickedSectionIndex,
-      dayChart
-    );
-    if (added) updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
+    const dayIndexInChart = Math.floor(clickedSectionIndex / sectionsPerDay);
+    const sectionIndexInDay = clickedSectionIndex % sectionsPerDay;
+    addPortionFetch(fdcId, userId, dayIndexInChart, sectionIndexInDay)
+      .then(() => updateDayChart())
+      .catch((e) => console.error(e));
   }
 
   async function deletePortion(userId: number, portionId: number) {
-    const deleted = await tryDeletePortion(portionId);
-    if (deleted)
-      updateDayChart(userId, setDayChart, setIsLoading, updateFailure);
+    deletePortionFetch(userId, portionId)
+      .then(() => updateDayChart())
+      .catch((e) => console.error(e));
+  }
+
+  function getRowsForSection(
+    dayIndexInChart: number,
+    sectionIndexInDay: number
+  ): Portion[] {
+    const days = dayChart?.days;
+    const dayAtDayIndex = days?.find(
+      (day) => day.indexInChart === dayIndexInChart
+    );
+    const sections = dayAtDayIndex?.sections;
+    const sectionAtSectionIndex = sections?.find(
+      (section) => section.indexInDay === sectionIndexInDay
+    );
+    const rows = sectionAtSectionIndex?.portions;
+    return rows ? rows : [];
   }
 
   return {
@@ -73,34 +94,64 @@ export function useDayChart() {
     setClickedSectionIndex,
     addPortion,
     deletePortion,
+    getRowsForSection,
     dayChart,
     updateDayChart,
+    foodData,
   };
 }
 
 export function DayChartProvider({ children }: ChildrenProps) {
-  const [dayChartData, setDayChartData] = useState({} as DayChartData);
-  const [dayChart, setDayChart] = useState({} as DayChartState);
+  const [dayChart, setDayChart] = useState({} as DayChart);
   const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [clickedSectionIndex, setClickedSectionIndex] = useState(0);
-  const { activeUser, setActiveUser } = useAccount();
+  const [foodData, setFoodData] = useState([] as FoodData[]);
   const navigate = useNavigate();
 
   function updateFailure() {
     navigate("/error");
   }
 
+  function updateDayChart() {
+    setIsLoading(true);
+
+    const loggedInId = localStorage.getItem("userId");
+    const loggedInToken = localStorage.getItem("token");
+    if (!loggedInId || !loggedInToken) {
+      navigate("/");
+      return;
+    }
+
+    loadUserDayChart(loggedInId, loggedInToken)
+      .then((dayChart) => {
+        if (!dayChart) {
+          throw new Error("Error loading dayChart");
+        }
+        setDayChart(dayChart);
+        return dayChart;
+      })
+      .then((dayChart) => {
+        const allPortions = getPortionsFromDayChart(dayChart);
+        const allIds = allPortions.map((portion) => portion.fdcId);
+        return getFoodDataFor(allIds);
+      })
+      .then((foodData) => {
+        setFoodData(foodData);
+        setIsLoading(false);
+      })
+      .catch((e) => console.error(e));
+  }
+
   useEffect(() => {
-    if (activeUser.dbId)
-      updateDayChart(activeUser.dbId, setDayChart, setIsLoading, updateFailure);
-  }, [activeUser]);
+    updateDayChart();
+  }, []);
 
   return (
     <DayChartContext.Provider
       value={{
-        dayChartData,
-        setDayChartData,
+        // dayChartData,
+        // setDayChartData,
         showSearch,
         setShowSearch,
         isLoading,
@@ -110,6 +161,8 @@ export function DayChartProvider({ children }: ChildrenProps) {
         dayChart,
         setDayChart,
         updateFailure,
+        updateDayChart,
+        foodData,
       }}
     >
       {children}

@@ -1,12 +1,15 @@
 import "./NutrientProgressBar.css";
-import { Nutrient } from "../../../types/FoodDataTypes";
+import { Nutrient } from "../../../types/FoodDataNew";
 
 type NutrientProgressBarProps = {
   nutrient: Nutrient;
 };
 
 export function NutrientProgressBar(props: NutrientProgressBarProps) {
-  const { displayName, amount, dailyValue } = props.nutrient;
+  const {
+    nutrientInfo: { displayName, dailyValue },
+    amount,
+  } = props.nutrient;
   const percentDV = Math.round((amount / dailyValue) * 100);
   const right = 100 - percentDV;
   const style = right > 0 ? { right: `${right}%` } : undefined;

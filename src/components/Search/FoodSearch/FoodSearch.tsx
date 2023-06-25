@@ -19,12 +19,12 @@ export function FoodSearch() {
   const [searchResults, setSearchResults] = useState({} as FoodSearchJson);
   const [selectedFdcId, setSelectedFdcId] = useState(0);
   const [searchCriteria, setSearchCriteria] = useState(initialCriteria);
-  const { addPortion, setShowSearch } = useDayChart();
-  const { activeUser } = useAccount();
+  const { addPortion, setShowSearch, clickedSectionIndex } = useDayChart();
 
   function clickAdd() {
     setShowSearch(false);
-    addPortion(activeUser.dbId, selectedFdcId, 1);
+    const userId = localStorage.getItem("userId");
+    if (userId) addPortion(+userId, selectedFdcId, clickedSectionIndex);
   }
 
   function selectFood(fdcId: number) {

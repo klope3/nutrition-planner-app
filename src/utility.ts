@@ -1,4 +1,5 @@
 import { nutrientInfo, unknownFoodName } from "./constants";
+import { DayChart, Portion } from "./types/DayChartNew";
 import {
   FoodData,
   FoodSearchJson,
@@ -98,4 +99,21 @@ function convertNutrientFromRawSearch(nutrient: any): Nutrient {
     isMajorNutrient: matchingInfo ? matchingInfo.isMajorNutrient : false,
     amount: roundAmount,
   };
+}
+
+export function getPortionsFromDayChart(dayChart: DayChart): Portion[] {
+  const portions: Portion[] = [];
+  const days = dayChart.days;
+  if (!days) return portions;
+
+  for (const day of days) {
+    if (!day.sections) continue;
+    for (const section of day.sections) {
+      if (!section.portions) continue;
+      for (const portion of section.portions) {
+        portions.push(portion);
+      }
+    }
+  }
+  return portions;
 }

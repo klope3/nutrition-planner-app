@@ -1,25 +1,31 @@
-import { PortionRowState } from "../../../types/DayChartTypes";
-import { useAccount } from "../../AccountProvider";
+import { useState } from "react";
+import { Portion } from "../../../types/DayChartNew";
+import { FoodData } from "../../../types/FoodDataNew";
 import { useDayChart } from "../../DayChartProvider";
 import "./PortionRow.css";
 
 type PortionRowProps = {
-  row: PortionRowState;
+  row: Portion;
 };
 
 export function PortionRow(props: PortionRowProps) {
   const {
-    row: { id: rowId, fdcId, foodData },
+    row: { id: rowId, fdcId },
   } = props;
-  const { deletePortion } = useDayChart();
-  const { activeUser } = useAccount();
+  const { deletePortion, foodData } = useDayChart();
+  const data = foodData.find((data) => data.fdcId === fdcId);
+  const text = data ? data.description : "Unknown Item";
 
   return (
     <div className="portion-row">
-      <div>{foodData.description}</div>
+      <div>{text}</div>
       <button
         className="remove-portion-button"
-        onClick={() => deletePortion(activeUser.dbId, rowId)}
+        onClick={() => {
+          const id = localStorage.getItem("userId");
+          if (!id) return;
+          deletePortion(+id, rowId);
+        }}
       >
         X
       </button>

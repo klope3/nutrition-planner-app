@@ -1,4 +1,3 @@
-import { fakeSearch, useFakeData } from "../../../fakeData";
 import { searchFdcFoodsJson } from "../../../fetch";
 import {
   applySearchCriteria,
@@ -14,10 +13,6 @@ export async function trySearch(
   searchText: string,
   setSearchResults: (json: FoodSearchJson) => void
 ) {
-  if (useFakeData) {
-    setSearchResults(fakeSearch as FoodSearchJson);
-    return false;
-  }
   const json = await searchFdcFoodsJson(searchText, 1);
   if (json) {
     let results = convertFoodSearchJson(json);

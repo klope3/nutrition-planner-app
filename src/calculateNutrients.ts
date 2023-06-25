@@ -1,40 +1,44 @@
 import { nutrientInfo, nutrientOrder } from "./constants";
-import { DayChartState } from "./types/DayChartTypes";
-import { Nutrient, NutrientInfo } from "./types/FoodDataTypes";
+import { Portion } from "./types/DayChartNew";
+import { FoodData, Nutrient } from "./types/FoodDataNew";
 
-export function getNutrientsToShow(dayChart: DayChartState, dayIndex: number) {
-  const rowsThisDay =
-    dayChart &&
-    dayChart.days &&
-    dayChart.days[dayIndex]?.sections?.map((section) => section?.rows).flat();
+export function getNutrientsToShow(rows: Portion[], foodData: FoodData[]) {
+  const foodDataThisDay: FoodData[] =
+    rows &&
+    (rows
+      .map((row) => foodData.find((data) => data.fdcId === row.fdcId))
+      .filter((item) => item !== undefined) as FoodData[]); //ts doesn't realize we filtered out the undefined
+
   const nutrientsThisDay =
-    rowsThisDay && rowsThisDay.map((row) => row?.foodData.nutrients).flat();
-
-  const nutrientsToSum = nutrientsThisDay?.filter(isNutrientSupported);
-  const nutrientSums = getNutrientSums(nutrientsToSum);
-  const nutrientsToShow = nutrientInfo.map((info) =>
-    createNutrientWithAmount(nutrientSums, info)
-  );
+    foodDataThisDay && foodDataThisDay.map((data) => data.nutrients).flat();
+  const nutrientSums = getNutrientSums(nutrientsThisDay);
+  const nutrientsToShow = nutrientInfo.map((info) => {
+    const amount = nutrientSums[info.fdcName];
+    const nutrient: Nutrient = {
+      amount: amount !== undefined ? amount : 0,
+      nutrientInfo: info,
+    };
+    return nutrient;
+  });
   sortNutrients(nutrientsToShow);
-
   return nutrientsToShow;
 }
 
 export function sortNutrients(nutrients: Nutrient[]) {
   nutrients.sort((nutrient1, nutrient2) => {
     return (
-      nutrientOrder.indexOf(nutrient1.fdcName) -
-      nutrientOrder.indexOf(nutrient2.fdcName)
+      nutrientOrder.indexOf(nutrient1.nutrientInfo.fdcName) -
+      nutrientOrder.indexOf(nutrient2.nutrientInfo.fdcName)
     );
   });
 }
 
-function getNutrientSums(nutrients: (Nutrient | undefined)[] | undefined): any {
+function getNutrientSums(nutrients: Nutrient[]): any {
   if (!nutrients) return {};
   const nutrientSums: any = {};
   nutrients.forEach((nutrient) => {
     if (nutrient) {
-      const name = nutrient.fdcName;
+      const name = nutrient.nutrientInfo.fdcName;
       nutrientSums[name] = nutrientSums[name]
         ? nutrientSums[name] + nutrient.amount
         : nutrient.amount;
@@ -43,22 +47,8 @@ function getNutrientSums(nutrients: (Nutrient | undefined)[] | undefined): any {
   return nutrientSums;
 }
 
-function isNutrientSupported(nutrient: Nutrient | undefined) {
+export function isNutrientSupported(nutrientName: string) {
   return !!nutrientInfo.find(
-    (nutrientInfo) => nutrientInfo.fdcName === nutrient?.fdcName
+    (nutrientInfo) => nutrientInfo.fdcName === nutrientName
   );
-}
-
-function createNutrientWithAmount(
-  nutrientSums: any,
-  info: NutrientInfo
-): Nutrient {
-  return {
-    fdcName: info.fdcName,
-    displayName: info.displayName,
-    amount: nutrientSums[info.fdcName] ? nutrientSums[info.fdcName] : 0,
-    unit: info.unit,
-    dailyValue: info.dailyValue,
-    isMajorNutrient: info.isMajorNutrient,
-  };
 }
