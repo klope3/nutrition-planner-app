@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { API_KEY, API_URL, nutrientInfo } from "./constants";
+import { API_KEY, API_URL, miscError, nutrientInfo } from "./constants";
 import { DayChart, dayChartSchema } from "./types/DayChartNew";
 import {
   DayChartDayEntry,
@@ -220,7 +220,7 @@ export function deletePortionFetch(userId: number, portionId: number) {
   });
 }
 
-export function createAccountFetch(email: string, password: string) {
+export async function createAccountFetch(email: string, password: string) {
   const headers = new Headers();
   headers.append("Content-Type", "application/json");
 
@@ -235,26 +235,27 @@ export function createAccountFetch(email: string, password: string) {
     body,
   };
 
-  return fetch("http://localhost:3000/users", requestOptions)
-    .then((res) => {
-      if (!res.ok) {
-        res.json().then((json) => {
-          if (json.message !== undefined) {
-            throw new Error(
-              `Creating account FAILED with status code ${res.status} and message: ${json.message}`
-            );
-          } else {
-            throw new Error(
-              `Creating account FAILED with status code ${res.status}`
-            );
-          }
-        });
-      } else return res.json();
-    })
-    .then((json) => {
-      const parsedJson = z
-        .object({ token: z.string(), id: z.number() })
-        .parse(json);
-      return parsedJson;
-    });
+  const response = await fetch("http://localhost:3000/users", requestOptions);
+  const json = await response.json();
+  if (!response.ok) {
+    if (json.message) {
+      throw new Error(json.message);
+    } else {
+      throw new Error(miscError);
+    }
+  } else {
+    const responseUserId = json.id;
+    const responseToken = json.token;
+    if (
+      typeof responseUserId === "number" &&
+      typeof responseToken === "string"
+    ) {
+      return {
+        token: responseToken,
+        userId: responseUserId,
+      };
+    } else {
+      throw new Error(miscError);
+    }
+  }
 }

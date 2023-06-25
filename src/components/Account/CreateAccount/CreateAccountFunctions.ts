@@ -1,5 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
 import { UserAccount } from "../../../accounts";
+import { miscError } from "../../../constants";
 import { createAccountFetch } from "../../../fetch";
 import { InputErrors } from "../../../types/InputFieldTypes";
 import {
@@ -27,13 +28,21 @@ export async function clickCreateAccount(
   }
 
   createAccountFetch(email, password)
-    .then((parsedJson) => {
-      localStorage.setItem("token", parsedJson.token);
-      localStorage.setItem("userId", `${parsedJson.id}`);
+    .then((result) => {
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("userId", `${result.userId}`);
       localStorage.setItem("userEmail", email);
       navigate("/chart");
     })
-    .catch((e) => console.error(e));
+    .catch((e) => {
+      if (e instanceof Error) {
+        if (e.message.toLocaleLowerCase() === "failed to fetch") {
+          setCreateAccountError(miscError);
+        } else {
+          setCreateAccountError(e.message);
+        }
+      }
+    });
 }
 
 export function getNewErrors(

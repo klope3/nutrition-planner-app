@@ -1,22 +1,11 @@
 import { nutrientInfo, nutrientOrder } from "./constants";
-import { DayChart } from "./types/DayChartNew";
-import { FoodData } from "./types/FoodDataNew";
-import { Nutrient, NutrientInfo } from "./types/FoodDataNew";
+import { Portion } from "./types/DayChartNew";
+import { FoodData, Nutrient } from "./types/FoodDataNew";
 
-export function getNutrientsToShow(
-  dayChart: DayChart,
-  foodData: FoodData[],
-  dayIndex: number
-) {
-  const rowsThisDay =
-    dayChart &&
-    dayChart.days &&
-    dayChart.days[dayIndex]?.sections
-      ?.map((section) => section?.portions)
-      .flat();
+export function getNutrientsToShow(rows: Portion[], foodData: FoodData[]) {
   const foodDataThisDay: FoodData[] =
-    rowsThisDay &&
-    (rowsThisDay
+    rows &&
+    (rows
       .map((row) => foodData.find((data) => data.fdcId === row.fdcId))
       .filter((item) => item !== undefined) as FoodData[]); //ts doesn't realize we filtered out the undefined
 
