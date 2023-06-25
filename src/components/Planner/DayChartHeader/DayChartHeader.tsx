@@ -7,7 +7,9 @@ export function DayChartHeader() {
   const email = localStorage.getItem("userEmail");
 
   function signOut() {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("token");
     navigate("/");
   }
 
